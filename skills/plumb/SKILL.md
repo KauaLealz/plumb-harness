@@ -80,6 +80,6 @@ prompt templates there — fixed part first, task last, for cache reuse.
 ## Closing a delivery
 
 Once `review` passes and the PR is approved by the human: record durable
-learnings (`plumb mem remember ... --type learning`, once Memanto is wired),
-append the delivery to the journal, and mention if a dream cycle is due
-(`plumb log dream-due`).
+learnings (`plumb mem remember ... --type learning`), log the delivery
+(`plumb log delivery --id <id>`), and check `plumb dream-due` — mention it
+to the human if a cycle is due, don't run it uninvited.
