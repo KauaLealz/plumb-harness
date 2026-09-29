@@ -5,6 +5,7 @@ import { registerDiscoverCommand } from "./commands/discover.js";
 import { registerScaffoldCommand } from "./commands/scaffold.js";
 import { registerInitCommand } from "./commands/init.js";
 import { registerDoctorCommand } from "./commands/doctor.js";
+import { registerNewCommand } from "./commands/new.js";
 import { getPlumbVersion } from "./lib/version.js";
 
 const program = new Command();
@@ -19,5 +20,6 @@ registerDiscoverCommand(program);
 registerScaffoldCommand(program);
 registerInitCommand(program);
 registerDoctorCommand(program);
+registerNewCommand(program);
 
 program.parseAsync(process.argv);
