@@ -1,0 +1,14 @@
+node_modules/
+dist/
+*.log
+.DS_Store
+
+# per-project state that consumers generate, never the harness repo's own
+.plumb/work/
+.plumb/dream/
+
+# Claude Harness - my own dev-session tracking tool, not part of the Plumb
+# product itself; stays local, never ships in this open source repo.
+.claude-harness/
+.claude/
+scripts/init.sh

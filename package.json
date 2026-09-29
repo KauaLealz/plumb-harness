@@ -1,0 +1,39 @@
+{
+  "name": "plumb-harness",
+  "version": "0.1.0",
+  "description": "Spec-driven development harness for AI coding agents",
+  "license": "MIT",
+  "type": "module",
+  "bin": {
+    "plumb": "./bin/plumb.js"
+  },
+  "files": [
+    "bin",
+    "dist",
+    "skills",
+    "templates"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsx src/cli.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "commander": "^12.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/node": "^22.10.2",
+    "eslint": "^9.17.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.1",
+    "vitest": "^5.0.2"
+  }
+}
