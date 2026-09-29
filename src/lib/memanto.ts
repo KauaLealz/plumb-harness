@@ -86,3 +86,28 @@ export function recall(agentId: string, query: string, options: RecallOptions = 
   args.push("--active");
   return run(args);
 }
+
+// These three take --agent directly, so no prior activateAgent() call is
+// needed (or wanted — it would just be one more chance to race the global
+// active-agent session for no benefit).
+
+export interface ExportMemoryResult extends MemantoResult {
+  bundlePath: string | null;
+}
+
+/** Memanto refuses an --output path outside its own data directory, so
+ * this exports to Memanto's own default location and returns that path —
+ * the caller copies it wherever it actually needs to live. */
+export function exportMemory(agentId: string): ExportMemoryResult {
+  const result = run(["memory", "export", "--agent", agentId, "--okf"]);
+  const match = result.stdout.match(/^Bundle:\s*(.+)$/m);
+  return { ...result, bundlePath: match ? match[1].trim() : null };
+}
+
+export function listConflicts(agentId: string): MemantoResult {
+  return run(["conflicts", "--agent", agentId, "--list"]);
+}
+
+export function applyPolicyDryRun(agentId: string): MemantoResult {
+  return run(["policy", "apply", "--agent", agentId, "--dry-run"]);
+}

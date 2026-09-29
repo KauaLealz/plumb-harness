@@ -1,6 +1,9 @@
 import type { Command } from "commander";
+import { existsSync, rmSync } from "node:fs";
+import { join } from "node:path";
 import { readConfigValue } from "../lib/config.js";
-import { remember, recall, type MemoryType } from "../lib/memanto.js";
+import { remember, recall, exportMemory, listConflicts, applyPolicyDryRun, type MemoryType } from "../lib/memanto.js";
+import { copyRecursive } from "../lib/fsUtil.js";
 
 function requireAgent(cwd: string): string | null {
   const agentId = readConfigValue(cwd, "PLUMB_MEMANTO_AGENT");
@@ -63,5 +66,55 @@ export function registerMemCommand(program: Command): void {
         process.stderr.write(result.stderr);
         process.exitCode = 1;
       }
+    });
+
+  mem
+    .command("export")
+    .description("Export the team's durable memory to .plumb/memory/ (OKF bundle), for a colleague's `plumb setup` to import")
+    .action(() => {
+      const cwd = process.cwd();
+      const agentId = requireAgent(cwd);
+      if (!agentId) {
+        process.exitCode = 1;
+        return;
+      }
+
+      const result = exportMemory(agentId);
+      if (!result.ok || !result.bundlePath) {
+        console.error(`Export failed: ${(result.stdout + result.stderr).trim()}`);
+        process.exitCode = 1;
+        return;
+      }
+
+      const dest = join(cwd, ".plumb", "memory");
+      if (existsSync(dest)) rmSync(dest, { recursive: true, force: true });
+      copyRecursive(result.bundlePath, dest);
+      console.log(`Exported to ${dest}`);
+    });
+
+  mem
+    .command("conflicts")
+    .description("List unresolved memory conflicts for this project's agent")
+    .action(() => {
+      const cwd = process.cwd();
+      const agentId = requireAgent(cwd);
+      if (!agentId) {
+        process.exitCode = 1;
+        return;
+      }
+      process.stdout.write(listConflicts(agentId).stdout);
+    });
+
+  mem
+    .command("expiring")
+    .description("Preview what the project's Memanto expiry policy would expire right now (dry run, nothing is deleted)")
+    .action(() => {
+      const cwd = process.cwd();
+      const agentId = requireAgent(cwd);
+      if (!agentId) {
+        process.exitCode = 1;
+        return;
+      }
+      process.stdout.write(applyPolicyDryRun(agentId).stdout);
     });
 }
