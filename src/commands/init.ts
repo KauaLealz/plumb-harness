@@ -1,10 +1,34 @@
 import type { Command } from "commander";
 import { existsSync } from "node:fs";
-import { join } from "node:path";
+import { join, basename } from "node:path";
 import { discover } from "../lib/discovery.js";
 import { scaffoldPlumbDir, writePlumbLock } from "../lib/plumbDir.js";
 import { applyAgentsFile } from "../lib/agentsFile.js";
 import { getPlumbVersion } from "../lib/version.js";
+import { writeConfigValue } from "../lib/config.js";
+import { isMemantoAvailable, createProjectAgent } from "../lib/memanto.js";
+
+function agentIdFor(cwd: string): string {
+  return basename(cwd)
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function setUpMemanto(cwd: string): string {
+  if (!isMemantoAvailable()) {
+    return "Memanto not available (not installed, or no backend configured) — continuing without memory. Run `memanto` to set it up, then `plumb doctor --fix`.";
+  }
+
+  const agentId = agentIdFor(cwd);
+  const result = createProjectAgent(agentId, `Plumb project agent for ${basename(cwd)}`);
+  if (!result.ok) {
+    return `Could not create the Memanto agent "${agentId}" — continuing without memory. (${result.stderr.trim() || "unknown error"})`;
+  }
+
+  writeConfigValue(cwd, "PLUMB_MEMANTO_AGENT", agentId);
+  return `Created Memanto agent "${agentId}" for this project.`;
+}
 
 export function registerInitCommand(program: Command): void {
   program
@@ -23,6 +47,7 @@ export function registerInitCommand(program: Command): void {
       const scaffold = scaffoldPlumbDir(cwd);
       writePlumbLock(cwd, getPlumbVersion());
       const agents = applyAgentsFile(cwd);
+      const memantoMessage = setUpMemanto(cwd);
 
       console.log(`Detected: ${result.language ?? "unknown language"}${result.testFramework ? `, ${result.testFramework}` : ""}`);
       console.log(`.plumb/ created at ${scaffold.plumbDir} (${scaffold.written.length} files)`);
@@ -30,6 +55,7 @@ export function registerInitCommand(program: Command): void {
       if (agents.bridgesCreated.length > 0) {
         console.log(`Created bridge files: ${agents.bridgesCreated.join(", ")}`);
       }
+      console.log(memantoMessage);
       console.log("");
       console.log("Next: run the `plumb-init` skill inside your AI coding tool to complete the interview.");
     });
