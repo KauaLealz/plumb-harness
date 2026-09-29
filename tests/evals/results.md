@@ -39,6 +39,40 @@ skill's own text and one in the harness's own setup — which is the dream
 cycle's job, just run manually this time instead of through
 `plumb-dream`.
 
+## Efficiency run — ready → specify, two turns, real token/cost numbers
+
+Per explicit request to validate efficiency, not just correctness. Same
+prompt as O1's PAY-142 scenario, `--output-format json` for real usage
+stats, `--resume <session-id>` to chain turns like a real conversation
+(not two independent `-p` calls).
+
+**Turn 1** (`"implementa o PAY-142: ..."`): 18 internal turns, 51.9s API
+time, **$0.492**. `usage`: 20 input, 41,571 cache-creation, **560,358
+cache-read**, 4,939 output. Correctly ran `ready`: `plumb new PAY-142`,
+sized `small` with a real reason, wrote `ready.md` v1 with 5 numbered
+questions (each with a suggested answer), stopped at the gate. The
+`journal-phase` hook fired on its own — `phase-start`/`ready` landed in
+`.plumb/journal.jsonl` without being told to.
+
+**Turn 2** (`"aprovo todas as sugestões, pode seguir"`, same session): 9
+turns, **$0.270** — cheaper despite doing more, because cache-read jumped
+to 416,742 while cache-creation dropped to 10,097. Advanced to `specify`
+correctly (only after the approval), wrote `spec.md`: 7 REQs each with a
+traceable source (`README.md:11`, `ready.md v1, pergunta 2`, `src/
+server.js:13-17`, ...), 5 Given/When/Then ACs, an explicit out-of-scope
+section, and a testing approach (unit only, no E2E — correctly reasoned
+from "fixture project, no real PSP"). `journal-phase` fired again for
+`specify`.
+
+**What this shows**: cache discipline (plan §14) isn't aspirational here —
+93%+ of turn 1's input tokens and turn 2's input tokens came from cache,
+not fresh processing, and cost went *down* turn-over-turn despite more
+output. Tool usage was correct at every step (`new`, sizing, gate stop,
+hook-driven journal) without being told to use any of it — it came from
+the skill text alone. Two real turns cost $0.76 combined; the rest of the
+flow (plan through review) wasn't run live to avoid spending further
+without added signal — two turns already show the pattern clearly.
+
 ## Not yet run live
 
 R1, R2, P1, P2, V1, I1 from `cases.md` are written but not yet exercised —
