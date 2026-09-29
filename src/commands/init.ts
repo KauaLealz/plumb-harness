@@ -7,6 +7,7 @@ import { applyAgentsFile } from "../lib/agentsFile.js";
 import { getPlumbVersion } from "../lib/version.js";
 import { writeConfigValue } from "../lib/config.js";
 import { isMemantoAvailable, createProjectAgent } from "../lib/memanto.js";
+import { applyPreset } from "../lib/preset.js";
 
 function agentIdFor(cwd: string): string {
   return basename(cwd)
@@ -22,19 +23,22 @@ function setUpMemanto(cwd: string): string {
 
   const agentId = agentIdFor(cwd);
   const result = createProjectAgent(agentId, `Plumb project agent for ${basename(cwd)}`);
-  if (!result.ok) {
-    return `Could not create the Memanto agent "${agentId}" — continuing without memory. (${result.stderr.trim() || "unknown error"})`;
+  if (!result.ok && !/already exists/i.test(result.stdout + result.stderr)) {
+    return `Could not create the Memanto agent "${agentId}" — continuing without memory. (${(result.stdout + result.stderr).trim() || "unknown error"})`;
   }
 
   writeConfigValue(cwd, "PLUMB_MEMANTO_AGENT", agentId);
-  return `Created Memanto agent "${agentId}" for this project.`;
+  return result.ok
+    ? `Created Memanto agent "${agentId}" for this project.`
+    : `Memanto agent "${agentId}" already existed — reusing it.`;
 }
 
 export function registerInitCommand(program: Command): void {
   program
     .command("init")
     .description("Set up Plumb in the current repository: discover the stack, scaffold .plumb/, and manage AGENTS.md")
-    .action(() => {
+    .option("--from <preset>", "apply a saved preset's overlay/config/map right after scaffolding")
+    .action((options: { from?: string }) => {
       const cwd = process.cwd();
 
       if (!existsSync(join(cwd, ".git"))) {
@@ -47,7 +51,6 @@ export function registerInitCommand(program: Command): void {
       const scaffold = scaffoldPlumbDir(cwd);
       writePlumbLock(cwd, getPlumbVersion());
       const agents = applyAgentsFile(cwd);
-      const memantoMessage = setUpMemanto(cwd);
 
       console.log(`Detected: ${result.language ?? "unknown language"}${result.testFramework ? `, ${result.testFramework}` : ""}`);
       console.log(`.plumb/ created at ${scaffold.plumbDir} (${scaffold.written.length} files)`);
@@ -55,7 +58,20 @@ export function registerInitCommand(program: Command): void {
       if (agents.bridgesCreated.length > 0) {
         console.log(`Created bridge files: ${agents.bridgesCreated.join(", ")}`);
       }
-      console.log(memantoMessage);
+
+      // Preset applies BEFORE the Memanto agent is created: a preset's
+      // config.env fully overwrites this project's, and it must never be
+      // allowed to clobber the PLUMB_MEMANTO_AGENT written right after.
+      if (options.from) {
+        try {
+          const applied = applyPreset(cwd, options.from);
+          console.log(`Applied preset "${options.from}": ${applied.applied.join(", ") || "nothing to apply"}`);
+        } catch (error) {
+          console.error(error instanceof Error ? error.message : String(error));
+        }
+      }
+
+      console.log(setUpMemanto(cwd));
       console.log("");
       console.log("Next: run the `plumb-init` skill inside your AI coding tool to complete the interview.");
     });

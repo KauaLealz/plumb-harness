@@ -8,6 +8,8 @@ import { registerDoctorCommand } from "./commands/doctor.js";
 import { registerNewCommand } from "./commands/new.js";
 import { registerMemCommand } from "./commands/mem.js";
 import { registerBriefCommand } from "./commands/brief.js";
+import { registerPresetCommand } from "./commands/preset.js";
+import { registerSetupCommand } from "./commands/setup.js";
 import { getPlumbVersion } from "./lib/version.js";
 
 const program = new Command();
@@ -25,5 +27,7 @@ registerDoctorCommand(program);
 registerNewCommand(program);
 registerMemCommand(program);
 registerBriefCommand(program);
+registerPresetCommand(program);
+registerSetupCommand(program);
 
 program.parseAsync(process.argv);
