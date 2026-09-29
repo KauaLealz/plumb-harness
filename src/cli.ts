@@ -1,14 +1,23 @@
 #!/usr/bin/env node
 import { Command } from "commander";
 import { registerStatusCommand } from "./commands/status.js";
+import { registerDiscoverCommand } from "./commands/discover.js";
+import { registerScaffoldCommand } from "./commands/scaffold.js";
+import { registerInitCommand } from "./commands/init.js";
+import { registerDoctorCommand } from "./commands/doctor.js";
+import { getPlumbVersion } from "./lib/version.js";
 
 const program = new Command();
 
 program
   .name("plumb")
   .description("Spec-driven development harness for AI coding agents")
-  .version("0.1.0");
+  .version(getPlumbVersion());
 
 registerStatusCommand(program);
+registerDiscoverCommand(program);
+registerScaffoldCommand(program);
+registerInitCommand(program);
+registerDoctorCommand(program);
 
 program.parseAsync(process.argv);
