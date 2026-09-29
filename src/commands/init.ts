@@ -9,6 +9,7 @@ import { writeConfigValue } from "../lib/config.js";
 import { isMemantoAvailable, createProjectAgent } from "../lib/memanto.js";
 import { applyPreset } from "../lib/preset.js";
 import { installHooks } from "../lib/hooksInstall.js";
+import { installSkillsForClaudeCode } from "../lib/skillsInstall.js";
 
 function agentIdFor(cwd: string): string {
   return basename(cwd)
@@ -74,8 +75,12 @@ export function registerInitCommand(program: Command): void {
 
       console.log(setUpMemanto(cwd));
 
-      // Claude Code only for now — Cursor's hook support isn't verified
-      // yet, so it's left to the AGENTS.md instructions alone (layer one).
+      // Claude Code only for now — Cursor's skill/hook discovery isn't
+      // verified yet, so it's left to the AGENTS.md instructions alone
+      // (layer one; see §6.1/§12.7).
+      const installedSkills = installSkillsForClaudeCode(cwd);
+      console.log(`Installed ${installedSkills.length} skills into .claude/skills/ (Claude Code)`);
+
       const hooksResult = installHooks(cwd);
       if (hooksResult.installed.length > 0) {
         console.log(`Installed Claude Code hooks: ${hooksResult.installed.length}`);
