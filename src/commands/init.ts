@@ -5,7 +5,7 @@ import { discover } from "../lib/discovery.js";
 import { scaffoldPlumbDir, writePlumbLock } from "../lib/plumbDir.js";
 import { applyAgentsFile } from "../lib/agentsFile.js";
 import { getPlumbVersion } from "../lib/version.js";
-import { writeConfigValue } from "../lib/config.js";
+import { writeConfigValue, readConfigValue } from "../lib/config.js";
 import { isMemantoAvailable, createProjectAgent } from "../lib/memanto.js";
 import { applyPreset } from "../lib/preset.js";
 import { installHooks } from "../lib/hooksInstall.js";
@@ -19,6 +19,9 @@ function agentIdFor(cwd: string): string {
 }
 
 function setUpMemanto(cwd: string): string {
+  if (readConfigValue(cwd, "PLUMB_MEMORY_BACKEND") === "obsidian") {
+    return "Memory backend is Obsidian (from preset) — skipping Memanto setup.";
+  }
   if (!isMemantoAvailable()) {
     return "Memanto not available (not installed, or no backend configured) — continuing without memory. Run `memanto` to set it up, then `plumb doctor --fix`.";
   }

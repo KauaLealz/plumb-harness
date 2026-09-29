@@ -1,7 +1,7 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { readConfigValue } from "./config.js";
-import { recall, type MemoryType } from "./memanto.js";
+import { recall, isBackendAvailable, backendUnavailableMessage, type MemoryType } from "./memory/index.js";
 
 export type Phase = "ready" | "specify" | "plan" | "tasks" | "implement" | "verify" | "review";
 
@@ -23,13 +23,8 @@ export interface BriefResult {
 }
 
 export function buildBrief(cwd: string, id: string, phase: Phase): BriefResult {
-  const agentId = readConfigValue(cwd, "PLUMB_MEMANTO_AGENT");
-  if (!agentId) {
-    return {
-      ok: false,
-      message:
-        "No PLUMB_MEMANTO_AGENT configured in .plumb/config.env. Run `plumb init` to create the project's Memanto agent.",
-    };
+  if (!isBackendAvailable(cwd)) {
+    return { ok: false, message: backendUnavailableMessage(cwd) };
   }
 
   const maxLines = Number(readConfigValue(cwd, "PLUMB_BRIEF_MAX_LINES") ?? "60");
@@ -37,7 +32,7 @@ export function buildBrief(cwd: string, id: string, phase: Phase): BriefResult {
   const sections: string[] = [`# Brief — ${id} (${phase})`, ""];
 
   for (const type of types) {
-    const result = recall(agentId, "", { type, recent: true, limit: 10 });
+    const result = recall(cwd, "", { type, recent: true, limit: 10 });
     if (!result.ok) continue;
     const body = result.stdout.trim();
     if (!body) continue;

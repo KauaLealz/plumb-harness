@@ -36,8 +36,9 @@ least once against a real fixture — not just described. See
 | Area | Commands |
 |---|---|
 | Project setup | `discover`, `scaffold`, `init [--from <preset>]`, `setup`, `doctor [--fix] [--agents [--live]]` |
+| Global install | `install --profile minimal\|standard\|full [--yes]`, `uninstall` (also `install.sh`) |
 | Work items | `new <id>`, `status` |
-| Memory (real [Memanto](https://github.com/moorcheh-ai/memanto)) | `mem remember/recall/export/conflicts/expiring`, `brief <id> <phase>` |
+| Memory (Memanto or an Obsidian vault — [`docs/memory.md`](docs/memory.md)) | `mem remember/recall/export`, `mem conflicts/expiring` (Memanto only), `brief <id> <phase>` |
 | Presets | `preset save/list/apply` |
 | Journal & metrics | `log <event>`, `stats`, `dream-due` |
 | Hooks (Claude Code) | `hooks install`, `hooks cache-guard/gate-guard/journal-phase/session-start` |
@@ -60,11 +61,13 @@ not just the gap:
 - Web and mobile eval fixtures — only a Node/Express API fixture exists so
   far ([`docs/testing.md`](docs/testing.md), `tests/evals/cases.md`'s
   "Known gaps").
-- `plumb upgrade`/`uninstall`, the global `install.sh`, and installer
-  profiles (minimal/standard/full) from the original plan aren't built —
-  `npm link` is the only install path today.
+- `plumb upgrade` isn't built. The global installer's profile checks are
+  honest, not exhaustive — Serena/Context7/secrets MCP are report-only
+  (detectable only from inside an agent session, not a plain subprocess).
 - Serena/Context7/Nautilus/DocGen/Excalidraw/WireMock/Hurl integration:
   referenced in skills as the target tooling, not yet wired into the CLI.
+- Obsidian backend's recall is substring match, not semantic — see
+  [`docs/memory.md`](docs/memory.md) for the tradeoff.
 
 ## How it's built
 

@@ -3,8 +3,10 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync, readFileSync, existsSync
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-vi.mock("../src/lib/memanto.js", () => ({
+vi.mock("../src/lib/memory/index.js", () => ({
   recall: vi.fn(() => ({ ok: true, stdout: "- Auth uses JWT now (decision, 2026-09-01)", stderr: "" })),
+  isBackendAvailable: vi.fn((cwd: string) => readFileSync(join(cwd, ".plumb", "config.env"), "utf8").includes("PLUMB_MEMANTO_AGENT=my-project")),
+  backendUnavailableMessage: vi.fn(() => "No memory backend configured."),
 }));
 
 describe("buildBrief", () => {
@@ -36,7 +38,7 @@ describe("buildBrief", () => {
     expect(content).not.toContain("## error"); // not a plan-phase type
   });
 
-  it("fails clearly when no Memanto agent is configured", async () => {
+  it("fails clearly when no memory backend is configured", async () => {
     writeFileSync(join(dir, ".plumb", "config.env"), "PLUMB_MEMANTO_AGENT=\n");
     const { buildBrief } = await import("../src/lib/brief.js");
     const result = buildBrief(dir, "PAY-142", "ready");
