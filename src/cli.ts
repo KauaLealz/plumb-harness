@@ -15,6 +15,7 @@ import { registerStatsCommand } from "./commands/stats.js";
 import { registerDreamDueCommand } from "./commands/dreamDue.js";
 import { registerHooksCommand } from "./commands/hooks.js";
 import { registerDreamCommand } from "./commands/dream.js";
+import { registerInstallCommand } from "./commands/install.js";
 import { getPlumbVersion } from "./lib/version.js";
 
 const program = new Command();
@@ -39,5 +40,6 @@ registerStatsCommand(program);
 registerDreamDueCommand(program);
 registerHooksCommand(program);
 registerDreamCommand(program);
+registerInstallCommand(program);
 
 program.parseAsync(process.argv);
