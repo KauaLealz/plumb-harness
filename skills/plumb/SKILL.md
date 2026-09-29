@@ -31,7 +31,9 @@ request.
 2. `plumb status` lists existing work items with their phase. If the id
    already has a `.plumb/work/<id>/`, read `state.md` and resume at
    "Próximo passo" — don't restart finished phases.
-3. No existing work → `plumb new <id>` creates the work dir and `state.md`.
+3. No existing work → `plumb new <id>` creates the work dir and `state.md`,
+   **before touching any file** — this step is not optional for small
+   changes; a one-line fix still gets an id and a `state.md`.
 
 ## Size it
 
@@ -40,6 +42,11 @@ Before any expensive phase, judge the size against
 `.plumb/overlay/sizing.md`. Write the size and reason into `state.md`.
 Re-judge if scope grows past ~50% mid-flow — re-sizing is cheap, finishing
 the wrong-sized flow is not.
+
+`quick` is the floor, not an escape hatch — even a one-line typo fix gets a
+work item, a size, and a logged gate. Skipping the work item entirely for
+"it's too small to bother" defeats the point of this skill: every code
+change gets *some* record, even if the record is one line.
 
 ## Run the phases
 
