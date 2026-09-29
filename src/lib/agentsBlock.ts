@@ -14,13 +14,17 @@ Spec-driven harness. Use skill \`plumb\` for any code change; plain questions do
 - Answer in caveman mode (level in .plumb/config.env). Code, commands, paths, errors: exact.
 - Evidence over opinion: cite card, human decision, memory, doc or file:line.
 - Never advance a phase, write to the board, push or open a PR without an explicit human "yes".
-- Never touch production systems or print secrets.
+- Never touch production systems or print, inline, or commit a secret value.
 
 ## Tools
 - Code: Serena symbol tools first; read whole files only when symbols are not enough.
 - External libraries: Context7 (\`ctx7\`) before relying on memory.
 - Data: Nautilus, local connections only, read-only.
 - Browser: \`playwright-cli\`. Shell output is compressed by RTK; read full logs only for the failing part.
+- Secrets: the \`secrets\` MCP (core, always installed) is the only way in or
+  out — \`create_secret\`/\`create_secrets_batch\` to store, then
+  \`apply_secrets_to_file\`/\`run_with_secret\` to consume without the value
+  ever entering context. Never a config.env line, never a paste.
 
 ## Memory & cache
 - Phase start: \`plumb brief <id> <phase>\`, read brief.md once. Gaps: \`plumb mem recall\`.

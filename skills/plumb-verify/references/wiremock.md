@@ -12,3 +12,10 @@ key, whatever the context requires) was correct.
 
 Recordings from real sandboxes must be masked before they're committed as
 fixtures — never commit a raw sandbox recording.
+
+If recording against a real sandbox needs a credential, get it via the
+`secrets` MCP's `run_with_secret` (injects it as an env var for that one
+command) or `apply_secrets_to_file` (writes it into whatever config file
+the recording tool reads) — never `create_secret`'s counterpart `value`
+typed into the conversation by hand, and never a credential pasted into
+`.plumb/config.env`.

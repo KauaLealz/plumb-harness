@@ -48,6 +48,8 @@ export function registerSetupCommand(program: Command): void {
       }
 
       console.log("");
-      console.log("Manual steps this command doesn't automate yet: per-tool MCP configuration, and local secrets (never committed).");
+      console.log("Manual steps this command doesn't automate yet: per-tool MCP configuration.");
+      console.log("Local secrets: never paste into config.env or the conversation — use the `secrets` MCP");
+      console.log("(create_secret, then apply_secrets_to_file/run_with_secret to consume). See docs/secrets.md.");
     });
 }

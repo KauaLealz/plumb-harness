@@ -10,7 +10,7 @@ questions, each with a suggested answer.
 | Fluxo do time | Board e acesso, formato de ID, aprovações, branch, commit e PR, ambientes, onde estão os documentos |
 | Qualidade | Definição de ready e de done, regras de review, lint e formatação |
 | Testes | Frameworks, como subir o ambiente, URL da aplicação, OpenAPI, serviços externos e troca de URL, auditoria, massa de dados, cobertura, CI |
-| Harness | Modo dos gates, autonomia no board, nível do Caveman, tiers de modelo, áreas proibidas, diagramas, conectores sugeridos |
+| Harness | Modo dos gates, autonomia no board, nível do Caveman, tiers de modelo, áreas proibidas, diagramas, conectores sugeridos, `secrets` MCP conectado |
 
 ## Writing a good suggested answer
 

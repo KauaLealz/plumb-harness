@@ -1,5 +1,16 @@
 # Connector catalog
 
+## Core — no signal needed, always on
+
+The `secrets` MCP is not a suggestion: every project gets it, because
+`plumb setup` and `verify` need somewhere to put local secrets that isn't
+`.plumb/config.env` or a paste into the conversation. Confirm it's
+connected during the "Harness" round (§interview.md) instead of asking
+whether to add it — the question is "is it configured", not "do you want
+it".
+
+## Conditional — suggested only when a signal matches
+
 Suggest, never install without a yes. Match signals the discovery step
 already found — don't ask "do you use Jira?" when the branch names already
 answer it.
