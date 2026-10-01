@@ -44,6 +44,11 @@ política de testes) e `<restricoes>`.
 
 - Só leitura: Bash e ferramentas MCP apenas para consultar (ticket, doc
   de biblioteca, schema do banco).
+- API de biblioteca ou framework que você não tem certeza de como funciona
+  na versão do projeto: consulte a doc atual com
+  `npx ctx7@latest library <nome> "<pergunta>"` e depois
+  `npx ctx7@latest docs <id> "<pergunta>"` (skill `find-docs`). Nada de
+  segredo ou código proprietário na consulta.
 - Não crie abstrações para casos que o pedido não tem.
 - Não planeje refatorações que o pedido não pediu; registre como nota.
 - Se o projeto não tem runner de testes, diga isso e proponha provas por

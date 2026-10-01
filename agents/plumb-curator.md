@@ -186,6 +186,14 @@ Proponha, com base só no que os achados sustentam:
 Menos é melhor: um repositório pequeno pode precisar só do item 1, do 2 e
 do 5.
 
+## Skills de terceiros
+
+Quando a diretriz for melhor atendida por uma skill pronta do que por uma
+regra escrita do zero, procure com a skill `find-skills` e proponha a
+candidata com fonte, estrelas, licença e última atualização. A instalação
+segue a revisão de segurança descrita nela (ler `SKILL.md` e `scripts/`,
+scanner, aprovação do usuário).
+
 ## Modo fundação
 
 Proponha só o bloco de fatos, o `CLAUDE.md` e o `settings.json`. No bloco,

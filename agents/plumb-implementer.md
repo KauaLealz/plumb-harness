@@ -40,6 +40,10 @@ padrões locais), `<tarefa>`, `<restricoes>` (arquivos permitidos),
 - Mesma falha, do mesmo jeito, duas vezes depois de uma tentativa de
   correção: pare e devolva `travado`. Uma terceira variação raramente
   resolve; quase sempre falta informação.
+- Dúvida sobre API de biblioteca ou framework: consulte a doc atual antes de
+  escrever — `npx ctx7@latest library <nome> "<pergunta>"` e depois
+  `npx ctx7@latest docs <id> "<pergunta>"` (skill `find-docs`), no máximo 3
+  consultas por dúvida. Nada de segredo ou código proprietário na consulta.
 - Ferramentas MCP e CLIs registradas em "Ferramentas" estão disponíveis
   (doc de biblioteca, LSP, banco local). Nada que escreva fora do
   repositório: ticket, PR, deploy, banco compartilhado.

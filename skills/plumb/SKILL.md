@@ -122,6 +122,11 @@ leituras) — "causa óbvia" só se sabe olhando.
 1. **Explorar (só leitura).** Para áreas que você não conhece, despache
    `plumb-explorer` com perguntas concretas — uma por explorador, até 3 em
    paralelo quando independentes. Área pequena: leia você mesmo.
+   Dúvida sobre a API de uma biblioteca ou framework (assinatura,
+   configuração, mudança de versão): consulte a documentação atual com a
+   skill `find-docs` em vez de confiar na memória — APIs mudam mais rápido
+   que o treino do modelo. Nunca ponha segredo, dado pessoal ou código
+   proprietário na consulta: ela vai para a API da Context7.
 2. **Planejar.** Despache `plumb-planner` com o pedido, os achados da
    exploração, os fatos do projeto relevantes, a trilha e — se a mudança
    toca API, banco, serviço externo, auth, pagamento, dados pessoais ou
@@ -256,7 +261,7 @@ Custa uma linha e é o que alimenta os outros dois mecanismos.
 | `procedimento` | Você executou passos que vão se repetir (migration, endpoint novo, release) | Anotar |
 | `padrão novo` | Esta mudança fez algo pela primeira vez no projeto (primeiro endpoint, migration, componente, job, tratamento de erro) | Anotar, com o arquivo que virou modelo |
 | `fato velho` | Um comando ou caminho dos fatos do projeto não existe mais | Anotar |
-| `lacuna` | Faltou uma capacidade (estado do banco, verificar UI, ler o ticket, doc de biblioteca) | Consulte `../plumb-setup/references/catalog.md` e sugira a ferramenta **uma vez** |
+| `lacuna` | Faltou uma capacidade (estado do banco, verificar UI, ler o ticket, um procedimento especializado) | Procure no catálogo (`../plumb-setup/references/catalog.md`); se não houver, use a skill `find-skills`. Sugira **uma vez** — skill de terceiro só entra depois da revisão de segurança que ela descreve e do "sim" do usuário |
 
 Fora da trilha padrão ou profunda não há arquivo da mudança: sinais de
 `regra` ainda vão para o curador na hora; os demais, descarte.

@@ -100,6 +100,22 @@ Subagentes não veem a conversa. Por isso todo despacho segue o contrato de
 prompt (`skills/plumb/references/prompt-contract.md`): objetivo, contexto,
 tarefa, restrições, critério de pronto e o que fazer se travar.
 
+## Skills de terceiros incluídas
+
+Duas skills vêm junto com o Plumb, copiadas num commit fixo (origem e
+licença em `SOURCE.md` / `LICENSE.upstream` de cada pasta):
+
+- **`find-docs`** ([upstash/context7](https://github.com/upstash/context7),
+  MIT) — consulta a documentação atual de qualquer biblioteca via
+  `npx ctx7@latest`, em vez de confiar na memória do modelo. Usada pelo
+  orquestrador, pelo planejador e pelo implementador quando há dúvida de
+  API. As consultas vão para a API da Context7: nunca com segredos ou
+  código proprietário.
+- **`find-skills`** ([vercel-labs/skills](https://github.com/vercel-labs/skills),
+  MIT) — encontra skills prontas quando falta uma capacidade (sinal
+  `lacuna`). Ajuste local: em vez de instalar direto, exige revisão de
+  segurança e o seu "sim", e prefere copiar para o seu repositório curado.
+
 ## Ferramentas
 
 `skills/plumb-setup/references/catalog.md` cobre economia de tokens (RTK,
@@ -219,6 +235,8 @@ parágrafo de Workflow que o `/plumb-setup` grava nele.
 skills/plumb/              orquestrador + references/ (contrato de prompt, modelo da mudança, testes)
 skills/plumb-setup/        estruturação e auditoria do projeto + references/catalog.md
 skills/plumb-retro/        retrospectiva periódica
+skills/find-docs/          documentação atual de bibliotecas (Context7) — cópia fixada
+skills/find-skills/        descobrir skills sob demanda, com revisão de segurança — cópia fixada
 agents/                    os 7 subagentes
 evals/                     casos, resultados e um fixture sem dependências
 bin/cli.js, lib/           instalador npm (install, uninstall, status)
