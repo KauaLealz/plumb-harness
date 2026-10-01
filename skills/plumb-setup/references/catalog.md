@@ -35,7 +35,20 @@ repositório ou na fala do usuário.
    carregam todas as definições de ferramenta de uma vez.
 9. **Comandos mudam.** Os marcados *(confirmar)* não foram verificados na
    documentação do fornecedor; confira o link antes de rodar.
-10. **Registre o que foi instalado** no bloco de fatos, grupo
+11. **No Cursor** não há `claude mcp add` nem `/plugin`: grave em
+    `.cursor/mcp.json` (projeto) ou `~/.cursor/mcp.json` (pessoal).
+    - Remoto `claude mcp add --transport http <nome> <url> --header "K: V"` →
+      `"<nome>": { "url": "<url>", "headers": { "K": "V" } }`
+    - Local `claude mcp add <nome> -- <cmd> <args…>` →
+      `"<nome>": { "command": "<cmd>", "args": ["<args>", …] }`
+    - Variáveis: `${env:NOME}` (em vez de `${NOME}`).
+    - Entradas que só existem como plugin do Claude Code (plugins LSP,
+      Semgrep, Sentry via marketplace, Figma via plugin) têm alternativa:
+      use a URL/comando MCP da mesma linha; os plugins LSP não fazem falta,
+      o Cursor já traz language servers.
+    - O Cursor limita a quantidade de ferramentas MCP ativas (relatos de
+      ~40): some as contagens antes de sugerir e prefira ainda mais as CLIs.
+12. **Registre o que foi instalado** no bloco de fatos, grupo
     "Ferramentas", com uma linha de *quando usar* — é o que faz o agente
     lembrar de usá-la.
 
@@ -47,7 +60,7 @@ toolsets reduzidos).
 
 | Ferramenta | Dá ao agente | Sinal | Instalação | Custo / obs. |
 |---|---|---|---|---|
-| RTK | Saída de comandos (git, testes, docker, build) comprimida 60–90% antes de chegar ao modelo | Sempre útil; mais em repositórios com suítes verbosas | `winget install rtk-ai.rtk` · `brew install rtk` → `rtk init -g` → reiniciar o Claude Code. `rtk gain` mostra a economia | 0. Hook de PreToolUse. Pode esconder a linha decisiva numa falha — peça a saída bruta quando um teste falhar |
+| RTK | Saída de comandos (git, testes, docker, build) comprimida 60–90% antes de chegar ao modelo | Sempre útil; mais em repositórios com suítes verbosas | `winget install rtk-ai.rtk` · `brew install rtk` → `rtk init -g` → reiniciar o Claude Code. `rtk gain` mostra a economia | 0. Hook de PreToolUse. No Cursor, ver o suporte em `rtk init --help` *(confirmar)*. Pode esconder a linha decisiva numa falha — peça a saída bruta quando um teste falhar |
 | Plugins LSP oficiais | Ir para definição, referências e diagnósticos depois de cada edição, sem ler arquivos inteiros | `tsconfig.json`, `pyproject.toml`, `go.mod`, `Cargo.toml`, `pom.xml`, `*.csproj`, `Gemfile`, `composer.json`… | `/plugin install <lang>-lsp@claude-plugins-official` (typescript, pyright, gopls, rust-analyzer, jdtls, clangd, csharp, kotlin, lua, php, ruby, swift). O binário do language server precisa estar no PATH | B. Primeira escolha para navegação de código |
 | Serena | Busca e edição por símbolo via language servers (40+ linguagens) | Repositório grande e multilíngue onde o LSP oficial não basta | `uv tool install -p 3.13 serena-agent` → `serena setup claude-code` | M. Sobrepõe-se aos plugins LSP — não instale os dois. A própria doc avisa que o Claude Code adere pouco às ferramentas dele sem ajustes |
 | Context7 | Documentação atual e por versão de bibliotecas | Muitas dependências ou frameworks que mudam rápido (Next, React, LangChain…) | `npx ctx7 setup --claude` (modo CLI + skill, mais barato) · ou `claude mcp add --transport http context7 https://mcp.context7.com/mcp` | 0 (CLI) / B (MCP, 2 ferramentas) |

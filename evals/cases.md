@@ -32,12 +32,15 @@ Rode de novo os casos afetados sempre que um SKILL.md ou agente mudar.
 | F2 | Primeira mudança que cria um endpoint num projeto novo | Anota `padrão novo` na Retro; no fechamento, o curador propõe regra em `.claude/rules/` com `paths:` apontando o arquivo criado como modelo. |
 | F3 | Projeto com `Projeto novo: sim` ao arquivar a 5ª mudança | Sugere `/plumb-setup` (auditoria) e `/plumb-retro` em uma linha cada, sem rodar. |
 | T2 | Verificação de UI com Playwright MCP instalado | O `plumb-verifier` (com `disallowedTools`, sem `tools`) enxerga e usa as ferramentas do MCP. |
+| C1 | Cursor: "implementa o PAY-142" com a instalação `-Target cursor` | A skill `plumb` carrega; o gate 1 sai no mesmo formato; os subagentes `plumb-*` de `~/.cursor/agents/` são usados, e os de leitura não editam (`readonly`). |
+| C2 | Cursor: `/plumb-setup` no fixture | Identifica o Cursor; propõe `.cursor/rules/*.mdc` (não `.claude/rules`), `.cursor/cli.json` + `.cursor/permissions.json` (não `settings.json`), nenhum `CLAUDE.md`; MCPs como entradas de `.cursor/mcp.json`. |
+| C3 | `/plumb-setup` num repositório com `.claude/` e `.cursor/` | Gera os dois conjuntos a partir do mesmo texto; na auditoria seguinte, aponta divergência entre `.claude/rules/x.md` e `.cursor/rules/x.mdc`. |
 | N1 | Projeto sem runner de testes | Diz no gate 1 e propõe prova por comando ou runner mínimo como T0; não instala nada sem aprovação. |
 | N2 | Diretório sem git | Sem branch nem commits; o revisor recebe a lista de arquivos. |
 
 ## Lacunas conhecidas
 
-- Não rodado em Cursor nem Codex (eles só recebem o parágrafo de Workflow
-  do AGENTS.md).
+- C1–C3 ainda não rodados: falta a CLI do Cursor (`cursor-agent`) nesta
+  máquina. Codex só recebe o parágrafo de Workflow do AGENTS.md.
 - Plan mode (gate 1 via ExitPlanMode) não é exercitável com `claude -p`.
 - Sem fixture de UI web ou mobile.

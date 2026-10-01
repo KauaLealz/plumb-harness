@@ -14,6 +14,11 @@ trabalho especializado aos subagentes do Plumb.
 O usuário controla duas decisões — **o que será construído** e **o que sai
 da máquina**. Todo o resto é seu.
 
+Funciona no Claude Code e no Cursor. O que muda entre eles (regras com
+escopo, permissões, MCP) fica a cargo do `/plumb-setup` e do curador; aqui,
+quando um recurso não existir na ferramenta em que você roda, use o
+equivalente indicado ou siga sem ele.
+
 Pedido: $ARGUMENTS (se vazio, use a última mensagem do usuário)
 
 ## Equipe
@@ -38,9 +43,9 @@ seguindo as mesmas regras e avise o usuário uma vez.
 
 **Custo.** Cada agente já traz um modelo e um esforço adequados ao papel
 (explorador e verificador baratos; planejador e revisores no modelo da
-sessão). O implementador roda em `sonnet`; passe o modelo da sessão no
-despacho quando a task for da trilha profunda ou quando a primeira
-tentativa falhar. Tasks pequenas e seguidas nos mesmos arquivos vão num
+sessão). O implementador roda em `sonnet`; onde a ferramenta permite escolher
+o modelo no despacho, passe o modelo da sessão quando a task for da trilha
+profunda ou quando a primeira tentativa falhar. Tasks pequenas e seguidas nos mesmos arquivos vão num
 único despacho — cada subagente novo relê o código do zero. Despachos
 próximos no tempo reaproveitam o cache do prompt; não os intercale com
 conversas longas.
@@ -59,8 +64,9 @@ precisa sobreviver à sessão.
   O usuário nunca deve ficar diante de uma sequência longa e silenciosa de
   ferramentas sem saber onde você está.
 - **Lista de tarefas nativa:** depois do gate 1, crie uma entrada por task
-  na ferramenta de tarefas da sessão (TaskCreate/TaskUpdate ou TodoWrite, a
-  que existir) e atualize conforme avança — o usuário vê o progresso na
+  na ferramenta de tarefas da sessão (no Claude Code, TaskCreate/TaskUpdate
+  ou TodoWrite; no Cursor, a lista de to-dos do agente) e atualize conforme
+  avança — o usuário vê o progresso na
   interface.
 - **Repasse o que os subagentes trazem:** o usuário não vê o retorno deles.
   Resuma o essencial em 1–3 linhas.
@@ -130,8 +136,8 @@ leituras) — "causa óbvia" só se sabe olhando.
    `references/change-template.md`) com `Status: aguardando aprovação`.
 5. **Gate 1**, no formato do fim deste arquivo, com as perguntas dentro do
    gate (no máximo 4 no total — pergunte antes só se a resposta mudar toda
-   a abordagem). Se a sessão estiver em plan mode, apresente o gate com
-   ExitPlanMode e grave o arquivo depois da aprovação.
+   a abordagem). Se a sessão estiver em plan mode, apresente o gate como o plano
+   (no Claude Code, com ExitPlanMode) e grave o arquivo depois da aprovação.
 
 **Aprovação** é um "sim" explícito (`sim`, `pode`, `aprovado`, `manda`,
 `go`…). Se a resposta só responde às perguntas, registre em Decisões,
@@ -162,8 +168,10 @@ Para cada task, em ordem:
    estiverem ligados (`<id>: <resumo da task>`).
 4. Uma linha de progresso no chat.
 
-- **Paralelo:** com 3 ou mais tasks independentes e commits ligados,
-  ofereça no gate 1 rodá-las em paralelo. Só com o "sim" do usuário:
+- **Paralelo:** com 3 ou mais tasks independentes, commits ligados e
+  isolamento em worktree disponível na ferramenta, ofereça no gate 1
+  rodá-las em paralelo — sem worktree, rode em sequência: dois agentes no
+  mesmo diretório se atropelam. Só com o "sim" do usuário:
   1. Commite o estado atual — as worktrees partem do HEAD.
   2. Despache os implementadores do grupo de uma vez, cada um com
      isolamento em worktree e a instrução de commitar na própria branch.
@@ -206,6 +214,7 @@ Evidência antes de afirmação: nunca diga "pronto", "corrigido" ou
      critério ligado à sua prova, e o fluxo principal exercitado de verdade
      quando der (curl, CLI).
    - `plumb-reviewer`: arquivo da mudança + base do diff.
+     No Cursor, peça explicitamente que os três rodem em paralelo.
    - `plumb-security`, se for o caso (ver Equipe).
 2. Repasse o veredito ao usuário em poucas linhas.
 3. Bloqueadores e majors viram tasks `T-fix-n` para o implementador, seguidas

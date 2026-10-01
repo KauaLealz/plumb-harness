@@ -25,7 +25,13 @@ Veja o que já existe: `AGENTS.md`, `CLAUDE.md`, `.claude/rules/`,
 - **vazio** — há código, mas nenhum desses arquivos → modo estruturação.
 - **existente** — algum desses arquivos existe → modo auditoria.
 
-Diga em uma linha qual é o caso e o que vem a seguir.
+Identifique também a(s) ferramenta(s) do time: a ferramenta em que você
+está rodando, mais os sinais do repositório (`.claude/` → Claude Code,
+`.cursor/` → Cursor). Se os sinais não decidem, inclua uma pergunta —
+`O time usa Claude Code, Cursor ou os dois? Sugiro <o que os sinais indicam>.`
+Passe a resposta ao curador: ele grava os arquivos de cada ferramenta.
+
+Diga em uma linha qual é o caso, para qual ferramenta, e o que vem a seguir.
 
 ## 1b — Fundação (projeto novo)
 
@@ -75,8 +81,8 @@ Sem git no diretório: pule o recorte 2 e avise.
 
 ## 2b — Ferramentas
 
-Leia `references/catalog.md`. Rode `claude mcp list` para ver o que já
-está instalado. Cruze os sinais que a exploração trouxe (dependências,
+Leia `references/catalog.md`. Veja o que já está instalado: no Claude
+Code, `claude mcp list`; no Cursor, `.cursor/mcp.json` e `~/.cursor/mcp.json`. Cruze os sinais que a exploração trouxe (dependências,
 remotes, CI, IaC, padrões de branch) com o catálogo e escolha **no máximo
 5** ferramentas, seguindo as regras de escolha de lá — CLI antes de MCP,
 priorizando o que fecha uma lacuna de verificação. Para cada uma, guarde o
@@ -130,20 +136,24 @@ Mostre o conteúdo completo de um arquivo só se o usuário pedir.
 1. **AGENTS.md** — insira ou substitua apenas o bloco entre
    `<!-- plumb:start -->` e `<!-- plumb:end -->`; o resto do arquivo fica
    intacto.
-2. **CLAUDE.md** — crie com `@AGENTS.md`, ou acrescente a linha se já
-   existir sem ela.
-3. **`.claude/rules/`, `.claude/skills/`** — crie o que foi aprovado.
-4. **`.claude/settings.json`** — mescle em `permissions.allow`,
-   `permissions.ask` e `permissions.deny` preservando todas as
-   configurações e regras existentes.
+2. **CLAUDE.md** (Claude Code) — crie com `@AGENTS.md`, ou acrescente a
+   linha se já existir sem ela.
+3. **Regras e skills** — crie o que foi aprovado: `.claude/rules/*.md`
+   (Claude Code), `.cursor/rules/*.mdc` (Cursor), `.claude/skills/` (as
+   duas leem).
+4. **Permissões** — mescle preservando todas as configurações e regras
+   existentes: `.claude/settings.json` (`allow`, `ask`, `deny`) no Claude
+   Code; `.cursor/cli.json` e `.cursor/permissions.json` no Cursor.
 5. **`.plumb/changes/archive/`** — crie a pasta. Se o usuário não quer
    versionar as mudanças, acrescente `.plumb/changes/` ao `.gitignore`.
 6. Registre as respostas no bloco de fatos (ex.: `commit por task: sim`).
-7. **Ferramentas aprovadas** — instale com os comandos do catálogo (MCP
-   com `--scope project` quando o time todo usa). As que exigem login
-   OAuth: diga ao usuário para rodar `/mcp`. As que exigem instalador do
+7. **Ferramentas aprovadas** — instale com os comandos do catálogo. MCP no
+   Claude Code: `claude mcp add --scope project` quando o time todo usa; no
+   Cursor: acrescente a entrada em `.cursor/mcp.json` (tradução na regra 11
+   do catálogo). As que exigem login OAuth: no Claude Code, `/mcp`; no
+   Cursor, o botão de login em Settings → MCP. As que exigem instalador do
    sistema (`winget`, `brew`): rode se tiver permissão, senão mostre o
-   comando. Confira com `claude mcp list` e registre cada uma no grupo
+   comando. Confira (`claude mcp list`, ou o painel de MCP do Cursor) e registre cada uma no grupo
    "Ferramentas" do bloco de fatos, com uma linha de quando usar. Peça ao
    usuário para conferir o `/context` na próxima sessão.
 

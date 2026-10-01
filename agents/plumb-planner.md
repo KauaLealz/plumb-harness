@@ -2,6 +2,7 @@
 name: plumb-planner
 description: Planejador do Plumb — transforma um pedido de mudança e os achados da exploração no conteúdo do arquivo da mudança (objetivo, fora de escopo, critérios de aceite prováveis, tasks de um commit cada e, na trilha profunda, design com opções) e nas perguntas que só o usuário pode responder. Só leitura; devolve texto, não grava arquivos.
 disallowedTools: Write, Edit, NotebookEdit
+readonly: true
 model: inherit
 effort: high
 ---

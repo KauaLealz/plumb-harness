@@ -12,29 +12,26 @@ sessão.
 
 ## Instalação
 
-Cópia manual para as pastas globais do Claude Code (vale para todos os
-seus projetos).
-
-**Bash / macOS / Linux:**
+Funciona no **Claude Code** e no **Cursor**. A instalação é uma cópia de
+arquivos para as pastas globais da ferramenta (vale para todos os seus
+projetos); o script só copia e, para o Cursor, gera a variante dos agentes.
 
 ```bash
 git clone https://github.com/KauaLealz/plumb-harness.git
-mkdir -p ~/.claude/skills ~/.claude/agents
-cp -r plumb-harness/skills/* ~/.claude/skills/
-cp plumb-harness/agents/*.md ~/.claude/agents/
+./plumb-harness/install.sh            # Claude Code
+./plumb-harness/install.sh cursor     # Cursor
+./plumb-harness/install.sh both       # os dois
 ```
-
-**PowerShell (Windows):**
 
 ```powershell
 git clone https://github.com/KauaLealz/plumb-harness.git
-New-Item -ItemType Directory -Force "$HOME\.claude\skills", "$HOME\.claude\agents" | Out-Null
-Copy-Item -Recurse -Force plumb-harness\skills\* "$HOME\.claude\skills\"
-Copy-Item -Force plumb-harness\agents\*.md "$HOME\.claude\agents\"
+.\plumb-harness\install.ps1                 # Claude Code
+.\plumb-harness\install.ps1 -Target cursor  # Cursor
+.\plumb-harness\install.ps1 -Target both    # os dois
 ```
 
-Para atualizar, rode `git pull` e copie de novo. Para usar só em um
-projeto, copie para `.claude/skills/` e `.claude/agents/` dele.
+Para instalar só num projeto, rode de dentro dele com `--project` (bash) ou
+`-Project` (PowerShell). Para atualizar, `git pull` e rode de novo.
 
 Depois, uma vez por repositório:
 
@@ -167,8 +164,33 @@ quando a sessão está em plan mode. Sem CLI, sem build, sem dependências.
 opções antes do subcomando (`git -c x=y push`). O gate 2 da skill continua
 valendo nesses casos.
 
-**Outras ferramentas** (Cursor, Codex…) recebem só o parágrafo de Workflow
-que o `/plumb-setup` grava no `AGENTS.md`.
+## Cursor
+
+O fluxo, os papéis, os gates e a retroalimentação são os mesmos. O que muda
+é onde cada coisa é gravada — o `/plumb-setup` detecta a ferramenta (ou
+pergunta) e gera os arquivos certos para cada uma, ou para as duas.
+
+| Parte | Claude Code | Cursor |
+|---|---|---|
+| Skills | `~/.claude/skills/` | `~/.cursor/skills/` (o Cursor também lê `~/.claude/skills/`) |
+| Subagentes | `~/.claude/agents/` com `model`, `effort`, `disallowedTools` | `~/.cursor/agents/` com `model: inherit` e `readonly: true` (gerados pelo script) |
+| Fatos do projeto | `AGENTS.md` via `CLAUDE.md` → `@AGENTS.md` | `AGENTS.md`, lido nativamente |
+| Regras com escopo | `.claude/rules/*.md` com `paths:` | `.cursor/rules/*.mdc` com `globs:` |
+| Permissões | `.claude/settings.json`: `allow`, `ask`, `deny` | `.cursor/cli.json`: `allow`, `deny` (sem "ask": o que não está liberado pede aprovação) + `.cursor/permissions.json` com a política em texto para o modo auto-review |
+| MCP | `claude mcp add` → `.mcp.json` | `.cursor/mcp.json` |
+| Lista de tarefas, plan mode | TaskCreate/TodoWrite, ExitPlanMode | to-dos do agente, modo Plan |
+
+**Limitações no Cursor:** sem `ask`, a confirmação de push/PR depende da
+política de auto-review e do gate 2 da skill, não de uma regra
+determinística; tasks em paralelo só rodam em sequência (sem isolamento
+em worktree garantido); plugins do Claude Code do catálogo (LSP, Sentry,
+Semgrep, Figma) viram a alternativa MCP da mesma linha. A compatibilidade
+foi montada a partir da documentação do Cursor e dos formatos da
+instalação local, **ainda sem um eval rodado no Cursor** — ver
+`evals/cases.md`.
+
+**Outras ferramentas** que leem `AGENTS.md` (Codex e afins) recebem o
+parágrafo de Workflow que o `/plumb-setup` grava nele.
 
 ## Ideias de onde vieram
 
@@ -191,6 +213,7 @@ skills/plumb-setup/        estruturação e auditoria do projeto + references/ca
 skills/plumb-retro/        retrospectiva periódica
 agents/                    os 7 subagentes
 evals/                     casos, resultados e um fixture sem dependências
+install.sh / install.ps1   cópia para Claude Code, Cursor ou os dois
 ```
 
 ## Desenvolvimento

@@ -2,6 +2,7 @@
 name: plumb-reviewer
 description: Revisor do Plumb — revisa o diff de uma mudança com contexto limpo, contra o arquivo da mudança (critérios, escopo) e as convenções do projeto, buscando bugs reais com cenário de falha concreto. Só leitura; devolve veredito curto. Use depois da implementação, antes de entregar.
 disallowedTools: Write, Edit, NotebookEdit
+readonly: true
 model: inherit
 effort: high
 ---
