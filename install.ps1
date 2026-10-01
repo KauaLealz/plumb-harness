@@ -41,9 +41,28 @@ if ($Target -in 'claude', 'both') {
   Copy-Skills (Join-Path $base '.claude\skills')
   Copy-Agents (Join-Path $base '.claude\agents')
 }
+function Set-GlobalInstruction($file) {
+  # Bloco entre marcadores: substitui numa reinstalação e preserva o resto do arquivo.
+  $block = [IO.File]::ReadAllText((Join-Path $src 'global-instruction.md')).TrimEnd()
+  $text  = if (Test-Path $file) { [IO.File]::ReadAllText($file) } else { '' }
+  $re    = '(?s)<!-- plumb:start -->.*?<!-- plumb:end -->'
+  if ($text -match $re) { $text = [regex]::Replace($text, $re, $block.Replace('$', '$$')) }
+  elseif ($text.Trim()) { $text = $text.TrimEnd() + "`n`n" + $block + "`n" }
+  else { $text = $block + "`n" }
+  New-Item -ItemType Directory -Force (Split-Path $file) | Out-Null
+  [IO.File]::WriteAllText($file, $text, $utf8)
+  Write-Host "instrução global -> $file"
+}
+
+if ($Target -in 'claude', 'both' -and -not $Project) {
+  Set-GlobalInstruction (Join-Path $HOME '.claude\CLAUDE.md')
+}
 if ($Target -in 'cursor', 'both') {
   # O Cursor também lê .claude/skills: com 'both', as skills não são duplicadas.
   if ($Target -eq 'cursor') { Copy-Skills (Join-Path $base '.cursor\skills') }
   Copy-Agents (Join-Path $base '.cursor\agents') -ForCursor
+}
+if ($Target -in 'cursor', 'both' -and -not $Project) {
+  Write-Host 'Cursor: cole o conteúdo de global-instruction.md em Settings > Rules > User Rules.'
 }
 Write-Host 'Pronto. Em cada repositório, rode /plumb-setup.'

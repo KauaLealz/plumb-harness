@@ -83,8 +83,10 @@ precisa sobreviver à sessão.
    Não refaça o que está feito.
 2. Use os fatos do projeto no `AGENTS.md` / `CLAUDE.md` (comandos,
    convenções, áreas sensíveis). Se o repositório não tem `AGENTS.md`,
-   `CLAUDE.md` nem `.claude/`, sugira `/plumb-setup` uma vez — ele estrutura
-   regras, skills e permissões do projeto. Se o usuário não quiser, siga
+   `CLAUDE.md` nem `.claude/`, sugira uma vez que o usuário rode
+   `/plumb-setup` — ele estrutura regras, skills e permissões do projeto. É
+   um comando do usuário: não aparece na sua lista de skills, e isso não
+   quer dizer que falta. Se o usuário não quiser, siga
    descobrindo os comandos por scripts, Makefile e CI.
 3. Se o usuário só perguntou o que está em andamento, liste as mudanças
    ativas com Status e próxima task, e pare.
@@ -270,8 +272,8 @@ por item. Sem sinais, pule — custo zero. Feche a Retro com uma linha de
 números: `Números: <n> tasks · <n> T-fix · <n> travamentos · <n> gates rejeitados`.
 
 **3. Retro periódica.** Ao arquivar, conte as mudanças arquivadas depois
-da última entrada de `.plumb/retro.md`. Cinco ou mais: sugira `/plumb-retro`
-em uma linha. Se os fatos têm `Projeto novo: sim` e já há cinco ou mais
+da última entrada de `.plumb/retro.md`. Cinco ou mais: sugira que o usuário
+rode `/plumb-retro` (comando dele, como o `/plumb-setup`), em uma linha. Se os fatos têm `Projeto novo: sim` e já há cinco ou mais
 mudanças arquivadas, sugira também `/plumb-setup` (vira auditoria e
 consolida o que o código já mostra). Não rode nenhum dos dois sem o
 usuário pedir.

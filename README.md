@@ -30,6 +30,13 @@ git clone https://github.com/KauaLealz/plumb-harness.git
 .\plumb-harness\install.ps1 -Target both    # os dois
 ```
 
+Na instalação global para o Claude Code, o script também grava um bloco
+curto (entre marcadores, preservando o resto) em `~/.claude/CLAUDE.md`,
+dizendo para usar o Plumb em qualquer mudança de código — sem ele, uma
+sessão num projeto ainda não configurado não sabe que o Plumb existe. No
+Cursor, cole o conteúdo de `global-instruction.md` em Settings → Rules →
+User Rules.
+
 Para instalar só num projeto, rode de dentro dele com `--project` (bash) ou
 `-Project` (PowerShell). Para atualizar, `git pull` e rode de novo.
 
@@ -214,6 +221,7 @@ skills/plumb-retro/        retrospectiva periódica
 agents/                    os 7 subagentes
 evals/                     casos, resultados e um fixture sem dependências
 install.sh / install.ps1   cópia para Claude Code, Cursor ou os dois
+global-instruction.md      bloco gravado em ~/.claude/CLAUDE.md (ou User Rules do Cursor)
 ```
 
 ## Desenvolvimento

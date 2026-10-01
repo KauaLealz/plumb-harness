@@ -35,9 +35,28 @@ copy_agents() {  # $1 = destino, $2 = "cursor" para gerar a variante do Cursor
 if [ "$target" = claude ] || [ "$target" = both ]; then
   copy_skills "$base/.claude/skills"; copy_agents "$base/.claude/agents"
 fi
+set_global_instruction() {  # bloco entre marcadores: substitui e preserva o resto
+  file="$1"; mkdir -p "$(dirname "$file")"; touch "$file"
+  awk -v blockfile="$src/global-instruction.md" '
+    BEGIN { while ((getline l < blockfile) > 0) block = block l ORS }
+    /<!-- plumb:start -->/ { printf "%s", block; skip = 1; done = 1; next }
+    /<!-- plumb:end -->/   { skip = 0; next }
+    !skip { print }
+    END { if (!done) { if (NR > 0) print ""; printf "%s", block } }
+  ' "$file" > "$file.tmp"
+  cat "$file.tmp" > "$file"; rm -f "$file.tmp"  # sem rename: alguns ambientes Windows falham em mv
+  echo "instrução global -> $file"
+}
+
+if { [ "$target" = claude ] || [ "$target" = both ]; } && [ "$base" = "$HOME" ]; then
+  set_global_instruction "$HOME/.claude/CLAUDE.md"
+fi
 if [ "$target" = cursor ] || [ "$target" = both ]; then
   # O Cursor também lê .claude/skills: com 'both', as skills não são duplicadas.
   [ "$target" = cursor ] && copy_skills "$base/.cursor/skills"
   copy_agents "$base/.cursor/agents" cursor
+fi
+if { [ "$target" = cursor ] || [ "$target" = both ]; } && [ "$base" = "$HOME" ]; then
+  echo "Cursor: cole o conteúdo de global-instruction.md em Settings > Rules > User Rules."
 fi
 echo "Pronto. Em cada repositório, rode /plumb-setup."
