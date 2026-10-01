@@ -12,33 +12,34 @@ sessão.
 
 ## Instalação
 
-Funciona no **Claude Code** e no **Cursor**. A instalação é uma cópia de
-arquivos para as pastas globais da ferramenta (vale para todos os seus
-projetos); o script só copia e, para o Cursor, gera a variante dos agentes.
+Pacote npm, sem dependências (Node 18+). Instala globalmente as skills, os
+subagentes e a instrução que faz qualquer sessão reconhecer o Plumb:
 
 ```bash
-git clone https://github.com/KauaLealz/plumb-harness.git
-./plumb-harness/install.sh            # Claude Code
-./plumb-harness/install.sh cursor     # Cursor
-./plumb-harness/install.sh both       # os dois
+npx plumb-harness install            # pergunta: Claude Code, Cursor ou os dois
+npx plumb-harness install --claude   # ou direto: --claude, --cursor, --both
 ```
 
-```powershell
-git clone https://github.com/KauaLealz/plumb-harness.git
-.\plumb-harness\install.ps1                 # Claude Code
-.\plumb-harness\install.ps1 -Target cursor  # Cursor
-.\plumb-harness\install.ps1 -Target both    # os dois
+Enquanto o pacote não está publicado no npm, instale direto do GitHub:
+
+```bash
+npx github:KauaLealz/plumb-harness install
 ```
 
-Na instalação global para o Claude Code, o script também grava um bloco
-curto (entre marcadores, preservando o resto) em `~/.claude/CLAUDE.md`,
-dizendo para usar o Plumb em qualquer mudança de código — sem ele, uma
-sessão num projeto ainda não configurado não sabe que o Plumb existe. No
-Cursor, cole o conteúdo de `global-instruction.md` em Settings → Rules →
-User Rules.
+| | Claude Code | Cursor |
+|---|---|---|
+| Skills | `~/.claude/skills/` | `~/.cursor/skills/` (com `--both`, o Cursor lê as de `~/.claude/skills/`) |
+| Subagentes | `~/.claude/agents/` | `~/.cursor/agents/`, na variante do Cursor (`model: inherit`, `readonly`) |
+| Instrução global | bloco em `~/.claude/CLAUDE.md`, entre marcadores, preservando o resto | o Cursor guarda regras globais só na interface: o instalador imprime o texto para colar em Settings → Rules → User Rules |
 
-Para instalar só num projeto, rode de dentro dele com `--project` (bash) ou
-`-Project` (PowerShell). Para atualizar, `git pull` e rode de novo.
+Outros comandos:
+
+```bash
+npx plumb-harness status                    # versão instalada em cada ferramenta
+npx plumb-harness install --both            # atualizar: rode o install de novo
+npx plumb-harness uninstall --claude        # remove skills, agentes e o bloco da instrução
+npx plumb-harness install --both --project  # só no projeto atual (.claude/ e .cursor/)
+```
 
 Depois, uma vez por repositório:
 
@@ -180,7 +181,7 @@ pergunta) e gera os arquivos certos para cada uma, ou para as duas.
 | Parte | Claude Code | Cursor |
 |---|---|---|
 | Skills | `~/.claude/skills/` | `~/.cursor/skills/` (o Cursor também lê `~/.claude/skills/`) |
-| Subagentes | `~/.claude/agents/` com `model`, `effort`, `disallowedTools` | `~/.cursor/agents/` com `model: inherit` e `readonly: true` (gerados pelo script) |
+| Subagentes | `~/.claude/agents/` com `model`, `effort`, `disallowedTools` | `~/.cursor/agents/` com `model: inherit` e `readonly: true` (gerados pelo instalador) |
 | Fatos do projeto | `AGENTS.md` via `CLAUDE.md` → `@AGENTS.md` | `AGENTS.md`, lido nativamente |
 | Regras com escopo | `.claude/rules/*.md` com `paths:` | `.cursor/rules/*.mdc` com `globs:` |
 | Permissões | `.claude/settings.json`: `allow`, `ask`, `deny` | `.cursor/cli.json`: `allow`, `deny` (sem "ask": o que não está liberado pede aprovação) + `.cursor/permissions.json` com a política em texto para o modo auto-review |
@@ -220,8 +221,9 @@ skills/plumb-setup/        estruturação e auditoria do projeto + references/ca
 skills/plumb-retro/        retrospectiva periódica
 agents/                    os 7 subagentes
 evals/                     casos, resultados e um fixture sem dependências
-install.sh / install.ps1   cópia para Claude Code, Cursor ou os dois
+bin/cli.js, lib/           instalador npm (install, uninstall, status)
 global-instruction.md      bloco gravado em ~/.claude/CLAUDE.md (ou User Rules do Cursor)
+test/                      testes do instalador (npm test)
 ```
 
 ## Desenvolvimento
@@ -230,6 +232,8 @@ Edite o markdown, rode de novo os casos afetados de `evals/cases.md` contra
 `evals/fixture/` e registre em `evals/results.md`. Mantenha o
 `skills/plumb/SKILL.md` com até ~300 linhas; o que só é preciso às vezes vai
 para `references/`, com um nível só.
+
+O instalador tem testes: `npm test`.
 
 A versão 1 (CLI em TypeScript, 10 skills, memória Memanto/Obsidian, ciclo
 "dream") está no histórico do git, antes do commit da v2.
