@@ -1,6 +1,6 @@
 {
   "name": "plumb-harness",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "Fluxo spec-driven leve para agentes de código no Claude Code e no Cursor: skills, subagentes e instrução global.",
   "type": "module",
   "bin": {

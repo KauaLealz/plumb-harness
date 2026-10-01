@@ -47,7 +47,7 @@ política de testes) e `<restricoes>`.
 - API de biblioteca ou framework que você não tem certeza de como funciona
   na versão do projeto: consulte a doc atual com
   `npx ctx7@latest library <nome> "<pergunta>"` e depois
-  `npx ctx7@latest docs <id> "<pergunta>"` (skill `find-docs`). Nada de
+  `npx ctx7@latest docs <id> "<pergunta>"` (skill `plumb-find-docs`). Nada de
   segredo ou código proprietário na consulta.
 - Não crie abstrações para casos que o pedido não tem.
 - Não planeje refatorações que o pedido não pediu; registre como nota.

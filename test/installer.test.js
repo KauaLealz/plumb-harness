@@ -63,6 +63,20 @@ test('install --cursor sozinho grava as skills em ~/.cursor/skills', () => {
   assert.ok(!existsSync(join(home, '.claude')), 'não toca no Claude Code');
 });
 
+test('install remove as cópias antigas do Plumb (find-docs/find-skills) e preserva homônimas de terceiros', () => {
+  const home = mkdtempSync(join(tmpdir(), 'plumb-'));
+  const dir = join(home, '.claude', 'skills');
+  mkdirSync(join(dir, 'find-docs'), { recursive: true });
+  writeFileSync(join(dir, 'find-docs', 'SOURCE.md'), '- Alterações locais: nenhuma');
+  mkdirSync(join(dir, 'find-skills'), { recursive: true });
+  writeFileSync(join(dir, 'find-skills', 'SKILL.md'), ['---', 'name: find-skills', '---', ''].join(String.fromCharCode(10)));
+  execFileSync(process.execPath, [CLI, 'install', '--claude'], { env: { ...process.env, PLUMB_HOME: home }, encoding: 'utf8' });
+  assert.ok(!existsSync(join(dir, 'find-docs')), 'cópia antiga do Plumb removida');
+  assert.ok(existsSync(join(dir, 'find-skills', 'SKILL.md')), 'skill de terceiro preservada');
+  assert.ok(existsSync(join(dir, 'plumb-find-docs', 'SKILL.md')));
+  assert.ok(existsSync(join(dir, 'plumb-find-skills', 'SKILL.md')));
+});
+
 test('install sem ferramenta e sem terminal interativo pede a flag', () => {
   assert.throws(
     () => execFileSync(process.execPath, [CLI, 'install'], { input: '', encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }),

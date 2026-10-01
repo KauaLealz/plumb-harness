@@ -46,7 +46,8 @@ Prefira sempre o ajuste mais barato que ataca a causa:
    exemplo, ou escopo com `paths:`).
 2. Uma linha nova numa regra ou no bloco de fatos.
 3. Uma skill de projeto para um procedimento que se repetiu.
-4. Uma ferramenta do catálogo para uma lacuna que se repetiu.
+4. Uma ferramenta do catálogo — ou, se não houver, uma skill encontrada
+   com `plumb-find-skills` — para uma lacuna que se repetiu.
 
 Limites fixos: nunca afrouxar regra de segurança ou de dados pessoais,
 nunca remover um gate, no máximo 5 ajustes por retro. Um problema cuja

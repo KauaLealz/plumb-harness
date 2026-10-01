@@ -88,6 +88,10 @@ remotes, CI, IaC, padrões de branch) com o catálogo e escolha **no máximo
 priorizando o que fecha uma lacuna de verificação. Para cada uma, guarde o
 sinal que a justifica, o comando e o custo de contexto.
 
+Sinal forte sem entrada no catálogo (uma tecnologia que o projeto usa e
+nenhuma linha cobre): procure com a skill `plumb-find-skills`, que exige
+revisão de segurança e o seu "sim" antes de instalar qualquer coisa.
+
 Se a descoberta não respondeu onde ficam cards e documentação ou que
 ferramentas o time usa, inclua as perguntas de entrevista do catálogo
 (contam no limite de 4 perguntas).

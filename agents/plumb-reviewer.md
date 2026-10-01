@@ -40,6 +40,10 @@ descrito no prompt e omita a seção Critérios.
 - Reporte só o que defenderia diante do autor. Uma revisão curta com dois
   problemas reais vale mais que uma longa com dez "talvez".
 - Segurança profunda é do `plumb-security`; aqui, aponte só o óbvio.
+- Uso de API de biblioteca que parece errado: confira na documentação atual
+  antes de acusar (`npx ctx7@latest library <nome> "<pergunta>"` e depois
+  `docs <id> "<pergunta>"`, skill `plumb-find-docs`) — a API pode ter mudado
+  depois do treino do modelo. Nada de código proprietário na consulta.
 
 ## Saída — exatamente neste formato
 
