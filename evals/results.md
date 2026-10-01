@@ -1,0 +1,26 @@
+# Resultados dos evals
+
+Rodados com `claude -p --permission-mode bypassPermissions --output-format json`
+contra cópias de `evals/fixture/` com as skills e agentes em `.claude/` do
+projeto, sem `/plumb-setup` (sem AGENTS.md). Modelo padrão da CLI.
+
+| Data | Modelo | Caso | Resultado | Custo | Evidência |
+|---|---|---|---|---|---|
+| 2026-10-01 | claude-opus-4-8 | X1 | passou | US$ 0,73 | Respondeu direto com `src/server.js:26-34`; a skill não foi carregada. |
+| 2026-10-01 | claude-opus-4-8 | S1 | passou com ressalvas | US$ 0,94 | Carregou `plumb`, trilha padrão, gravou `.plumb/changes/PAY-142.md` (4 critérios, 2 tasks), gate no formato com 1 pergunta e sugestão, nenhum código editado. Ressalvas: planejou sem despachar explorador e planejador ("repo pequeno, já li tudo") e gravou em Decisões uma sugestão ainda em aberto. Correções: planejamento inline passou a ser regra explícita para área pequena; Decisões só registra o que o usuário respondeu. |
+| 2026-10-01 | claude-opus-4-8 | D1 | falhou | US$ 0,52 | A skill não disparou; corrigiu o typo sem rodar testes nem anunciar a trilha. |
+| 2026-10-01 | claude-opus-4-8 | D1 (description reforçada) | falhou | US$ 0,30 | Mesmo resultado: em edição trivial o modelo não carrega a skill. Correção: o parágrafo de Workflow do AGENTS.md (gravado pelo `/plumb-setup`, sempre carregado) passou a exigir testes e evidência até para typo. Rodado de novo depois do setup (linha abaixo). |
+| 2026-10-01 | claude-opus-4-8 | P1/P3 (`/plumb-setup`, fixture com remote GitHub) | passou com ressalvas | US$ 1,19 + 0,78 (aprovação) | Diagnóstico "estruturação"; nada gravado antes do "sim"; uma proposta com 4 perguntas; ferramentas por sinal, CLI primeiro (`gh` detectado como já instalado, Hurl opcional); curador despachado; AGENTS.md com 49 linhas. Ressalvas: registrou o typo do fixture como "fato" (corrigido no curador: bugs e dívidas não são fatos); reescreveu o parágrafo de Workflow em tópicos; omitiu a seção "Ao compactar"; explorou sem despachar exploradores (aceito para repositório pequeno — virou regra explícita). |
+| 2026-10-01 | claude-opus-4-8 | D1 (depois do setup) | passou | US$ 0,44 | Corrigiu o typo, rodou `npm test` (2/2) e reportou antes de dizer pronto; perguntou antes de commitar. Não anunciou a trilha — a skill não carrega em edição trivial; quem garantiu a evidência foi o parágrafo de Workflow do AGENTS.md. |
+| 2026-10-01 | claude-opus-4-8 | F1 (`/plumb-setup` em repo só com README) — etapa de entrevista | passou com ressalva | US$ 0,41 | Diagnóstico "novo" → fundação; sem exploradores; 6 perguntas de fundação numa mensagem, com sugestões coerentes com o README (Node+TS+Fastify, por feature, Vitest, envelope de erro, Postgres+Prisma, GH Actions); as 2 perguntas do fluxo dentro da 6ª; nada gravado. Ressalva: acrescentou uma 7ª pergunta (onde ficam os cards). Observação: usou como sinal um MCP da configuração global do usuário (Railway). Etapa pós-aprovação não rodada. |
+| 2026-10-01 | claude-opus-4-8 | S1→S2→V1→K2 ponta a ponta (PAY-142, repo com setup feito) | passou | US$ 0,65 + 2,97 | Gate 1 no formato, 1 pergunta com sugestão. Depois do "sim": branch `feat/pay-142-pix`, lista de tarefas nativa, `plumb-implementer` (TDD), `plumb-verifier` (6/6 + curl real), `plumb-reviewer` e `plumb-security` em paralelo (pagamento), achado menor (teste de precedência com falso verde) corrigido e reverificado, sinal `retrabalho` na Retro, **um** despacho do `plumb-curator` no fechamento, Aprendizados com sim/não no gate 2, PR proposto e nada enviado. Ressalvas: listou "decisões que tomei" no gate 1 antes da aprovação; a correção do menor não virou T-fix nos Números. |
+
+## Custo fixo de uma execução `claude -p`
+
+Medido com o prompt "Responda apenas: ok", modelo `sonnet`:
+
+| Modo | Custo | Tokens gravados em cache |
+|---|---|---|
+| Padrão | US$ 0,27 | 45.106 |
+| `--strict-mcp-config --setting-sources project --system-prompt <curto>` | US$ 0,21 | 35.096 |
+| `--bare` | não roda com login por assinatura ("Not logged in") — exige chave de API | — |

@@ -1,0 +1,11 @@
+{
+  "name": "plumb-fixture-api",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Minimal API used as a fixture for Plumb evals. Not a real app.",
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "start": "node src/main.js"
+  }
+}
