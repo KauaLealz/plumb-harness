@@ -20,9 +20,10 @@ Escreva no idioma do usuário e avise o progresso em uma linha por etapa.
 2. Liste as mudanças em `.plumb/changes/archive/` arquivadas depois disso.
    De cada uma, leia **só** o cabeçalho e a seção `## Retro` (Grep, não o
    arquivo inteiro) — é ali que os sinais já estão resumidos.
-3. **Rascunhos do cérebro:** `item_search(project=".", memory_classes=["working"], limit=50)`.
+3. **Rascunhos do cérebro:** `item_search(memory_classes=["working"], limit=50)`.
    São o que as mudanças guardaram sem pedir; a retro é onde eles viram
-   oficiais ou saem.
+   oficiais ou saem. Cada resultado traz `uses`: quantas vezes o item foi
+   devolvido de propósito (busca ou foco do contexto) — a evidência de valor.
 4. Se o usuário rodou `/insights` recentemente e colou o relatório, use-o
    como evidência adicional.
 
@@ -32,9 +33,10 @@ Escreva no idioma do usuário e avise o progresso em uma linha por etapa.
   rodar a migration" em três mudanças diferentes é uma causa só.
 - **Duas ou mais ocorrências** = padrão: candidato a ajuste.
 - **Uma ocorrência** = observar: liste, não proponha.
-- Rascunho citado ou confirmado em duas ou mais mudanças, sem correção
-  contra ele → candidato a `longterm`. Rascunho que o trabalho contradisse
-  ou que ninguém usou em 30 dias → candidato a `deprecated`.
+- Rascunho com `uses` ≥ 2, ou citado em duas ou mais mudanças, sem correção
+  contra ele → candidato a `longterm`. Rascunho com `uses` = 0 depois de 30 dias
+  (ou que o trabalho contradisse) → candidato a `deprecated`. Item oficial com
+  `uses` = 0 há muito tempo: pergunte se ainda vale.
 - Para cada ajuste da retro anterior: o sinal-alvo voltou a aparecer?
   Não → manter. Sim, menos → manter e observar. Sim, igual ou mais →
   reforçar de outro jeito ou reverter.

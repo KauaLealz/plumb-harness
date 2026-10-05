@@ -25,8 +25,11 @@ Contratos / dados / migração: <o que muda, ou "n/a">
 Riscos e rollback: <...>
 
 ## Tasks
-- [ ] T1 <o quê> — arquivos: <caminhos> — prova: AC1 — verificar: `<comando>`
-- [ ] T2 <o quê> — arquivos: <caminhos> — prova: AC2 — verificar: `<comando>`
+Lote L1 (arquivos: <caminhos>)
+- [ ] T1 <o quê> — prova: AC1 — verificar: `<comando>`
+- [ ] T2 <o quê> — prova: AC2 — verificar: `<comando>`
+Lote L2 (arquivos: <caminhos>)
+- [ ] T3 <o quê> — prova: AC3 — verificar: `<comando>`
 
 ## Decisões
 - <AAAA-MM-DD> <quem>: <decisão> — <porquê>
@@ -36,7 +39,7 @@ Riscos e rollback: <...>
 
 ## Retro
 - <tipo>: <o que aconteceu> — <evidência>
-Números: <n> tasks · <n> T-fix · <n> travamentos · <n> gates rejeitados
+Números: <n> tasks · <n> lotes · <n> T-fix · <n> travamentos · <n> gates rejeitados · <n> despachos · <n> consultas ao cérebro
 ```
 
 ## Regras dos campos
@@ -48,14 +51,15 @@ Números: <n> tasks · <n> T-fix · <n> travamentos · <n> gates rejeitados
   "Trata erros adequadamente" não é provável; "Dado um Pix criado há 31
   minutos, quando o webhook confirmar, então ele é recusado com motivo
   `expired`" é.
-- **Tasks** — uma task = um commit revisável. Task que mistura dois
+- **Tasks** — uma task = um critério provável, com comando.
+  **Lote** = tasks que tocam os mesmos arquivos: um despacho, um commit. Task que mistura dois
   critérios ou mexe em arquivos sem relação está grande demais: divida.
   `verificar` é o comando mais estreito que prova a task (em geral um
   arquivo de teste), não a suíte inteira.
 - **Decisões** — só escolhas que alguém questionaria depois, já tomadas:
   as respostas do usuário nos gates e o que ele aprovou. Uma sugestão sua
   ainda em aberto fica nas Perguntas do gate, não aqui.
-- **Retro** — sinais de retroalimentação (tipos na skill `plumb`), uma
+- **Retro** — sinais de retroalimentação (tipos em `references/retro-signals.md` da skill `plumb`), uma
   linha cada, anotados na hora. A linha de Números entra no fechamento. É o
   que a `/plumb-retro` lê depois.
 - **Notas** — o handoff. Se o trabalho parar no meio, uma sessão nova

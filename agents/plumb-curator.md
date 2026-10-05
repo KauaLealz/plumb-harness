@@ -104,18 +104,17 @@ terceiro instalada pelo usuário não se migra.
 - **Evidência:** cite o arquivo, o comando ou a fala do usuário que
   sustenta cada item.
 
-## Bloco do AGENTS.md (no máximo 30 linhas)
+## Bloco do AGENTS.md (no máximo 20 linhas)
 
 Só comandos e Workflow — todo o resto vai para o cérebro:
 - Comandos exatos, com o de rodar um único teste.
 - Grupo **Ferramentas**: uma linha por ferramenta instalada, dizendo
   *quando* usar (`gh run view --log-failed` — CI falhou na branch).
-- `Segundo cérebro: <Workspace> / <Domain>` — uma linha.
-- Seção **Ao compactar**, com 2–3 linhas: preservar o id da mudança ativa,
-  o Status, as tasks pendentes, as decisões e os comandos que falharam.
+- Uma linha `Convenções do Plumb:` com as respostas do setup (ex.:
+  `commit por task: sim · .plumb/changes versionado: sim`).
 - Fecha com o parágrafo de Workflow abaixo, **copiado literalmente**: mesmo
   texto, mesma forma, sem virar tópicos. É o que ferramentas sem suporte a
-  skills seguem.
+  skills (Codex e afins) seguem.
 
 ```
 ## Workflow
@@ -125,44 +124,12 @@ trilha (direta / padrão / profunda); nas trilhas padrão e profunda, escreva
 aprovação antes de codar; escreva os testes primeiro; peça confirmação
 antes de push ou PR. Em qualquer mudança, até um typo: rode os testes e o
 lint afetados e reporte a evidência — nunca diga "pronto" sem isso.
-Convenções, regras, decisões e procedimentos do projeto estão no segundo
-cérebro (MCP `knowledge-os`): consulte `context_get` antes de mexer numa
-área.
 ```
 
 ## Permissões
 
-Claude Code — `.claude/settings.json`:
-- `allow`: os comandos de teste e lint encontrados (ex.: `Bash(npm test *)`)
-  e as ferramentas do cérebro usadas em toda mudança
-  (`mcp__knowledge-os__context_get`, `mcp__knowledge-os__item_search`,
-  `mcp__knowledge-os__item_get`, `mcp__knowledge-os__item_save`).
-- `ask`: `Bash(git push *)`, `Bash(gh pr create *)`,
-  `Bash(git reset --hard *)`, `Bash(rm -rf *)` e os comandos de deploy ou
-  de infraestrutura que o projeto usa (`Bash(vercel --prod *)`,
-  `Bash(terraform apply *)`, `Bash(kubectl delete *)`).
-- `deny`: `Bash(git push --force *)`, `Bash(git push -f *)` e um
-  `Read(./<arquivo>)` para cada arquivo de ambiente com valores reais
-  (`.env`, `.env.local`, `.env.production`…), cada um pelo nome — um
-  curinga como `.env.*` bloquearia também o `.env.example`.
-
-Cursor — `.cursor/cli.json` (não existe `ask`: o que não está em `allow`
-pede aprovação; **sem a chave `version`** — o arquivo de projeto só aceita
-`permissions`, e o `cursor-agent` se recusa a iniciar com qualquer outra
-chave):
-```json
-{ "permissions": {
-    "allow": ["Shell(npm test)", "Shell(npm run lint)"],
-    "deny":  ["Shell(git push --force)", "Shell(git push -f)", "Read(.env)", "Read(.env.local)"] } }
-```
-e `.cursor/permissions.json`:
-```json
-{ "autoRun": { "block_instructions": [
-    "Não rode git push, gh pr create, git reset --hard, rm -rf nem comandos de deploy sem o usuário ter confirmado no chat." ] } }
-```
-
-Projeto com as duas ferramentas: gere os dois conjuntos. `CLAUDE.md` com
-`@AGENTS.md` só para o Claude Code; o Cursor lê o `AGENTS.md` direto.
+Leia `permissions.md` (o caminho absoluto vem no prompt do `/plumb-setup`) e
+gere as permissões da ferramenta do projeto. Nunca invente regra fora dele.
 
 ## Modos
 

@@ -43,7 +43,7 @@ test('removeBlock tira só o bloco', () => {
 
 test('toCursorAgent troca o modelo e remove campos do Claude Code', () => {
   const src = '---\nname: a\ndisallowedTools: Write, Edit\nreadonly: true\nmodel: sonnet\neffort: low\n---\nbody\n';
-  assert.equal(toCursorAgent(src), '---\nname: a\nreadonly: true\nmodel: inherit\n---\nbody\n');
+  assert.equal(toCursorAgent(src), '---\nname: a\nmodel: inherit\n---\nbody\n');
 });
 
 test('install --both global: skills, agentes e instrução; idempotente; uninstall desfaz', () => {

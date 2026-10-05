@@ -120,9 +120,10 @@ ferramentas o time usa, inclua as perguntas de entrevista do catálogo
 
 Despache `plumb-curator` no modo do diagnóstico (estruturação, migração,
 auditoria ou fundação) com todos os achados ou respostas, o workspace e o
-domain.
+domain, e o caminho absoluto de `references/permissions.md` (desta skill).
+Não leia o arquivo do curador antes de despachar.
 Revise o retorno: cada item tem evidência e `summary` que se segue sem o
-`content`? O bloco do `AGENTS.md` tem até 30 linhas e só comandos? Há algo
+`content`? O bloco do `AGENTS.md` tem até 20 linhas e só comandos? Há algo
 que um agente descobriria sozinho em segundos? Corte.
 
 Acrescente às perguntas do curador estas duas, se ainda não respondidas
@@ -185,8 +186,8 @@ Mostre o conteúdo completo de um arquivo só se o usuário pedir.
 6. **`.plumb/changes/archive/`** — crie a pasta e acrescente
    `.plumb/pending-brain.jsonl` ao `.gitignore`. Se o usuário não quer
    versionar as mudanças, acrescente também `.plumb/changes/`.
-7. Registre as respostas como item `contexto/convencoes-plumb` no cérebro
-   (ex.: `commit por task: sim; .plumb/changes versionado: sim`).
+7. Registre as respostas na linha `Convenções do Plumb:` do bloco do `AGENTS.md`
+   (ex.: `commit por task: sim · .plumb/changes versionado: sim`) — não no cérebro.
 8. **Ferramentas aprovadas** — instale com os comandos do catálogo. MCP no
    Claude Code: `claude mcp add --scope project` quando o time todo usa; no
    Cursor: acrescente a entrada em `.cursor/mcp.json` (tradução na regra 11

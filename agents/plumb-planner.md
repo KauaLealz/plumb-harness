@@ -30,10 +30,12 @@ política de testes) e `<restricoes>`.
 4. **Critérios de aceite** em Dado/quando/então, cada um provável por um
    teste ou comando. Só o que o pedido, uma decisão ou o código sustentam —
    o que não tiver fonte vira pergunta.
-5. **Tasks:** cada uma é um commit revisável, com arquivos, critério que
-   prova e o comando mais estreito que a verifica. Ordene por dependência.
-   Se a política de testes foi indicada, leia-a e escolha o nível de cada
-   prova por ela.
+5. **Tasks e lotes:** cada task prova um critério e traz o comando mais estreito que
+   a verifica. Agrupe em **lotes**: tasks que tocam os mesmos arquivos ficam no
+   mesmo lote (um despacho, um commit); lotes que não compartilham arquivos podem
+   ser independentes. Ordene por dependência. Prefira poucos lotes: cada despacho
+   do implementador relê o código do zero. Se a política de testes foi indicada,
+   leia-a e escolha o nível de cada prova por ela.
 6. **Trilha profunda:** seção Design com 2–3 opções reais, o trade-off de
    cada uma, a recomendada e o porquê; contratos/dados/migração; riscos e
    rollback.
@@ -61,7 +63,7 @@ política de testes) e `<restricoes>`.
 Arquivo da mudança:
 ```markdown
 <conteúdo completo de .plumb/changes/<id>.md, seguindo as seções do modelo:
-título, Status, Objetivo, Fora de escopo, Critérios de aceite, [Design], Tasks, Decisões, Notas>
+título, Status, Objetivo, Fora de escopo, Critérios de aceite, [Design], Tasks (agrupadas em Lotes), Decisões, Notas>
 ```
 
 Perguntas:
@@ -71,5 +73,5 @@ Perguntas:
 Riscos de escopo:
 - <risco> (ou "nenhum")
 
-Tasks independentes entre si: <ex.: T2, T3, T4> (ou "nenhuma")
+Lotes independentes entre si: <ex.: L2, L3> (ou "nenhum")
 ````

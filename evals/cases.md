@@ -32,11 +32,18 @@ Rode de novo os casos afetados sempre que um SKILL.md ou agente mudar.
 | F2 | Primeira mudança que cria um endpoint num projeto novo | Anota `padrão novo` na Retro; no fechamento, grava um `pattern` com `scope_paths` apontando o arquivo criado como modelo. |
 | F3 | Pacote com `contexto/projeto-novo` ao arquivar a 5ª mudança | Sugere `/plumb-setup` (auditoria) e `/plumb-retro` em uma linha cada, sem rodar. |
 | T2 | Verificação de UI com Playwright MCP instalado | O `plumb-verifier` (com `disallowedTools`, sem `tools`) enxerga e usa as ferramentas do MCP. |
-| C1 | Cursor: "implementa o PAY-142" com a instalação `-Target cursor` | A skill `plumb` carrega; o gate 1 sai no mesmo formato; os subagentes `plumb-*` de `~/.cursor/agents/` são usados, e os de leitura não editam (`readonly`). |
+| C1 | Cursor: "implementa o PAY-142" com a instalação `-Target cursor` | A skill `plumb` carrega; o gate 1 sai no mesmo formato; os subagentes `plumb-*` de `~/.cursor/agents/` são usados, e o `plumb-verifier` consegue rodar a suíte (sem Ask mode); os de leitura não editam por regra do texto. |
 | C2 | Cursor: `/plumb-setup` no fixture | Identifica o Cursor; conhecimento vai para o cérebro; `.cursor/cli.json` + `.cursor/permissions.json` (não `settings.json`), nenhum `CLAUDE.md`; MCPs como entradas de `.cursor/mcp.json`. |
 | C3 | `/plumb-setup` num repositório com `.claude/rules/` e `.cursor/rules/` | Migra as duas para os mesmos itens do cérebro (sem duplicar regra igual); aponta divergência entre `.claude/rules/x.md` e `.cursor/rules/x.mdc` como pergunta. |
 | N1 | Projeto sem runner de testes | Diz no gate 1 e propõe prova por comando ou runner mínimo como T0; não instala nada sem aprovação. |
 | N2 | Diretório sem git | Sem branch nem commits; o revisor recebe a lista de arquivos. |
+| I1 | "Como funciona o webhook de pagamento?" | Responde direto; consulta o cérebro só se for convenção; nenhum arquivo, nenhum despacho. |
+| I2 | "A partir de agora, mensagens de erro sempre em português" (sem pedir código) | Grava `regra/...` como `working` pelo molde, **sem** curador e **sem** gate; confirma em uma linha. |
+| I3 | "Corrige o decimal no POST /payments e, a partir de agora, erros em português" | Pedido misto separado: a regra grava na hora; o bug segue a trilha direta (ou padrão só se o escopo pedir), sem herdar a cerimônia da regra. |
+| I4 | "Investiga por que o webhook reenvia a confirmação" | Só leitura, sem TDD nem gate; a resposta vai ao chat e o achado durável vira `insight`/`gotcha` rascunho. |
+| B2 | Mudança com 4 tasks nos mesmos dois arquivos | O planejador agrupa em 1 lote; **um** despacho do implementador e um commit por lote; o orquestrador roda o comando do lote, não o de cada task. |
+| V2 | Mudança em `src/payments/**` (keyword `sensivel` no cérebro) fora da trilha profunda | `context_get` devolve `sensitive: true`; `plumb-reviewer` recebe `<lente>seguranca</lente>`; `plumb-security` não é despachado. |
+| M6 | Moldar uma mudança | Uma única consulta ao cérebro (`context_get` com `paths` e `query`); sem `item_get` depois, salvo detalhe que faltou. |
 | M1 | Sessão nova num projeto ligado | O hook injeta o pacote (`Workspace / Domain`, regras, decisões); o agente não chama `context_get` de novo sem motivo; na trilha direta, chama com `paths` só se a área não está no pacote. |
 | M2 | Pergunta "por que o webhook recusa Pix vencido?" com a decisão guardada | Responde a partir do `insight` (via pacote ou `item_search`), citando a key, sem abrir o Plumb. |
 | M3 | Moldar uma mudança em `src/payments/` com `regra/money` (escopo `src/payments/**`) e `proc/migration` guardados | `context_get` com os arquivos da área antes de planejar; o planejador e o implementador recebem a regra no `<contexto>`; o procedimento vira o roteiro das tasks. |

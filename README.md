@@ -42,7 +42,7 @@ npx github:KauaLealz/plumb-harness install
 | | Claude Code | Cursor |
 |---|---|---|
 | Skills | `~/.claude/skills/` | `~/.cursor/skills/` (com `--both`, o Cursor lê as de `~/.claude/skills/`) |
-| Subagentes | `~/.claude/agents/` | `~/.cursor/agents/`, na variante do Cursor (`model: inherit`, `readonly`) |
+| Subagentes | `~/.claude/agents/` | `~/.cursor/agents/`, na variante do Cursor (`model: inherit`, sem `readonly`) |
 | Instrução global | bloco em `~/.claude/CLAUDE.md`, entre marcadores, preservando o resto | o Cursor guarda regras globais só na interface: o instalador imprime o texto para colar em Settings → Rules → User Rules |
 | Segundo cérebro | MCP `knowledge-os` no escopo user (perfil `agent`, 6 ferramentas) + hook `SessionStart` em `~/.claude/settings.json` | `~/.cursor/mcp.json` + hook `sessionStart` em `~/.cursor/hooks.json` |
 
@@ -95,8 +95,17 @@ localizar → trilha → moldar → [gate 1] → construir → verificar → [ga
 | **padrão** | A maior parte do trabalho | Um arquivo `.plumb/changes/<id>.md`; aprovação antes do código e antes de entregar |
 | **profunda** | Feature entre módulos, migração, contrato, auth/pagamento/dados pessoais | O mesmo arquivo + design com opções + revisão de segurança |
 
+Antes das trilhas, o orquestrador classifica a **intenção**: pergunta (responde e
+para), regra ou decisão enunciada (grava no cérebro na hora, sem gate), investigação
+(só leitura, o achado vira item), hotfix e dependência/docs (trilha direta) ou mudança
+de código. Pedido misto é separado: a diretriz não herda a cerimônia da mudança.
+
 O arquivo da mudança é também o handoff: numa sessão nova, "continua o
 PAY-142" retoma pelo Status e pelas tasks desmarcadas.
+
+As tasks são agrupadas em **lotes** (mesmos arquivos = um despacho e um commit), a
+suíte completa roda uma vez, no verificador, e a revisão de segurança é uma lente do
+revisor, a não ser na trilha profunda. Nada disso muda os gates.
 
 O cérebro entra em quatro pontos: o pacote do projeto no início da sessão;
 as regras da área e as decisões e procedimentos parecidos ao moldar; uma
@@ -106,13 +115,13 @@ busca pelo sintoma quando algo trava; e uma gravação em lote ao fechar.
 
 | Papel | Onde | Faz |
 |---|---|---|
-| Orquestrador | skill `plumb` (sessão principal) | Conversa, trilha, gates, estado; monta os prompts, delega e grava no cérebro |
+| Orquestrador | skill `plumb` (sessão principal) | Classifica o pedido, escolhe a rota, conduz os gates e o estado; monta os prompts, delega e grava no cérebro |
 | Explorador | `agents/plumb-explorer.md` | Responde perguntas sobre o código com `arquivo:linha` (só leitura) |
 | Planejador | `agents/plumb-planner.md` | Critérios de aceite, tasks, design, perguntas (só leitura) |
-| Implementador | `agents/plumb-implementer.md` | Uma task em TDD, só nos arquivos declarados |
+| Implementador | `agents/plumb-implementer.md` | Um lote de tasks (mesmos arquivos) em TDD, só nos arquivos declarados |
 | Verificador | `agents/plumb-verifier.md` | Prova independente: checks, critério → evidência, execução real |
-| Revisor | `agents/plumb-reviewer.md` | Diff contra a spec e as regras do cérebro: bugs com cenário de falha, escopo, convenções |
-| Revisor de segurança | `agents/plumb-security.md` | Injeção, autorização, segredos, dados pessoais, dinheiro |
+| Revisor | `agents/plumb-reviewer.md` | Diff contra a spec e as regras do cérebro: bugs com cenário de falha, escopo, convenções; com a lente de segurança em área sensível |
+| Revisor de segurança | `agents/plumb-security.md` | Trilha profunda: injeção, autorização, segredos, dados pessoais, dinheiro |
 | Curador de contexto | `agents/plumb-curator.md` | O que guardar no cérebro, com tipo, chave, escopo e texto exato — devolve o lote pronto para `item_save` |
 
 Os agentes usam `disallowedTools` (edição de arquivos e escrita no
@@ -211,11 +220,13 @@ somente leitura por padrão, nada sem o seu "sim". Entradas marcadas
   revisores e curador no modelo da sessão com esforço alto.
 - Planejamento sem subagente quando a área é pequena; tasks pequenas nos
   mesmos arquivos num só despacho.
-- Retroalimentação com um despacho e uma gravação por mudança, não um por
-  sinal; a retro lê só o cabeçalho e a seção Retro dos arquivos arquivados.
-- `AGENTS.md` com até 30 linhas (comandos e Workflow); o conhecimento chega
-  pelo pacote do cérebro, com orçamento, e as regras de área só quando a
-  área é tocada.
+- Retroalimentação: 1–2 sinais simples o orquestrador grava sozinho; 3+ vão
+  num único despacho do curador, nunca um por sinal; a retro lê só o cabeçalho e a seção Retro dos arquivos arquivados.
+- `AGENTS.md` com até 20 linhas (comandos e Workflow); o conhecimento chega
+  pelo pacote do cérebro, com orçamento. Ao tocar uma área, uma consulta traz as
+  regras dela e o começo do content, sem `item_get` depois.
+- `SKILL.md` do orquestrador com ~14 KB; o que só vale às vezes (lotes em paralelo,
+  tabela de sinais, molde de item) fica em `references/`, lido sob demanda.
 - Medido nos evals: cada sessão do Claude Code começa com 35–70 mil tokens
   de contexto fixo, quase todo do próprio Claude Code e da sua configuração
   global. Confira o seu com `/context`.
@@ -243,7 +254,7 @@ as duas.
 | Parte | Claude Code | Cursor |
 |---|---|---|
 | Skills | `~/.claude/skills/` | `~/.cursor/skills/` (o Cursor também lê `~/.claude/skills/`) |
-| Subagentes | `~/.claude/agents/` com `model`, `effort`, `disallowedTools` | `~/.cursor/agents/` com `model: inherit` e `readonly: true` (gerados pelo instalador) |
+| Subagentes | `~/.claude/agents/` com `model`, `effort`, `disallowedTools` | `~/.cursor/agents/` com `model: inherit`, sem `readonly` (gerados pelo instalador) |
 | Comandos do projeto | `AGENTS.md` via `CLAUDE.md` → `@AGENTS.md` | `AGENTS.md`, lido nativamente |
 | Segundo cérebro | MCP `knowledge-os` (user) + hook `SessionStart` | `~/.cursor/mcp.json` + hook `sessionStart` (`additional_context`) |
 | Permissões | `.claude/settings.json`: `allow`, `ask`, `deny` | `.cursor/cli.json`: `allow`, `deny` (sem "ask": o que não está liberado pede aprovação) + `.cursor/permissions.json` com a política em texto para o modo auto-review |
@@ -253,7 +264,7 @@ as duas.
 **Limitações no Cursor:** sem `ask`, a confirmação de push/PR depende da
 política de auto-review e do gate 2 da skill, não de uma regra
 determinística; tasks em paralelo só rodam em sequência (sem isolamento
-em worktree garantido); os agentes de leitura usam `readonly`, sem bloqueio
+em worktree garantido); os agentes não usam `readonly` (no Cursor ele vira Ask mode e bloqueia shell e MCP), então a regra "não edite" é só do texto do agente, sem bloqueio
 específico da escrita no cérebro; plugins do Claude Code do catálogo (LSP,
 Sentry, Semgrep, Figma) viram a alternativa MCP da mesma linha. A
 compatibilidade foi montada a partir da documentação do Cursor e dos
