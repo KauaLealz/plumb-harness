@@ -96,7 +96,12 @@ Convenções, regras com escopo, decisões, procedimentos e gotchas moram no MCP
    `AGENTS.md`, ou projeto não ligado: sugira `/plumb-setup` (comando do usuário,
    que não aparece na sua lista de skills) e, sem ele, descubra os comandos por
    scripts, Makefile e CI.
-3. O usuário só perguntou o que está em andamento? Liste as mudanças ativas com
+3. **Pedido é só um id de ticket** (`PAY-142`)? Ache o card antes de qualquer outra
+   coisa: Grep do id **fora** de `.claude/`, `.cursor/`, `.plumb/` e `node_modules/`
+   (as skills do Plumb usam ids como exemplo) e leia o arquivo que o define
+   (README, docs, `CHANGELOG`); com remote GitHub, `gh issue view`. Sem achar,
+   pergunte o que o card pede — não suponha.
+4. O usuário só perguntou o que está em andamento? Liste as mudanças ativas com
    Status e próxima task, e pare.
 
 ## 1 — Escolher a trilha
