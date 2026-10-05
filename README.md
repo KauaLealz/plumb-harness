@@ -86,26 +86,38 @@ A partir daí é só pedir mudanças — a skill `plumb` dispara sozinha.
 ## Como funciona
 
 ```
-localizar → trilha → moldar → [gate 1] → construir → verificar → [gate 2] → entregar
+entender o pedido → planejar → [você aprova o plano] → construir → verificar → [você decide push/PR] → entregue
 ```
 
 | Trilha | Quando | Cerimônia |
 |---|---|---|
 | **direta** | Typo, config, bug de causa óbvia | Nenhuma: corrige, roda os checks, reporta com evidência |
-| **padrão** | A maior parte do trabalho | Um arquivo `.plumb/changes/<id>.md`; aprovação antes do código e antes de entregar |
-| **profunda** | Feature entre módulos, migração, contrato, auth/pagamento/dados pessoais | O mesmo arquivo + design com opções + revisão de segurança |
+| **padrão** | A maior parte do trabalho | Um plano no segundo cérebro (`mudanca/<id>`); você aprova antes do código |
+| **profunda** | Feature entre módulos, migração, contrato, auth/pagamento/dados pessoais | O mesmo plano + design com opções + revisão de segurança |
 
 Antes das trilhas, o orquestrador classifica a **intenção**: pergunta (responde e
 para), regra ou decisão enunciada (grava no cérebro na hora, sem gate), investigação
 (só leitura, o achado vira item), hotfix e dependência/docs (trilha direta) ou mudança
 de código. Pedido misto é separado: a diretriz não herda a cerimônia da mudança.
 
-O arquivo da mudança é também o handoff: numa sessão nova, "continua o
-PAY-142" retoma pelo Status e pelas tasks desmarcadas.
+O plano é também o handoff: ele aparece em "Mudanças em andamento" no início de
+toda sessão, e "continua o PAY-142" retoma pelo andamento e pelas tarefas que
+faltam — sem pasta nenhuma no repositório.
+
+**Paradas.** O Plumb para só em três momentos: para você aprovar o plano (com
+todas as perguntas juntas — responder às perguntas já conta como aprovação),
+antes de algo sair da máquina (push, PR) e num bloqueio real. No meio não há
+"posso seguir?". As perguntas são só as que o pedido, a conversa, o código e o
+cérebro não respondem, cada uma com opções e a recomendada.
+
+**Conversa.** No terminal, ele fala do que está acontecendo com o código ("✓ O
+Pix já devolve o QR code — testes 5 de 5"), não do método ("T1 concluída, lote
+L2"): sem ids internos, sem nomes de etapa nem de subagente, e sem narrar a
+leitura dos próprios arquivos.
 
 As tasks são agrupadas em **lotes** (mesmos arquivos = um despacho e um commit), a
 suíte completa roda uma vez, no verificador, e a revisão de segurança é uma lente do
-revisor, a não ser na trilha profunda. Nada disso muda os gates.
+revisor, a não ser na trilha profunda.
 
 O cérebro entra em quatro pontos: o pacote do projeto no início da sessão;
 as regras da área e as decisões e procedimentos parecidos ao moldar; uma
@@ -136,13 +148,14 @@ restrições, critério de pronto e o que fazer se travar.
 
 ## Segundo cérebro
 
-No repositório ficam só os comandos e o Workflow no `AGENTS.md`, as
-mudanças em `.plumb/changes/` e as permissões. O resto mora no Knowledge OS
+No repositório ficam só os comandos e o Workflow no `AGENTS.md` e as
+permissões. O resto mora no Knowledge OS
 (SQLite local em `~/.knowledge-os`), organizado em workspace (cliente,
 empresa) → domain (projeto):
 
 | O quê | Item | Chega ao agente |
 |---|---|---|
+| Plano de cada mudança | `task` (`mudanca/<id>`); `done` ao entregar | "Mudanças em andamento" no início da sessão |
 | Convenção, stack, mapa, áreas sensíveis | `context` / `rule` no domain do projeto | Hook de início de sessão |
 | Regra de uma área | `rule` com `scope_paths` | `context_get` com os arquivos que a mudança toca |
 | Decisão e o porquê | `insight`, com a mudança de origem | Pacote ("Decisões recentes") e busca |
@@ -156,9 +169,9 @@ empresa) → domain (projeto):
   de fora.
 - **Ciclo de vida:** o que as mudanças aprendem entra como rascunho
   (`working`), sem perguntar; virar `longterm`/`canonical` pede o seu "sim"
-  — no gate 2 ou na `/plumb-retro`, que também aposenta o que envelheceu.
+  na `/plumb-retro`, que também aposenta o que envelheceu.
 - **Fora do ar:** o Plumb avisa e segue; o que gravaria vai para
-  `.plumb/pending-brain.jsonl` e entra na próxima sessão.
+  `~/.knowledge-os/pending.jsonl` e entra na próxima sessão.
 - **Seguro:** o servidor recusa segredos; a busca não usa rede nem
   embeddings.
 
@@ -196,21 +209,22 @@ somente leitura por padrão, nada sem o seu "sim". Entradas marcadas
 ## Retroalimentação
 
 1. **Sinais na hora:** cada regra enunciada, decisão durável, correção,
-   gate rejeitado, travamento, retrabalho, procedimento repetível, padrão
+   plano rejeitado, travamento, retrabalho, procedimento repetível, padrão
    novo, fato velho ou lacuna de ferramenta vira uma linha na seção Retro
-   do arquivo da mudança. Um `padrão novo` (o primeiro endpoint, a primeira
+   do plano. Um `padrão novo` (o primeiro endpoint, a primeira
    migration) vira, no fechamento, um item `pattern` com escopo apontando o
    arquivo criado como modelo — é assim que um projeto novo consolida as
    convenções. Regra enunciada vai ao curador e ao cérebro na hora.
-2. **No fechamento:** um único despacho do curador com todos os sinais e as
-   decisões; o lote vai para o cérebro numa chamada (`item_save`, como
-   rascunho) e o gate 2 mostra o que foi guardado, com sim/não só para
-   promoções e edições no `AGENTS.md`. Se a regra já existia e foi
+2. **No fechamento:** 1–2 sinais simples o orquestrador grava sozinho; 3 ou
+   mais vão num único despacho do curador. Tudo entra numa chamada
+   (`item_save`, como rascunho, junto com o plano concluído) e a entrega diz,
+   numa linha, o que foi guardado — sem perguntar. Se a regra já existia e foi
    ignorada, o ajuste é reforçá-la, não duplicá-la.
 3. **`/plumb-retro`** (sugerida a cada 5 mudanças): agrupa causas que se
    repetem, propõe até 5 ajustes com sinal-alvo, promove ou aposenta os
    rascunhos e, na retro seguinte, confere se o sinal diminuiu — manter,
-   reforçar ou reverter. Histórico em `.plumb/retro.md`.
+   reforçar ou reverter. Histórico no item `retro/ultima`; o próprio pacote do
+   início da sessão avisa quando há 5 mudanças concluídas desde a última.
 
 ## Custo
 
@@ -237,11 +251,11 @@ Skills e subagentes do Claude Code; `AGENTS.md` importado pelo `CLAUDE.md`;
 hook `SessionStart` com `additionalContext` (pacote do cérebro); MCP no
 escopo user; lista de tarefas da sessão para o progresso; `permissions.ask`
 para push/PR; isolamento em worktree para tasks paralelas; plan mode +
-ExitPlanMode para o gate 1 quando a sessão está em plan mode. Sem build e
+ExitPlanMode para apresentar o plano quando a sessão está em plan mode. Sem build e
 sem dependências no lado do Plumb.
 
 **Limitação conhecida:** a regra `Bash(git push *)` não pega variações com
-opções antes do subcomando (`git -c x=y push`). O gate 2 da skill continua
+opções antes do subcomando (`git -c x=y push`). A pergunta de push/PR da entrega continua
 valendo nesses casos.
 
 ## Cursor
@@ -262,7 +276,7 @@ as duas.
 | Lista de tarefas, plan mode | TaskCreate/TodoWrite, ExitPlanMode | to-dos do agente, modo Plan |
 
 **Limitações no Cursor:** sem `ask`, a confirmação de push/PR depende da
-política de auto-review e do gate 2 da skill, não de uma regra
+política de auto-review e da pergunta de push/PR da entrega, não de uma regra
 determinística; tasks em paralelo só rodam em sequência (sem isolamento
 em worktree garantido); os agentes não usam `readonly` (no Cursor ele vira Ask mode e bloqueia shell e MCP), então a regra "não edite" é só do texto do agente, sem bloqueio
 específico da escrita no cérebro; plugins do Claude Code do catálogo (LSP,

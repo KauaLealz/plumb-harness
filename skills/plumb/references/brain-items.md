@@ -39,5 +39,6 @@ uma mudança (fica nas Decisões dela). Bug ou dívida (é trabalho, não fato).
 
 ## Cérebro fora do ar
 
-Uma entrada por linha em `.plumb/pending-brain.jsonl` (o mesmo objeto de
-`items`, com `workspace` e `domain` se souber). A próxima sessão grava sozinha.
+Uma entrada por linha em `~/.knowledge-os/pending.jsonl`: o mesmo objeto de
+`items` mais `"project": "<caminho absoluto do repositório>"`. A próxima sessão
+grava sozinha (o hook do início esvazia a fila).

@@ -15,7 +15,8 @@ ou um erro de operação consegue fazer com esta mudança?
 
 ## Você recebe
 
-O caminho do arquivo da mudança e a base do diff (ou a lista de arquivos).
+A key do plano no cérebro (`mudanca/<id>`, leia com `item_get`) e a base do diff
+(ou a lista de arquivos).
 
 ## Como trabalhar
 

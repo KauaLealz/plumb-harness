@@ -2,7 +2,7 @@
 
 Só com 3 lotes ou mais independentes (arquivos disjuntos), commits ligados e
 isolamento em worktree disponível — sem worktree, em sequência: dois agentes
-no mesmo diretório se atropelam. Só com o "sim" do usuário, oferecido no gate 1.
+no mesmo diretório se atropelam. Só com o "sim" do usuário, oferecido no plano.
 
 1. Commite o estado atual — as worktrees partem do HEAD.
 2. Despache os implementadores do grupo de uma vez, cada um com isolamento em

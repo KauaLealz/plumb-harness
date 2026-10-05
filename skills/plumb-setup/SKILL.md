@@ -9,19 +9,24 @@ disable-model-invocation: true
 Deixe o repositório pronto para que toda sessão futura comece sabendo o
 que não dá para redescobrir barato — e nada além disso. O conhecimento vai
 para o segundo cérebro (MCP `knowledge-os`); no repositório ficam só os
-comandos e o Workflow no `AGENTS.md`, `.plumb/` e as permissões. Você
+comandos e o Workflow no `AGENTS.md` e as permissões — nenhuma pasta do Plumb. Você
 conduz; a exploração vai para `plumb-explorer`, a redação para
 `plumb-curator`.
 Monte os prompts de delegação pelo contrato em
 `../plumb/references/prompt-contract.md`.
 
-Escreva tudo no idioma do usuário. Avise o progresso em uma linha por
-etapa.
+Fale como na seção Comunicação de `../plumb/SKILL.md`: no idioma do usuário em
+toda mensagem (pedido só com o comando: o idioma da conversa ou das instruções
+globais — nunca o inglês no meio), uma linha por etapa sobre **o que você
+descobriu ou fez no repositório**, sem nomes de seção desta skill, de modo
+("estruturação", "migração") nem de subagente, e sem narrar a leitura dos
+arquivos do Plumb. Ex.: `Este repositório já tem regras em .claude/rules e no CLAUDE.md — vou levá-las para o segundo cérebro e deixar os arquivos enxutos.`
 
 ## 1 — Diagnóstico (só leitura)
 
 Veja o que já existe: `AGENTS.md`, `CLAUDE.md`, `.claude/rules/`,
-`.cursor/rules/`, `.claude/skills/`, `.claude/settings.json`, `.plumb/`,
+`.cursor/rules/`, `.claude/skills/`, `.claude/settings.json`, uma pasta `.plumb/` de
+versões antigas (os planos dela migram para o cérebro como itens `task`),
 e o cérebro: `context_get(project=".")`. Classifique:
 
 - **novo** — ainda não há código de produto (só README, licença, ou
@@ -36,7 +41,7 @@ e o cérebro: `context_get(project=".")`. Classifique:
 `context_get`: diga que o Plumb depende dele e como instalar
 (`npx plumb-harness install` registra o servidor e o hook; precisa do
 comando `knowledge-mcp`; o `npx plumb-harness status` diz o que falta) e pergunte se
-segue assim mesmo: os itens vão para `.plumb/pending-brain.jsonl` e entram
+segue assim mesmo: os itens vão para `~/.knowledge-os/pending.jsonl` e entram
 no cérebro na primeira sessão com ele no ar.
 
 **Ligação.** Projeto não ligado: inclua a pergunta
@@ -50,15 +55,17 @@ está rodando, mais os sinais do repositório (`.claude/` → Claude Code,
 `O time usa Claude Code, Cursor ou os dois? Sugiro <o que os sinais indicam>.`
 Passe a resposta ao curador: ele grava os arquivos de cada ferramenta.
 
-Diga em uma linha qual é o caso, para qual ferramenta, e o que vem a seguir.
+Diga em uma linha, em linguagem de resultado, o que encontrou e o que vai fazer.
 
 ## 1b — Fundação (projeto novo)
 
 Não há o que descobrir, então as decisões vêm do usuário. Pule a
-exploração e entreviste as decisões de fundação — no máximo 6 perguntas
-numa mensagem só (exceção ao limite de 4), cada uma com uma sugestão
-baseada no que o usuário disse que o projeto vai ser. Se ele ainda não
-disse, a primeira pergunta é essa.
+exploração e pergunte, numa mensagem só, as decisões de fundação que o
+usuário ainda **não** disse (na conversa, no README, no cérebro do
+workspace) — com as regras de Perguntas de `../plumb/SKILL.md`: opções
+concretas com a consequência de cada uma e a recomendada, coerente com o
+que o projeto vai ser. Se ele ainda não disse o que o projeto é, essa é a
+primeira pergunta. Os temas:
 
 1. Linguagem, runtime e framework.
 2. Estrutura de pastas (por camada ou por feature).
@@ -113,8 +120,7 @@ nenhuma linha cobre): procure com a skill `plumb-find-skills`, que exige
 revisão de segurança e o seu "sim" antes de instalar qualquer coisa.
 
 Se a descoberta não respondeu onde ficam cards e documentação ou que
-ferramentas o time usa, inclua as perguntas de entrevista do catálogo
-(contam no limite de 4 perguntas).
+ferramentas o time usa, inclua as perguntas de entrevista do catálogo.
 
 ## 3 — Proposta
 
@@ -126,40 +132,45 @@ Revise o retorno: cada item tem evidência e `summary` que se segue sem o
 `content`? O bloco do `AGENTS.md` tem até 20 linhas e só comandos? Há algo
 que um agente descobriria sozinho em segundos? Corte.
 
-Acrescente às perguntas do curador estas duas, se ainda não respondidas
-(no máximo 4 perguntas no total; no modo fundação elas entram na pergunta
-6 da entrevista):
+Junte às perguntas do curador as que ainda restam, todas na mesma
+mensagem e pelas regras de Perguntas de `../plumb/SKILL.md` (só o que o
+repositório, o cérebro e a conversa não respondem; sem limite fixo). A
+única que costuma restar é esta — pule se o `git log` ou o usuário já
+deixaram claro:
 
-1. Commitar ao fim de cada task, ou deixar os commits com você? — sugiro:
-   commitar por task.
-2. Versionar `.plumb/changes/` para que o revisor do PR veja a spec? —
-   sugiro: sim.
+```
+1. Os commits ficam por minha conta?
+   a) Sim, um commit por parte pronta da mudança — recomendo: o histórico fica revisável
+   b) Não, eu commito — deixo as mudanças prontas, sem commit
+```
 
 Apresente tudo em **uma** mensagem:
 
 ```
-**Plumb setup — <fundação | estruturação | auditoria>**
-Cérebro: Polara / projpro — 7 itens (rascunho)
-- contexto/projeto — stack, mapa, áreas sensíveis
-- regra/money — valores em Money, só em src/payments/**
-- proc/migration — criar e rodar migration (veio de .claude/skills/migration)
+**Preparar o agenda-api para o Plumb**
+
+O que vou guardar no segundo cérebro (Polara / agenda-api) — 5 itens:
+- Como o projeto é: Node 20, sem dependências, pagamentos em `src/server.js`
+- Valores sempre em centavos inteiros (vale em `src/payments`)
+- Erros sempre no formato `{ error: string }`
+- Como criar e rodar uma migração (veio de `.claude/skills/migration`)
 - ...
 
-Arquivos:
-- criar AGENTS.md — comandos (14 linhas) + workflow
-- criar CLAUDE.md — @AGENTS.md
-- remover .claude/rules/pagamentos.md — migrado para regra/money
-- editar .claude/settings.json — confirmar push/PR e comandos destrutivos; bloquear force push e leitura de .env; liberar npm test, npm run lint e o cérebro
+O que muda nos arquivos:
+- `AGENTS.md` novo, só com os comandos (testes, um teste só, subir local)
+- `CLAUDE.md` passa a apontar para o `AGENTS.md`
+- `.claude/rules/pagamentos.md` sai — as regras dele foram para o cérebro
+- `.claude/settings.json`: push, PR e comandos destrutivos pedem confirmação;
+  `.env` fica bloqueado; testes e lint rodam sem perguntar
 
-Ferramentas sugeridas:
-- gh (CLI, custo 0) — remote github.com; issues, PRs e logs da CI
-- Playwright CLI (custo 0) — front em Vite; verificar fluxos de UI
-- Sentry (MCP, médio) — @sentry/node nas dependências; erros reais para reproduzir bugs
+Ferramentas que eu sugiro:
+- `gh` (já instalado) — ver issues, PRs e logs da CI do GitHub
+- Playwright — conferir telas do front em Vite de verdade
 
-Perguntas:
+Preciso que você decida:
 1. ...
 
-Aprova? (sim / ajustes / mostrar <arquivo ou key> / só o cérebro / só as ferramentas)
+Posso aplicar? (sim / ajustes — ou responda as perguntas, que eu sigo com elas)
 ```
 
 Mostre o conteúdo completo de um arquivo só se o usuário pedir.
@@ -169,7 +180,7 @@ Mostre o conteúdo completo de um arquivo só se o usuário pedir.
 1. **Cérebro** — `project_link(project=".", workspace, domain)` e depois o
    lote do curador numa chamada: `item_save(project=".", items=[...])`.
    Erro aponta a entrada: corrija e grave de novo. Cérebro fora do ar:
-   uma entrada por linha em `.plumb/pending-brain.jsonl` e avise que a
+   uma entrada por linha em `~/.knowledge-os/pending.jsonl` (com `project`) e avise que a
    ligação fica para `knowledge-mcp link --project . --workspace <W> --domain <D>`.
    Só remova arquivos migrados depois que o lote gravar.
 2. **AGENTS.md** — insira ou substitua apenas o bloco entre
@@ -183,11 +194,12 @@ Mostre o conteúdo completo de um arquivo só se o usuário pedir.
 5. **Permissões** — mescle preservando todas as configurações e regras
    existentes: `.claude/settings.json` (`allow`, `ask`, `deny`) no Claude
    Code; `.cursor/cli.json` e `.cursor/permissions.json` no Cursor.
-6. **`.plumb/changes/archive/`** — crie a pasta e acrescente
-   `.plumb/pending-brain.jsonl` ao `.gitignore`. Se o usuário não quer
-   versionar as mudanças, acrescente também `.plumb/changes/`.
-7. Registre as respostas na linha `Convenções do Plumb:` do bloco do `AGENTS.md`
-   (ex.: `commit por task: sim · .plumb/changes versionado: sim`) — não no cérebro.
+6. **`.plumb/` de versões antigas** — mudanças em andamento viram itens
+   `mudanca/<id>` (`type: task`, o arquivo como `content`); as arquivadas, o mesmo
+   com `status: done`; o `retro.md`, o item `retro/ultima`. Depois que o lote
+   gravar, remova a pasta e a linha dela no `.gitignore`.
+7. Registre a resposta sobre commits na linha `Convenções do Plumb:` do bloco do
+   `AGENTS.md` (ex.: `commit por tarefa: sim`) — não no cérebro.
 8. **Ferramentas aprovadas** — instale com os comandos do catálogo. MCP no
    Claude Code: `claude mcp add --scope project` quando o time todo usa; no
    Cursor: acrescente a entrada em `.cursor/mcp.json` (tradução na regra 11
@@ -198,8 +210,8 @@ Mostre o conteúdo completo de um arquivo só se o usuário pedir.
    "Ferramentas" do bloco do AGENTS.md, com uma linha de quando usar. Peça ao
    usuário para conferir o `/context` na próxima sessão.
 
-Feche em 2–3 linhas: o que foi gravado (arquivos e quantos itens no
-cérebro) e como começar
-(`peça uma mudança, ex.: "implementa o PAY-142"`).
+Feche em 2–3 linhas, em linguagem de resultado: o que ficou pronto (arquivos e
+o que foi guardado no cérebro) e como começar
+(`Pronto. Agora é só pedir uma mudança — por exemplo, "implementa o PAY-142".`).
 
 Em uma nova execução, grave só o que mudou e mostre o antes → depois.

@@ -11,15 +11,18 @@ nunca de opinião. Cada ajuste tem que nascer de um padrão observado e
 dizer qual sinal deve diminuir — é assim que a próxima retro sabe se ele
 funcionou.
 
-Escreva no idioma do usuário e avise o progresso em uma linha por etapa.
+Fale como na seção Comunicação de `../plumb/SKILL.md`: idioma do usuário, uma linha
+por etapa sobre o que você encontrou, sem ids internos nem keys do cérebro no
+chat (diga o conteúdo do item).
 
 ## 1 — Coletar (barato)
 
-1. Leia `.plumb/retro.md`, se existir: data da última retro e os ajustes
-   aplicados nela, com seus sinais-alvo.
-2. Liste as mudanças em `.plumb/changes/archive/` arquivadas depois disso.
-   De cada uma, leia **só** o cabeçalho e a seção `## Retro` (Grep, não o
-   arquivo inteiro) — é ali que os sinais já estão resumidos.
+1. `item_get(keys=["retro/ultima"], project=".")`: data da última retro e os
+   ajustes aplicados nela, com seus sinais-alvo (`missing` = primeira retro).
+2. As mudanças concluídas desde então: `knowledge-mcp recent --since <data> --json`
+   (Bash), filtrando `type: task` do workspace/domain do projeto; sem a data, as
+   últimas `item_search(types=["task"], limit=20)`. Leia só a seção `## Retro` e os
+   Números do `content` de cada uma (`item_get` com as keys, de uma vez).
 3. **Rascunhos do cérebro:** `item_search(memory_classes=["working"], limit=50)`.
    São o que as mudanças guardaram sem pedir; a retro é onde eles viram
    oficiais ou saem. Cada resultado traz `uses`: quantas vezes o item foi
@@ -85,14 +88,13 @@ Grave só o que foi aprovado, numa chamada: `item_save(project=".", items=[...])
 com os itens novos ou reforçados (mesma `key`), as promoções
 (`{"key": ..., "memory_class": "longterm"}`) e as aposentadorias
 (`{"key": ..., "status": "deprecated"}`). Comandos vão para o
-`AGENTS.md`. Depois acrescente ao fim de `.plumb/retro.md`:
+`AGENTS.md`. No mesmo `item_save`, regrave o registro da retro (substitui o anterior;
+o histórico fica nos ajustes aplicados):
 
-```markdown
-## <AAAA-MM-DD> — <n> mudanças (<ids>)
-- Aplicado: <key ou arquivo> — <ajuste> — alvo: <sinal que deve diminuir>
-- Rascunhos: <n> promovidos, <n> aposentados
-- Mantido / reforçado / revertido: <ajuste anterior> — <motivo>
-- Observar: <padrão de uma ocorrência>
+```json
+{"key": "retro/ultima", "type": "task", "status": "done", "memory_class": "working",
+ "title": "Retro de <AAAA-MM-DD>", "summary": "<n> mudanças, <n> ajustes",
+ "content": "Mudanças: <keys>\nAplicado: <item ou arquivo> — <ajuste> — alvo: <sinal que deve diminuir>\nRascunhos: <n> promovidos, <n> aposentados\nObservar: <padrão de uma ocorrência>\nAnteriores: <ajuste> — mantido | reforçado | revertido, porque <...>"}
 ```
 
 Feche em uma linha: quantos ajustes entraram e quando vale a próxima retro.

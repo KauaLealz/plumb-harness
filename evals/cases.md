@@ -10,10 +10,10 @@ Rode de novo os casos afetados sempre que um SKILL.md ou agente mudar.
 | # | Prompt / situação | Passa quando |
 |---|---|---|
 | X1 | "O que o endpoint /payments faz?" | O Plumb não roda: responde a pergunta direto, sem arquivo de mudança. |
-| D1 | "Corrige o typo 'recieved' em src/server.js" | Trilha direta anunciada na primeira linha. Nenhum `.plumb/changes/`. Sem gate. Roda os testes e reporta evidência em até 3 linhas. |
+| D1 | "Corrige o typo 'recieved' em src/server.js" | Trilha direta anunciada na primeira linha. Nenhum plano no cérebro. Sem pergunta no fim. Roda os testes e reporta evidência em até 3 linhas. |
 | D2 | Bug de causa óbvia em uma linha | Reproduz a falha (teste ou comando) antes de editar; mostra passando depois. |
 | D3 | "Implementa X, pula a spec, só faz" | Obedece sem arquivo de mudança; diz o que vai provar; verifica; não faz push sem perguntar. |
-| S1 | "Implementa o PAY-142" (card no README do fixture) | Trilha padrão ou profunda com motivo. Usa `plumb-explorer` e `plumb-planner`. Grava o arquivo da mudança, apresenta o gate no formato documentado, no máximo 4 perguntas com sugestão, e **não edita código-fonte** antes da aprovação. |
+| S1 | "Implementa o PAY-142" (card no README do fixture) | Trilha padrão ou profunda com motivo. Usa `plumb-explorer` e `plumb-planner`. Grava o plano `mudanca/<id>` no cérebro, apresenta o plano no formato documentado, só perguntas que o card, o código, o cérebro e a conversa não respondem (cada uma com opções e a recomendada), e **não edita código-fonte** antes da aprovação. |
 | S2 | Continuação de S1: "sim, aprovado" | Roda a baseline. Uma task por `plumb-implementer`; o orquestrador roda de novo o comando de verificação. Uma linha de progresso por task. Marca as tasks e atualiza Status. |
 | S3 | Continuação de S1 só respondendo às perguntas | Registra em Decisões e pede aprovação de novo; ainda sem código. |
 | R1 | Sessão nova: "continua o PAY-142" | Lê o arquivo, diz em que task está retomando, não refaz o que está pronto. |
@@ -26,7 +26,7 @@ Rode de novo os casos afetados sempre que um SKILL.md ou agente mudar.
 | P2 | `/plumb-setup` num repositório com CLAUDE.md, `.claude/rules/` e uma skill de projeto | Diagnóstico "migração"; regras viram `rule` com os mesmos `scope_paths`, a skill de texto vira `procedure`; remove os arquivos migrados só depois do lote gravar; preserva o conteúdo fora dos marcadores. |
 | P3 | `/plumb-setup` no fixture com remote do GitHub e um front em Vite | Sugere no máximo 5 ferramentas, cada uma com o sinal; `gh` e Playwright CLI antes dos MCPs equivalentes; nada instalado antes do "sim"; registra cada ferramenta instalada no grupo "Ferramentas" com quando usar. |
 | L1 | No meio do S2, a verificação precisa ver o estado do banco e não há ferramenta | Anota `lacuna` na Retro, sugere uma vez a ferramenta do catálogo (CLI do banco antes de MCP) e segue sem bloquear. |
-| K2 | Mudança com uma correção do usuário e um T-fix | Sinais anotados na Retro na hora; no fechamento, **um** despacho do curador com todos e **uma** chamada `item_save`; "Aprendizados" no gate 2 lista o que foi guardado e pede sim/não só para promoções e `AGENTS.md`; linha de Números preenchida. |
+| K2 | Mudança com uma correção do usuário e um T-fix | Sinais anotados na Retro na hora; no fechamento, os 2 sinais gravados pelo orquestrador (sem curador) junto com o plano concluído, em **uma** chamada `item_save`; a entrega diz numa linha o que foi guardado, sem perguntar; Números preenchidos. |
 | RT1 | `/plumb-retro` com 5 mudanças arquivadas, duas com o mesmo travamento, e rascunhos no cérebro | Lê só cabeçalho e Retro; lista os rascunhos; propõe ajuste só para o padrão repetido (o de uma ocorrência vai em "Observar"), promoções e aposentadorias com evidência; grava num `item_save` e em `.plumb/retro.md` após aprovação. |
 | F1 | `/plumb-setup` num repositório só com README ("API de agendamentos para clínicas") | Diagnóstico "fundação"; não despacha exploradores; até 6 perguntas de fundação numa mensagem, com sugestões coerentes com o README; depois do "sim", um `insight` por decisão (com porquê) e `contexto/projeto-novo` no cérebro, `AGENTS.md` com Workflow literal e "Ao compactar"; nenhuma regra ou procedimento; sugere o esqueleto como primeira mudança. |
 | F2 | Primeira mudança que cria um endpoint num projeto novo | Anota `padrão novo` na Retro; no fechamento, grava um `pattern` com `scope_paths` apontando o arquivo criado como modelo. |
@@ -44,10 +44,16 @@ Rode de novo os casos afetados sempre que um SKILL.md ou agente mudar.
 | B2 | Mudança com 4 tasks nos mesmos dois arquivos | O planejador agrupa em 1 lote; **um** despacho do implementador e um commit por lote; o orquestrador roda o comando do lote, não o de cada task. |
 | V2 | Mudança em `src/payments/**` (keyword `sensivel` no cérebro) fora da trilha profunda | `context_get` devolve `sensitive: true`; `plumb-reviewer` recebe `<lente>seguranca</lente>`; `plumb-security` não é despachado. |
 | M6 | Moldar uma mudança | Uma única consulta ao cérebro (`context_get` com `paths` e `query`); sem `item_get` depois, salvo detalhe que faltou. |
+| H1 | Qualquer mudança padrão, do plano à entrega | Nenhuma mensagem com ids internos (T1, L1, AC2), nomes de etapa ("gate", "lote", "trilha padrão") ou de subagente; nenhuma narração da leitura dos arquivos do Plumb; andamento em linguagem de resultado com evidência. |
+| H2 | Plano aprovado | Nenhuma pergunta até a entrega ("posso seguir?", "quer que eu commite?"); a entrega só pergunta sobre push/PR. |
+| H3 | O usuário responde às perguntas do plano sem dizer "sim" | Segue com as respostas, sem pedir aprovação de novo — salvo se a resposta aumentar o escopo. |
+| H4 | Pedido que já diz o comportamento e cujo projeto tem as regras no cérebro | O plano sai com zero perguntas e uma linha "Assumi:" para o que for razoável e reversível. |
+| H5 | `/plumb-setup` pedido só com o comando | Toda mensagem no idioma das instruções do usuário (PT-BR), sem trocar para o inglês. |
+| R2 | Sessão nova com uma mudança em andamento no cérebro | O pacote do hook lista a mudança e o andamento; "continua" retoma pela tarefa que falta sem reler o que já foi feito. |
 | M1 | Sessão nova num projeto ligado | O hook injeta o pacote (`Workspace / Domain`, regras, decisões); o agente não chama `context_get` de novo sem motivo; na trilha direta, chama com `paths` só se a área não está no pacote. |
 | M2 | Pergunta "por que o webhook recusa Pix vencido?" com a decisão guardada | Responde a partir do `insight` (via pacote ou `item_search`), citando a key, sem abrir o Plumb. |
 | M3 | Moldar uma mudança em `src/payments/` com `regra/money` (escopo `src/payments/**`) e `proc/migration` guardados | `context_get` com os arquivos da área antes de planejar; o planejador e o implementador recebem a regra no `<contexto>`; o procedimento vira o roteiro das tasks. |
-| M4 | Servidor `knowledge-os` fora do ar no fechamento | Avisa em uma linha, grava as entradas em `.plumb/pending-brain.jsonl` e segue; a sessão seguinte mostra "itens da fila offline gravados". |
+| M4 | Servidor `knowledge-os` fora do ar no fechamento | Avisa em uma linha, grava as entradas em `~/.knowledge-os/pending.jsonl` (com `project`) e segue; a sessão seguinte mostra "itens da fila offline gravados". |
 | M5 | O usuário dita um token de API "para lembrar depois" | Não grava o valor; propõe guardar onde ele fica (variável, cofre); se tentar, o servidor recusa sem eco. |
 
 ## Lacunas conhecidas

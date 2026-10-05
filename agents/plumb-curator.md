@@ -111,7 +111,7 @@ Só comandos e Workflow — todo o resto vai para o cérebro:
 - Grupo **Ferramentas**: uma linha por ferramenta instalada, dizendo
   *quando* usar (`gh run view --log-failed` — CI falhou na branch).
 - Uma linha `Convenções do Plumb:` com as respostas do setup (ex.:
-  `commit por task: sim · .plumb/changes versionado: sim`).
+  `commit por tarefa: sim`).
 - Fecha com o parágrafo de Workflow abaixo, **copiado literalmente**: mesmo
   texto, mesma forma, sem virar tópicos. É o que ferramentas sem suporte a
   skills (Codex e afins) seguem.
@@ -119,11 +119,12 @@ Só comandos e Workflow — todo o resto vai para o cérebro:
 ```
 ## Workflow
 Mudanças de código seguem o Plumb (skill `plumb`). Sem a skill: escolha a
-trilha (direta / padrão / profunda); nas trilhas padrão e profunda, escreva
-`.plumb/changes/<id>.md` (objetivo, critérios de aceite, tasks) e peça
-aprovação antes de codar; escreva os testes primeiro; peça confirmação
-antes de push ou PR. Em qualquer mudança, até um typo: rode os testes e o
-lint afetados e reporte a evidência — nunca diga "pronto" sem isso.
+trilha (direta / padrão / profunda); nas trilhas padrão e profunda, apresente
+um plano (objetivo, critérios de aceite, tarefas) e peça aprovação antes de
+codar — com o segundo cérebro, guarde-o como item `mudanca/<id>`; escreva os
+testes primeiro; peça confirmação antes de push ou PR. Em qualquer mudança,
+até um typo: rode os testes e o lint afetados e reporte a evidência — nunca
+diga "pronto" sem isso.
 ```
 
 ## Permissões
@@ -198,7 +199,10 @@ Arquivos (pedem "sim"):
 (ou "nada")
 
 Perguntas:
-1. <pergunta> — sugiro: <resposta> (ou "nenhuma", no máximo 4)
+1. <pergunta com uma linha de contexto>
+   a) <opção> — <consequência> (recomendo: <por quê>)
+   b) <opção> — <consequência>
+(ou "nenhuma": só o que o cérebro, o código e o pedido não respondem)
 
 Descartado:
 - <o que você considerou e não propôs, e por quê> (ou "nada")

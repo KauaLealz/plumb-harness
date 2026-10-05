@@ -1,12 +1,21 @@
-# Modelo do arquivo da mudança
+# Modelo do plano da mudança
 
-Grave em `.plumb/changes/<id>.md`. Mantenha só as seções que a trilha usa —
-seção vazia é ruído, não rigor. Escreva no idioma do usuário (títulos
+O plano mora no segundo cérebro, como item `task`. Mantenha só as seções que a
+trilha usa — seção vazia é ruído, não rigor. No idioma do usuário (títulos
 inclusive).
 
+```json
+{"key": "mudanca/pay-142", "type": "task", "memory_class": "working",
+ "title": "PAY-142 — Pix no checkout",
+ "summary": "Aguardando aprovação",
+ "source": "PAY-142", "keywords": "pix qr code pagamento",
+ "scope_paths": ["src/server.js", "test/payments.test.js"],
+ "content": "<o markdown abaixo>"}
+```
+
 ```markdown
-# <id>: <título curto>
-Status: aguardando aprovação · Trilha: padrão · Branch: <branch ou ->
+# PAY-142: Pix no checkout
+Trilha: padrão · Branch: <branch ou ->
 
 ## Objetivo
 <1–3 frases: o problema e o resultado observável. Link do ticket, se houver.>
@@ -16,7 +25,6 @@ Status: aguardando aprovação · Trilha: padrão · Branch: <branch ou ->
 
 ## Critérios de aceite
 - AC1: Dado <estado>, quando <ação>, então <resultado observável>.
-- AC2: ...
 
 ## Design
 <!-- só na trilha profunda -->
@@ -24,43 +32,47 @@ Opções: A — <...> · B — <...> → escolhida: A, porque <...>
 Contratos / dados / migração: <o que muda, ou "n/a">
 Riscos e rollback: <...>
 
-## Tasks
-Lote L1 (arquivos: <caminhos>)
-- [ ] T1 <o quê> — prova: AC1 — verificar: `<comando>`
-- [ ] T2 <o quê> — prova: AC2 — verificar: `<comando>`
-Lote L2 (arquivos: <caminhos>)
-- [ ] T3 <o quê> — prova: AC3 — verificar: `<comando>`
+## Tarefas
+Lote L1 (arquivos: <caminhos>) — verificar: `<comando do lote>`
+- [ ] T1 <resultado em linguagem de comportamento> — prova: AC1
+- [ ] T2 <...> — prova: AC2
+
+## Assumi
+- <suposição razoável e reversível que o usuário pode corrigir>
 
 ## Decisões
 - <AAAA-MM-DD> <quem>: <decisão> — <porquê>
 
 ## Notas
-<bloqueios, registros da regra do travamento, problemas fora do escopo>
+<bloqueios, registros de travamento, problemas fora do escopo>
 
 ## Retro
 - <tipo>: <o que aconteceu> — <evidência>
-Números: <n> tasks · <n> lotes · <n> T-fix · <n> travamentos · <n> gates rejeitados · <n> despachos · <n> consultas ao cérebro
+Números: <n> tarefas · <n> lotes · <n> correções pós-revisão · <n> travamentos · <n> despachos · <n> consultas ao cérebro
 ```
 
 ## Regras dos campos
 
-- **Status** — `aguardando aprovação`, `construindo T<n>`, `verificando`,
-  `pronta para entregar` ou `concluída`. É a primeira coisa que uma sessão
-  retomada lê; atualize sempre que o trabalho andar.
-- **Critérios de aceite** — cada um provável por um teste ou comando.
-  "Trata erros adequadamente" não é provável; "Dado um Pix criado há 31
-  minutos, quando o webhook confirmar, então ele é recusado com motivo
-  `expired`" é.
-- **Tasks** — uma task = um critério provável, com comando.
-  **Lote** = tasks que tocam os mesmos arquivos: um despacho, um commit. Task que mistura dois
-  critérios ou mexe em arquivos sem relação está grande demais: divida.
-  `verificar` é o comando mais estreito que prova a task (em geral um
-  arquivo de teste), não a suíte inteira.
-- **Decisões** — só escolhas que alguém questionaria depois, já tomadas:
-  as respostas do usuário nos gates e o que ele aprovou. Uma sugestão sua
-  ainda em aberto fica nas Perguntas do gate, não aqui.
-- **Retro** — sinais de retroalimentação (tipos em `references/retro-signals.md` da skill `plumb`), uma
-  linha cada, anotados na hora. A linha de Números entra no fechamento. É o
-  que a `/plumb-retro` lê depois.
-- **Notas** — o handoff. Se o trabalho parar no meio, uma sessão nova
-  precisa continuar só com Status, tasks desmarcadas e Notas.
+- **`summary`** — o andamento, em linguagem de resultado: `Aguardando aprovação`,
+  `Construindo: 1 de 2 — falta recusar método inválido`, `Verificando`,
+  `Concluída: Pix devolve o QR code`. É o que aparece em "Mudanças em andamento" e
+  o que uma sessão retomada lê primeiro. Atualize a cada avanço — só ele, numa
+  chamada pequena (`{"key": "mudanca/pay-142", "summary": "..."}`).
+- **`content`** — reenvie só quando o plano muda (respostas que alteram algo,
+  escopo novo) e no fechamento, com as tarefas marcadas, a Retro e os Números.
+- **`status`** — `active` enquanto está em andamento; `done` ao entregar (sai do
+  pacote, continua na busca como histórico).
+- **Critérios de aceite** — cada um provável por um teste ou comando. "Trata erros
+  adequadamente" não é provável; "Dado um Pix criado há 31 minutos, quando o webhook
+  confirmar, então ele é recusado com motivo `expired`" é.
+- **Tarefas** — uma tarefa prova um critério. **Lote** = tarefas que tocam os mesmos
+  arquivos: um despacho, um commit. A descrição de cada tarefa é o texto que o
+  usuário vê na lista de tarefas: escreva como resultado, não como implementação.
+- **Decisões** — só escolhas que alguém questionaria depois, já tomadas: as
+  respostas do usuário e o que ele aprovou.
+- **Retro** — sinais de retroalimentação (tipos em `retro-signals.md`), uma linha
+  cada, anotados na hora. Os Números entram no fechamento; a `/plumb-retro` lê depois.
+- **Notas** — o handoff. Se o trabalho parar no meio, uma sessão nova precisa
+  continuar só com o `summary`, as tarefas desmarcadas e as Notas.
+- Sem cérebro (fora do ar): o plano fica no chat e na lista de tarefas, e o item vai
+  para a fila `~/.knowledge-os/pending.jsonl`.

@@ -1,6 +1,7 @@
 # Sinais de retroalimentação
 
-Anote cada sinal em uma linha na seção `## Retro` do arquivo da mudança, na hora:
+Anote cada sinal em uma linha na seção `## Retro` do plano (no `content` do item
+`mudanca/<id>`; junte as linhas e grave com a próxima atualização do plano), na hora:
 `- <tipo>: <o que aconteceu> — <evidência>`. Custa uma linha e alimenta o
 fechamento e a `/plumb-retro`.
 
@@ -28,8 +29,9 @@ Antes de arquivar, trate os sinais da Retro ainda não tratados:
   Nunca um despacho por sinal.
 - Antes de gravar, o item já existe e foi ignorado? O problema é de aderência
   (falta o porquê, um exemplo, `keywords` ou `scope_paths`), não de regra faltando.
-- Itens entram `working`, sem perguntar. No gate 2, o bloco "Aprendizados" diz o
-  que foi guardado, uma linha por item, e pede sim/não só para promoções a
-  `longterm`/`canonical` e edições no `AGENTS.md`.
+- Itens entram `working`, sem perguntar. Na entrega, uma linha "Guardei para as
+  próximas vezes: …" diz o que foi guardado, em linguagem humana. Promoção a
+  `longterm`/`canonical` fica para a `/plumb-retro` — não pergunte na entrega.
+  Edição no `AGENTS.md` (um comando que mudou): faça e diga na entrega.
 - Erro de gravação: corrija a entrada que o erro aponta e grave de novo.
 - Feche a Retro com `Números:` (formato no modelo da mudança).

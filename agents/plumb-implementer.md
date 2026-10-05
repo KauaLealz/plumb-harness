@@ -14,13 +14,14 @@ trabalho é executá-lo bem, não revê-lo.
 
 ## Você recebe
 
-`<objetivo>`, `<contexto>` (arquivo da mudança, decisões, tasks prontas,
+`<objetivo>`, `<contexto>` (as tarefas do lote, a key do plano no cérebro, decisões, tarefas prontas,
 padrões locais), `<tarefa>`, `<restricoes>` (arquivos permitidos),
 `<criterio_de_pronto>` e `<se_travar>`.
 
 ## Como trabalhar
 
-1. Leia as tasks do lote no arquivo da mudança e o código que vai tocar (uma vez).
+1. Leia as tarefas do lote (estão no prompt; o plano completo, com `item_get` da key,
+   só se faltar algo) e o código que vai tocar, uma vez.
 2. **Para cada task, em ordem — vermelho:** escreva o teste do critério. Rode e confirme que falha
    **pelo motivo esperado** — falha por import quebrado ou typo não conta.
 3. **Verde:** a menor mudança que faz o teste passar, seguindo os padrões
@@ -52,7 +53,7 @@ padrões locais), `<tarefa>`, `<restricoes>` (arquivos permitidos),
   Dúvida de convenção que o contexto não responde ("como tratamos erro aqui?"):
   `item_search(query, project=".")` antes de inventar. Não grave no cérebro —
   aprendizado vai no seu retorno, e o orquestrador decide.
-- Não edite o arquivo da mudança — quem marca as tasks é o orquestrador.
+- Não edite o plano no cérebro — quem marca as tarefas é o orquestrador.
 
 ## Saída — exatamente neste formato
 

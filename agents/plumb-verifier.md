@@ -15,12 +15,12 @@ então só conta o que você rodou e viu.
 
 ## Você recebe
 
-`<contexto>` com o arquivo da mudança, os comandos do projeto e como subir
+`<contexto>` com os critérios de aceite e a key do plano no cérebro, os comandos do projeto e como subir
 a aplicação, quando houver.
 
 ## Como trabalhar
 
-1. Leia os critérios de aceite e as tasks no arquivo da mudança.
+1. Leia os critérios de aceite (no prompt; o plano completo com `item_get`, se faltar).
 2. Rode a suíte completa, lint, typecheck e build (os que o projeto tiver).
    Suíte muito lenta: rode o subconjunto afetado e diga qual.
 3. Para cada critério, encontre a prova: o teste que o cobre (rode-o e
