@@ -75,19 +75,46 @@ precisa sobreviver à sessão.
 - **Arquivos guardam fatos e decisões**, nunca narrativa: sem preâmbulos,
   sem repetir o pedido, sem seções vazias.
 
+## Segundo cérebro
+
+O conhecimento durável do projeto — convenções, regras com escopo,
+decisões e o porquê, procedimentos, padrões, gotchas — mora no segundo
+cérebro (MCP `knowledge-os`), não em arquivos. No repositório ficam só os
+comandos e o Workflow no `AGENTS.md`, as mudanças em `.plumb/changes/` e as
+permissões. Assim o que se aprende num projeto vale em todas as sessões e
+ferramentas, e o contexto fixo fica pequeno.
+
+- **Ler.** O hook de início de sessão injeta o pacote do projeto (seção
+  com `Workspace / Domain`). Não veio: `context_get(project=".")` uma vez.
+  Antes de mexer em arquivos, `context_get(project=".", paths=[...])` traz
+  as regras com escopo daquela área — é o que substitui as regras que antes
+  carregavam sozinhas. Dúvida pontual ("por que isto é assim?", "como
+  fazemos X aqui?"): `item_search` antes de supor ou perguntar.
+- **Gravar** só pelo curador (ver Retroalimentação): o que for `working`
+  você grava na hora, sem perguntar; subir para `longterm`/`canonical` pede
+  o "sim" do usuário.
+- **Projeto não ligado** (o pacote diz isso): sugira `/plumb-setup` uma vez
+  e siga.
+- **Cérebro fora do ar** (ferramenta ausente ou erro): avise em uma linha e
+  siga. O que você gravaria vai, uma entrada de `item_save` por linha, para
+  `.plumb/pending-brain.jsonl`; a próxima sessão grava sozinha.
+- Nunca ponha segredo nem dado pessoal num item — o cérebro é lido por
+  todo agente, em todo projeto do workspace.
+
 ## 0 — Localizar
 
 1. Procure em `.plumb/changes/*.md` (ignore `archive/`) uma mudança com o id
    ou o tema do pedido. Achou: leia, diga onde está retomando
    (`Retomando PAY-142 na T3 — T1 e T2 prontas.`) e siga a partir do Status.
    Não refaça o que está feito.
-2. Use os fatos do projeto no `AGENTS.md` / `CLAUDE.md` (comandos,
-   convenções, áreas sensíveis). Se o repositório não tem `AGENTS.md`,
-   `CLAUDE.md` nem `.claude/`, sugira uma vez que o usuário rode
-   `/plumb-setup` — ele estrutura regras, skills e permissões do projeto. É
-   um comando do usuário: não aparece na sua lista de skills, e isso não
-   quer dizer que falta. Se o usuário não quiser, siga
-   descobrindo os comandos por scripts, Makefile e CI.
+2. Use os comandos do `AGENTS.md` e o pacote do segundo cérebro
+   (convenções, áreas sensíveis, decisões). Se o repositório não tem o
+   bloco Plumb no `AGENTS.md`, ou o pacote diz que o projeto não está
+   ligado, sugira uma vez que o usuário rode `/plumb-setup` — ele liga o
+   projeto ao cérebro e estrutura comandos e permissões. É um comando do
+   usuário: não aparece na sua lista de skills, e isso não quer dizer que
+   falta. Se o usuário não quiser, siga descobrindo os comandos por
+   scripts, Makefile e CI.
 3. Se o usuário só perguntou o que está em andamento, liste as mudanças
    ativas com Status e próxima task, e pare.
 
@@ -127,8 +154,13 @@ leituras) — "causa óbvia" só se sabe olhando.
    skill `plumb-find-docs` em vez de confiar na memória — APIs mudam mais rápido
    que o treino do modelo. Nunca ponha segredo, dado pessoal ou código
    proprietário na consulta: ela vai para a API da Context7.
+   **Consulte o cérebro** sobre a área, numa rodada: `context_get` com os
+   arquivos que a mudança deve tocar (regras com escopo) e `item_search`
+   com o tema (decisões e procedimentos parecidos). Procedimento que casa
+   com a mudança (`criar migration`, `endpoint novo`) vira o roteiro das
+   tasks; decisão anterior que a mudança contraria vira pergunta do gate.
 2. **Planejar.** Despache `plumb-planner` com o pedido, os achados da
-   exploração, os fatos do projeto relevantes, a trilha e — se a mudança
+   exploração, o que o cérebro trouxe, a trilha e — se a mudança
    toca API, banco, serviço externo, auth, pagamento, dados pessoais ou
    fluxo crítico — o caminho absoluto de `references/testing.md`. Ele
    devolve o conteúdo do arquivo da mudança e até 4 perguntas.
@@ -151,7 +183,7 @@ leituras) — "causa óbvia" só se sabe olhando.
 ajuste e peça a aprovação de novo, em uma linha.
 
 **Depois da aprovação:**
-- Commits ligados (fatos do projeto ou pedido do usuário): crie a branch
+- Commits ligados (convenção do projeto no cérebro ou pedido do usuário): crie a branch
   pela convenção do projeto a partir da branch atual — nunca commite na
   branch padrão — e registre no cabeçalho. A base do diff é a branch de
   origem.
@@ -168,7 +200,8 @@ anote em Notas e avise, para não serem confundidas com regressão.
 
 Para cada task, em ordem:
 
-1. Despache `plumb-implementer` com o prompt completo da task (contrato).
+1. Despache `plumb-implementer` com o prompt completo da task (contrato),
+   incluindo as regras do cérebro que valem para os arquivos dela.
 2. Quando voltar, **rode você mesmo o comando de verificação da task** —
    confie na evidência, não no relato.
 3. Marque a task, atualize Status e a lista nativa, commite se os commits
@@ -194,7 +227,9 @@ Para cada task, em ordem:
   6. Remova as worktrees e branches integradas (`git worktree remove`,
      `git branch -d`).
 - **Regra do travamento:** se o implementador voltar `travado`, ou a mesma
-  verificação falhar do mesmo jeito duas vezes, pare. Registre em Notas o
+  verificação falhar do mesmo jeito duas vezes, pare. Antes de levar ao
+  usuário, um `item_search` com a mensagem de erro ou o sintoma — um gotcha
+  guardado resolve mais barato que qualquer hipótese. Registre em Notas o
   que falhou, o que foi tentado e as hipóteses; leve ao usuário opções
   concretas (outra abordagem, mais informação, sessão nova). Repetir
   variações pequenas queima contexto e quase sempre indica uma suposição
@@ -207,9 +242,10 @@ Para cada task, em ordem:
   deixe marcações, Status e Notas em dia e sugira uma sessão nova — ela
   retoma pelo passo 0.
 
-**Trilha direta:** você mesmo implementa (vermelho → verde se for bug),
-roda testes e lint dos arquivos tocados e reporta em 2–3 linhas com a
-evidência. Fim.
+**Trilha direta:** se o pacote do início não cobre a área, um
+`context_get` com os arquivos que vai tocar; depois você mesmo implementa
+(vermelho → verde se for bug), roda testes e lint dos arquivos tocados e
+reporta em 2–3 linhas com a evidência. Fim.
 
 ## 4 — Verificar
 
@@ -244,8 +280,8 @@ deixe as mudanças sem commit.
 
 ## Retroalimentação
 
-O harness melhora com a evidência do próprio trabalho — sem banco de
-memória nem ritual extra. Três mecanismos, do mais barato ao mais caro.
+O harness melhora com a evidência do próprio trabalho, e o que se aprende
+vai para o segundo cérebro. Três mecanismos, do mais barato ao mais caro.
 
 **1. Sinais, na hora em que acontecem.** Anote cada um em uma linha na
 seção `## Retro` do arquivo da mudança: `- <tipo>: <o que aconteceu> — <evidência>`.
@@ -253,39 +289,51 @@ Custa uma linha e é o que alimenta os outros dois mecanismos.
 
 | Tipo | Quando | O que fazer |
 |---|---|---|
-| `regra` | O usuário enuncia uma diretriz ("sempre…", "nunca…", "aqui a gente…", "a partir de agora…") | **Na hora:** despache `plumb-curator` e confirme em uma linha |
+| `regra` | O usuário enuncia uma diretriz ("sempre…", "nunca…", "aqui a gente…", "a partir de agora…") | **Na hora:** despache `plumb-curator`, grave o que ele devolver e confirme em uma linha |
+| `decisão` | O usuário decide algo com um porquê que vale além desta mudança | Anotar |
 | `correção` | O usuário corrige algo que você fez | Anotar |
 | `rejeição` | Um gate é rejeitado por um motivo que vale além desta mudança | Anotar |
 | `travamento` | A regra do travamento disparou | Anotar |
 | `retrabalho` | Um T-fix nasceu de algo que um critério ou checklist teria pego | Anotar |
 | `procedimento` | Você executou passos que vão se repetir (migration, endpoint novo, release) | Anotar |
 | `padrão novo` | Esta mudança fez algo pela primeira vez no projeto (primeiro endpoint, migration, componente, job, tratamento de erro) | Anotar, com o arquivo que virou modelo |
-| `fato velho` | Um comando ou caminho dos fatos do projeto não existe mais | Anotar |
+| `fato velho` | Um comando do `AGENTS.md` ou um item do cérebro não vale mais | Anotar |
 | `lacuna` | Faltou uma capacidade (estado do banco, verificar UI, ler o ticket, um procedimento especializado) | Procure no catálogo (`../plumb-setup/references/catalog.md`); se não houver, use a skill `plumb-find-skills`. Sugira **uma vez** — skill de terceiro só entra depois da revisão de segurança que ela descreve e do "sim" do usuário |
 
 Fora da trilha padrão ou profunda não há arquivo da mudança: sinais de
 `regra` ainda vão para o curador na hora; os demais, descarte.
 
 **2. No fechamento da mudança.** Antes de arquivar, se a Retro tem sinais
-ainda não tratados, despache `plumb-curator` **uma vez** com todos eles —
-nunca um despacho por sinal. Antes, faça um Grep do assunto em
-`AGENTS.md`, `.claude/rules/` e `.claude/skills/`: se a regra já existe e
-foi ignorada, diga isso ao curador — o problema é de aderência (falta o
-porquê, um exemplo, ou o escopo está errado), não de regra faltando.
-Mostre as propostas no gate 2 como um bloco "Aprendizados", com sim/não
-por item. Sem sinais, pule — custo zero. Feche a Retro com uma linha de
-números: `Números: <n> tasks · <n> T-fix · <n> travamentos · <n> gates rejeitados`.
+ainda não tratados, despache `plumb-curator` **uma vez** com todos eles,
+as Decisões da mudança e o pacote do cérebro que você já tem — nunca um
+despacho por sinal. O curador procura duplicata no cérebro; se a regra já
+existia e foi ignorada, o problema é de aderência (falta o porquê, um
+exemplo, `keywords` ou `scope_paths`), não de regra faltando. Ele devolve
+um lote pronto para `item_save`:
+1. Grave o lote numa chamada (`item_save(project=".", items=[...])`) — os
+   itens entram como `working` (rascunho), sem perguntar.
+2. No gate 2, o bloco "Aprendizados" diz o que foi guardado, uma linha por
+   item, e traz com sim/não por item só o que pede o usuário: promoções a
+   `longterm`/`canonical` e edições no `AGENTS.md`.
+3. Erro de gravação: corrija a entrada que o erro aponta e grave de novo;
+   cérebro fora do ar: fila offline (ver Segundo cérebro).
+
+Sem sinais, pule — custo zero. Feche a Retro com uma linha de números:
+`Números: <n> tasks · <n> T-fix · <n> travamentos · <n> gates rejeitados`.
 
 **3. Retro periódica.** Ao arquivar, conte as mudanças arquivadas depois
 da última entrada de `.plumb/retro.md`. Cinco ou mais: sugira que o usuário
-rode `/plumb-retro` (comando dele, como o `/plumb-setup`), em uma linha. Se os fatos têm `Projeto novo: sim` e já há cinco ou mais
+rode `/plumb-retro` (comando dele, como o `/plumb-setup`), em uma linha. Se o pacote do cérebro tem `contexto/projeto-novo` e já há cinco ou mais
 mudanças arquivadas, sugira também `/plumb-setup` (vira auditoria e
 consolida o que o código já mostra). Não rode nenhum dos dois sem o
 usuário pedir.
 
-Toda proposta do curador vai ao usuário assim:
-`Guardar "valores monetários sempre em Money" em .claude/rules/pagamentos.md (vale para src/payments/**)? (sim/não)` —
-e só é gravada com o "sim".
+No chat, o que foi guardado aparece assim:
+`Guardado no cérebro (rascunho): regra/money — "valores sempre em Money", vale em src/payments/**`
+e o que pede o usuário, assim:
+`Tornar oficial (canonical) "valores sempre em Money"? (sim/não)` — e só
+muda com o "sim". Rascunho errado: o usuário diz e você marca
+`status: deprecated`.
 
 ## Formato do gate
 

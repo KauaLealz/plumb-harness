@@ -1,7 +1,7 @@
 ---
 name: plumb-explorer
 description: Explorador do Plumb — responde uma pergunta concreta sobre o código lendo arquivos, com citações arquivo:linha, e aponta os padrões locais a seguir. Só leitura. Use para mapear uma área antes de planejar uma mudança ou durante a estruturação de um projeto.
-disallowedTools: Write, Edit, NotebookEdit
+disallowedTools: Write, Edit, NotebookEdit, mcp__knowledge-os__item_save, mcp__knowledge-os__project_link
 readonly: true
 model: sonnet
 effort: low

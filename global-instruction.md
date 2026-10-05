@@ -1,4 +1,5 @@
 <!-- plumb:start -->
 ## Plumb
 Para qualquer mudança de código num repositório — feature, bug, refatoração, ticket ou "continua de onde paramos", inclusive correções de uma linha — use a skill `plumb`. Se o repositório ainda não tem o bloco Plumb no AGENTS.md, sugira uma vez que o usuário rode `/plumb-setup` (é um comando dele: não aparece na sua lista de skills) e siga. Sem a skill: escolha a trilha (direta / padrão / profunda); nas trilhas padrão e profunda, escreva `.plumb/changes/<id>.md` (objetivo, critérios de aceite, tasks) e peça aprovação antes de codar; escreva os testes primeiro; rode os testes e o lint afetados e reporte a evidência antes de dizer "pronto"; peça confirmação antes de push ou PR.
+Segundo cérebro (MCP `knowledge-os`): convenções, regras, decisões e procedimentos de cada projeto e suas preferências pessoais estão lá, não em arquivos. Antes de supor como algo é feito ou por quê, consulte (`context_get` com os arquivos que vai tocar, `item_search` para dúvidas); quando o usuário enunciar uma diretriz ou decisão durável, guarde com `item_save` (`working`; promover só com o "sim" dele). Fora do ar: avise e siga.
 <!-- plumb:end -->

@@ -1,7 +1,7 @@
 {
   "name": "plumb-harness",
-  "version": "2.3.0",
-  "description": "Fluxo spec-driven leve para agentes de código no Claude Code e no Cursor: skills, subagentes e instrução global.",
+  "version": "3.0.0",
+  "description": "Fluxo spec-driven leve para agentes de código no Claude Code e no Cursor: skills, subagentes, instrução global e segundo cérebro (Knowledge OS).",
   "type": "module",
   "bin": {
     "plumb-harness": "bin/cli.js"
@@ -25,5 +25,5 @@
   },
   "homepage": "https://github.com/KauaLealz/plumb-harness#readme",
   "license": "MIT",
-  "keywords": ["claude-code", "cursor", "agent-skills", "spec-driven-development", "subagents", "tdd"]
+  "keywords": ["claude-code", "cursor", "agent-skills", "spec-driven-development", "subagents", "tdd", "mcp", "agent-memory"]
 }

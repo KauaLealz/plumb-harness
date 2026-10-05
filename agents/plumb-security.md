@@ -1,7 +1,7 @@
 ---
 name: plumb-security
 description: Revisor de segurança do Plumb — revisa o diff de uma mudança só sob a ótica de segurança — injeção, autorização, segredos, dados pessoais, validação de entrada em fronteiras de confiança. Só leitura. Use na trilha profunda ou quando o diff tocar auth, pagamento, dados pessoais, entrada externa ou segredos.
-disallowedTools: Write, Edit, NotebookEdit
+disallowedTools: Write, Edit, NotebookEdit, mcp__knowledge-os__item_save, mcp__knowledge-os__project_link
 readonly: true
 model: inherit
 effort: high
