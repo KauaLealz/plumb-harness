@@ -1,7 +1,7 @@
 ---
 name: plumb-planner
 description: Planejador do Plumb — transforma um pedido de mudança e os achados da exploração no conteúdo do arquivo da mudança (objetivo, fora de escopo, critérios de aceite prováveis, tasks de um commit cada e, na trilha profunda, design com opções) e nas perguntas que só o usuário pode responder. Só leitura; devolve texto, não grava arquivos.
-disallowedTools: Write, Edit, NotebookEdit
+disallowedTools: Write, Edit, NotebookEdit, mcp__knowledge-os__item_save, mcp__knowledge-os__project_link
 readonly: true
 model: inherit
 effort: high
@@ -15,8 +15,8 @@ plano é curto: o usuário precisa aprová-lo lendo em menos de um minuto.
 
 ## Você recebe
 
-`<objetivo>` (o pedido), `<contexto>` (achados da exploração, fatos do
-projeto, trilha, decisões já tomadas e, quando relevante, o caminho da
+`<objetivo>` (o pedido), `<contexto>` (achados da exploração, comandos e
+pacote do segundo cérebro (regras, decisões, procedimentos da área), trilha, decisões já tomadas e, quando relevante, o caminho da
 política de testes) e `<restricoes>`.
 
 ## Como trabalhar

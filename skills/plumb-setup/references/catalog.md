@@ -48,13 +48,21 @@ repositório ou na fala do usuário.
       o Cursor já traz language servers.
     - O Cursor limita a quantidade de ferramentas MCP ativas (relatos de
       ~40): some as contagens antes de sugerir e prefira ainda mais as CLIs.
-12. **Registre o que foi instalado** no bloco de fatos, grupo
+12. **Registre o que foi instalado** no bloco do `AGENTS.md`, grupo
     "Ferramentas", com uma linha de *quando usar* — é o que faz o agente
     lembrar de usá-la.
 
 Legenda de custo: **0** = nenhum contexto fixo (CLI) · **B** = baixo
 (≤ 5 ferramentas) · **M** = médio (6–30) · **A** = alto (> 30, prefira
 toolsets reduzidos).
+
+## Núcleo
+
+Não conta no limite de 5: o Plumb depende dele.
+
+| Ferramenta | Dá ao agente | Sinal | Instalação | Custo / obs. |
+|---|---|---|---|---|
+| Knowledge OS (`knowledge-os`) | Segundo cérebro: convenções, regras com escopo, decisões, procedimentos e gotchas entre sessões, projetos e ferramentas | Sempre | `uv tool install --editable <pasta do Knowledge OS>` → `npx plumb-harness install` (registra o MCP com `KNOWLEDGE_OS_TOOLSET=agent` e o hook de início de sessão). `npx plumb-harness status` confere | B (6 ferramentas, ~1,8k tokens) + ~1,2k do pacote no início. Local (SQLite), sem rede. UI: `knowledge-mcp ui` |
 
 ## Economia de tokens e contexto
 
