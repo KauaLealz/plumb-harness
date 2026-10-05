@@ -37,11 +37,8 @@ Lote L1 (arquivos: <caminhos>) — verificar: `<comando do lote>`
 - [ ] T1 <resultado em linguagem de comportamento> — prova: AC1
 - [ ] T2 <...> — prova: AC2
 
-## Assumi
-- <suposição razoável e reversível que o usuário pode corrigir>
-
 ## Decisões
-- <AAAA-MM-DD> <quem>: <decisão> — <porquê>
+- <decisão> — <fonte: pedido, conversa, cérebro, AGENTS.md, código, ou ajuste do usuário em AAAA-MM-DD>
 
 ## Notas
 <bloqueios, registros de travamento, problemas fora do escopo>
@@ -68,8 +65,8 @@ Números: <n> tarefas · <n> lotes · <n> correções pós-revisão · <n> trava
 - **Tarefas** — uma tarefa prova um critério. **Lote** = tarefas que tocam os mesmos
   arquivos: um despacho, um commit. A descrição de cada tarefa é o texto que o
   usuário vê na lista de tarefas: escreva como resultado, não como implementação.
-- **Decisões** — só escolhas que alguém questionaria depois, já tomadas: as
-  respostas do usuário e o que ele aprovou.
+- **Decisões** — o "Decidi" do plano, cada uma com a fonte, mais os ajustes que o
+  usuário fez na revisão. Só escolhas que alguém questionaria depois.
 - **Retro** — sinais de retroalimentação (tipos em `retro-signals.md`), uma linha
   cada, anotados na hora. Os Números entram no fechamento; a `/plumb-retro` lê depois.
 - **Notas** — o handoff. Se o trabalho parar no meio, uma sessão nova precisa

@@ -181,10 +181,10 @@ Não conta no limite de 5: o Plumb depende dele.
 | Mocks de serviços externos | Simular a falha mais cara de uma integração | Chamadas HTTP a terceiros sem stub nos testes | WireMock (`docker run -p 8080:8080 wiremock/wiremock`) · Testcontainers (biblioteca) | 0 |
 | Carga | Medir latência e throughput | Requisito de performance no card | `k6 run script.js` | 0 |
 
-## Perguntas de entrevista (no máximo 2, só se a descoberta não respondeu)
+## Sinais de onde o time trabalha (decida, não pergunte)
 
-1. Onde ficam os cards e a documentação do time? — sugira o que os sinais
-   indicam (ex.: "Jira e Confluence — vi `PAY-123` nos commits").
-2. Que ferramentas o time já usa no dia a dia que o agente deveria
-   enxergar (erros, design, banco, deploy)? — sugira a partir das
-   dependências e da CI.
+1. Cards e documentação: remote GitHub e nenhum outro sinal → GitHub Issues;
+   ids `ABC-123` com link `atlassian.net` em commits ou README → Jira/Confluence;
+   `linear.app` → Linear. Liste a decisão em "Decidi:".
+2. Ferramentas do dia a dia (erros, design, banco, deploy): só as que aparecem nas
+   dependências, na CI ou nas configs do repositório.

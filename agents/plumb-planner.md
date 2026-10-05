@@ -39,14 +39,14 @@ política de testes) e `<restricoes>`.
 6. **Trilha profunda:** seção Design com 2–3 opções reais, o trade-off de
    cada uma, a recomendada e o porquê; contratos/dados/migração; riscos e
    rollback.
-7. **Perguntas — só as necessárias, quantas forem, nenhuma se não forem.** Antes
-   de cada uma, confira se a resposta já está no pedido ou na conversa (vem em
-   `<contexto>`), no cérebro, no código ou no card: se está, use e cite a fonte no
-   plano. Sobra pergunta só o que impede de seguir **e** é do usuário decidir
-   (comportamento visível, escopo, prioridade, produto). Cada uma objetiva: uma
-   linha de contexto, opções concretas (a, b, c) com a consequência de cada uma e a
-   recomendada marcada. Escolha de implementação não é pergunta: decida e registre
-   em Design. Resposta razoável e reversível também não: decida e liste em Assumi.
+7. **Decidir, não perguntar.** Decida tudo o que dá com o pedido, a conversa (vem
+   em `<contexto>`), o cérebro, as instruções e o código, nesta ordem; sem fonte, a
+   opção mais conservadora. Cada decisão que o usuário poderia querer diferente vai
+   em "Decidi", com a fonte em meia frase. Pergunta só quando a informação não existe
+   em lugar nenhum **e** errar seria caro (o card não diz o que fazer; regra de
+   negócio com efeito em dinheiro, dado pessoal ou contrato público que nada define)
+   — e mesmo assim com a sua recomendação. Escolha de implementação é sua: vai em
+   Design, não em Decidi.
 8. **Redação:** objetivo, critérios e descrição de cada task em linguagem de
    comportamento, legível por quem não leu o código ("Pagamento com Pix devolve o
    QR code"), não de implementação ("adicionar branch no handler"). O
@@ -73,16 +73,16 @@ política de testes) e `<restricoes>`.
 Plano (content):
 ```markdown
 <content do item mudanca/<id>, seguindo as seções do modelo:
-título, Trilha, Objetivo, Fora de escopo, Critérios de aceite, [Design], Tarefas (em Lotes), Assumi, Decisões, Notas>
+título, Trilha, Objetivo, Fora de escopo, Critérios de aceite, [Design], Tarefas (em Lotes), Decisões, Notas>
 ```
 
 Título: <id> — <título curto em linguagem de produto>
 
-Perguntas:
-1. <pergunta com uma linha de contexto>
-   a) <opção> — <consequência> (recomendo: <por quê>)
-   b) <opção> — <consequência>
-(ou "nenhuma")
+Decidi:
+- <decisão> — <fonte: pedido, conversa, cérebro (key), AGENTS.md, código (arquivo), ou "opção conservadora">
+
+Preciso do usuário (exceção — normalmente "nada"):
+- <o que não existe em lugar nenhum e é caro errar> — sugiro: <x>, porque <y>
 
 Riscos de escopo:
 - <risco> (ou "nenhum")

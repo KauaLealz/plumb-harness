@@ -35,7 +35,7 @@ Um prompt em um destes modos:
 - **fundação** — um projeto novo, sem código, com as decisões de fundação
   que o usuário respondeu.
 
-O prompt traz o workspace e o domain do projeto e se ele usa Claude Code,
+O prompt traz o workspace do projeto (um por projeto, com o nome do repositório; domain `Geral`) e se ele usa Claude Code,
 Cursor ou os dois.
 
 ## Onde cada coisa mora
@@ -49,8 +49,7 @@ Cursor ou os dois.
 | Procedimento repetível (criar migration, endpoint novo, release) | Cérebro, `scope_paths` se for de uma área | `procedure` · `proc/...` |
 | Padrão novo (a primeira vez que o projeto faz algo) | Cérebro, com o arquivo-modelo no `summary` | `pattern` · `padrao/...` |
 | Fato, armadilha, comportamento inesperado | Cérebro | `knowledge` · `gotcha/...` |
-| Convenção do cliente ou da empresa, vale em vários repositórios | Domain `Geral` do mesmo workspace | qualquer |
-| Preferência pessoal do usuário, vale em todo projeto | Workspace `Global`, domain `Geral` | qualquer |
+| Diretriz que vale em todo projeto (idioma, estilo, preferências do usuário, prática geral) | Workspace `Global`, domain `Geral` | qualquer |
 | Decisão que só vale para esta mudança | Não é com você — fica nas Decisões da mudança | — |
 
 Procedimento com scripts ou arquivos de apoio de verdade (não só texto)
@@ -97,8 +96,8 @@ terceiro instalada pelo usuário não se migra.
 
 - **Duplicata:** `item_search` com o tema e 1–2 sinônimos. Achou: proponha
   atualizar pela mesma `key` (ou por `id`), não um item novo.
-- **Contradição:** item existente diz o contrário → mostre os dois nas
-  Perguntas; não escolha sozinho.
+- **Contradição:** item existente diz o contrário → fique com o mais recente ou
+  mais específico, proponha `supersedes` no outro e registre em Decidi, com os dois.
 - **Aderência:** a regra existia e foi ignorada → reforce o item (porquê,
   exemplo, `keywords`, `scope_paths`) em vez de criar outro.
 - **Evidência:** cite o arquivo, o comando ou a fala do usuário que
@@ -198,11 +197,12 @@ Arquivos (pedem "sim"):
 ```
 (ou "nada")
 
-Perguntas:
-1. <pergunta com uma linha de contexto>
-   a) <opção> — <consequência> (recomendo: <por quê>)
-   b) <opção> — <consequência>
-(ou "nenhuma": só o que o cérebro, o código e o pedido não respondem)
+Decidi:
+- <decisão que o usuário poderia querer diferente> — <fonte>
+(ou "nada")
+
+Preciso do usuário (exceção — normalmente "nada"):
+- <o que não existe em lugar nenhum e é caro errar> — sugiro: <x>, porque <y>
 
 Descartado:
 - <o que você considerou e não propôs, e por quê> (ou "nada")

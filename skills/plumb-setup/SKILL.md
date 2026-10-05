@@ -6,6 +6,9 @@ disable-model-invocation: true
 
 # Plumb setup
 
+**Desde a primeira mensagem, no idioma do usuário** (o da conversa ou das
+instruções globais; com o pedido só no comando, nunca troque para o inglês).
+
 Deixe o repositório pronto para que toda sessão futura comece sabendo o
 que não dá para redescobrir barato — e nada além disso. O conhecimento vai
 para o segundo cérebro (MCP `knowledge-os`); no repositório ficam só os
@@ -15,12 +18,20 @@ conduz; a exploração vai para `plumb-explorer`, a redação para
 Monte os prompts de delegação pelo contrato em
 `../plumb/references/prompt-contract.md`.
 
-Fale como na seção Comunicação de `../plumb/SKILL.md`: no idioma do usuário em
-toda mensagem (pedido só com o comando: o idioma da conversa ou das instruções
-globais — nunca o inglês no meio), uma linha por etapa sobre **o que você
-descobriu ou fez no repositório**, sem nomes de seção desta skill, de modo
-("estruturação", "migração") nem de subagente, e sem narrar a leitura dos
-arquivos do Plumb. Ex.: `Este repositório já tem regras em .claude/rules e no CLAUDE.md — vou levá-las para o segundo cérebro e deixar os arquivos enxutos.`
+**Como falar.** Do início à proposta, **no máximo três mensagens curtas**, e
+cada uma diz **o que você descobriu no repositório** — nunca o que vai fazer a
+seguir dentro deste fluxo (ler um arquivo, despachar alguém, revisar um retorno):
+`Este repositório já tem regras em .claude/rules e no CLAUDE.md — vou levá-las para o segundo cérebro e deixar os arquivos enxutos.`
+Nunca no chat: o nome dos modos ("estruturação", "migração", "auditoria",
+"fundação"), dos subagentes ("curador", "explorador") e das seções desta skill;
+"vou despachar…", "o curador retornou", "leio o contrato", "revisei: cada item
+tem evidência…" — essas etapas são silenciosas. Para o usuário: `Montei a proposta.`
+
+**Decidir, não perguntar.** Decida o que o repositório, o cérebro, as
+instruções e a conversa sustentam e mostre em "Decidi:", com a fonte — o usuário
+revisa a proposta inteira de uma vez. Pergunta só na exceção da seção "Decidir,
+não perguntar" de `../plumb/SKILL.md` (não existe em lugar nenhum e é caro errar),
+com a sua recomendação. Não invente dúvida que nada no repositório levantou.
 
 ## 1 — Diagnóstico (só leitura)
 
@@ -44,10 +55,11 @@ comando `knowledge-mcp`; o `npx plumb-harness status` diz o que falta) e pergunt
 segue assim mesmo: os itens vão para `~/.knowledge-os/pending.jsonl` e entram
 no cérebro na primeira sessão com ele no ar.
 
-**Ligação.** Projeto não ligado: inclua a pergunta
-`Guardar o conhecimento em <Workspace> / <Domain>? Sugiro <dono do remote ou cliente> / <nome do repositório>.`
-— projetos do mesmo cliente ou empresa no mesmo workspace compartilham o
-domain `Geral` (convenções comuns).
+**Ligação.** Projeto não ligado: ele ganha um workspace próprio, com o nome do
+repositório (`project_link(project=".")`), e diga em "Decidi:". O que vale para
+todos os projetos do usuário (idioma, estilo, práticas gerais que aparecerem nas
+regras antigas ou nas instruções globais) vai para o workspace `Global`, domain
+`Geral` — não para o projeto.
 
 Identifique também a(s) ferramenta(s) do time: a ferramenta em que você
 está rodando, mais os sinais do repositório (`.claude/` → Claude Code,
@@ -59,14 +71,11 @@ Diga em uma linha, em linguagem de resultado, o que encontrou e o que vai fazer.
 
 ## 1b — Fundação (projeto novo)
 
-Não há o que descobrir, então as decisões vêm do usuário. Pule a
-exploração e pergunte, numa mensagem só, as decisões de fundação que o
-usuário ainda **não** disse (na conversa, no README, no cérebro do
-workspace) — com as regras de Perguntas de `../plumb/SKILL.md`: opções
-concretas com a consequência de cada uma e a recomendada, coerente com o
-que o projeto vai ser. Se ele ainda não disse o que o projeto é, essa é a
-primeira pergunta. Os temas:
-
+Não há código para ler, então **proponha** as decisões de fundação a partir do
+que o usuário disse que o projeto vai ser (no pedido, na conversa, no README) e
+das preferências dele no workspace `Global` — cada uma com o porquê — e ele
+revisa a lista inteira na proposta. Só se ele ainda não disse o que o projeto é,
+essa é a única pergunta antes de propor. Os temas:
 1. Linguagem, runtime e framework.
 2. Estrutura de pastas (por camada ou por feature).
 3. Testes: runner e níveis (unitário, integração, E2E).
@@ -119,8 +128,9 @@ Sinal forte sem entrada no catálogo (uma tecnologia que o projeto usa e
 nenhuma linha cobre): procure com a skill `plumb-find-skills`, que exige
 revisão de segurança e o seu "sim" antes de instalar qualquer coisa.
 
-Se a descoberta não respondeu onde ficam cards e documentação ou que
-ferramentas o time usa, inclua as perguntas de entrevista do catálogo.
+Onde ficam os cards e que ferramentas o time usa: decida pelos sinais (remote
+GitHub → GitHub Issues e `gh`; ids `ABC-123` em commits com link do Jira → Jira) e
+liste em "Decidi:". Sem sinal nenhum, não sugira ferramenta de tickets.
 
 ## 3 — Proposta
 
@@ -128,28 +138,22 @@ Despache `plumb-curator` no modo do diagnóstico (estruturação, migração,
 auditoria ou fundação) com todos os achados ou respostas, o workspace e o
 domain, e o caminho absoluto de `references/permissions.md` (desta skill).
 Não leia o arquivo do curador antes de despachar.
-Revise o retorno: cada item tem evidência e `summary` que se segue sem o
-`content`? O bloco do `AGENTS.md` tem até 20 linhas e só comandos? Há algo
-que um agente descobriria sozinho em segundos? Corte.
+Confira o retorno **em silêncio** (nada disso vai para o chat) e corte o que
+falhar: item sem evidência, `summary` que não se segue sem o `content`, bloco do
+`AGENTS.md` com mais de 20 linhas ou com algo além de comandos, coisa que um
+agente descobriria sozinho em segundos.
 
-Junte às perguntas do curador as que ainda restam, todas na mesma
-mensagem e pelas regras de Perguntas de `../plumb/SKILL.md` (só o que o
-repositório, o cérebro e a conversa não respondem; sem limite fixo). A
-única que costuma restar é esta — pule se o `git log` ou o usuário já
-deixaram claro:
+Junte as decisões do curador às suas num só "Decidi:". Commits: se o `git log`
+ou o usuário não dizem o contrário, decida "um commit por parte pronta da
+mudança, em branch própria" — fonte: o histórico fica revisável — e liste.
 
-```
-1. Os commits ficam por minha conta?
-   a) Sim, um commit por parte pronta da mudança — recomendo: o histórico fica revisável
-   b) Não, eu commito — deixo as mudanças prontas, sem commit
-```
-
-Apresente tudo em **uma** mensagem:
+Apresente tudo em **uma** mensagem, com o título exatamente neste formato (sem o
+nome do modo, da ferramenta ou de etapas):
 
 ```
 **Preparar o agenda-api para o Plumb**
 
-O que vou guardar no segundo cérebro (Polara / agenda-api) — 5 itens:
+O que vou guardar no segundo cérebro (workspace agenda-api) — 5 itens:
 - Como o projeto é: Node 20, sem dependências, pagamentos em `src/server.js`
 - Valores sempre em centavos inteiros (vale em `src/payments`)
 - Erros sempre no formato `{ error: string }`
@@ -167,10 +171,12 @@ Ferramentas que eu sugiro:
 - `gh` (já instalado) — ver issues, PRs e logs da CI do GitHub
 - Playwright — conferir telas do front em Vite de verdade
 
-Preciso que você decida:
-1. ...
+Decidi (revise o que não fizer sentido):
+- Workspace próprio, `agenda-api` — o projeto não se mistura com outros.
+- "Respostas em PT-BR" vai para o Global — vale em todo projeto.
+- Um commit por parte pronta, em branch própria — não achei convenção no git log.
 
-Posso aplicar? (sim / ajustes — ou responda as perguntas, que eu sigo com elas)
+Posso aplicar? (sim / ajuste qualquer item acima)
 ```
 
 Mostre o conteúdo completo de um arquivo só se o usuário pedir.

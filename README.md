@@ -65,20 +65,20 @@ Depois, uma vez por repositório:
 /plumb-setup
 ```
 
-Ele liga o repositório a um workspace/domain do cérebro (pelo remote do
-git), descobre comandos, convenções e áreas sensíveis e propõe, numa única
-aprovação: os itens do cérebro (contexto do projeto, convenções, regras com
-escopo, procedimentos), o bloco de comandos no `AGENTS.md`, o `CLAUDE.md`
-(`@AGENTS.md`), permissões em `.claude/settings.json` (confirmar `git push`
-e `gh pr create`; liberar os comandos de teste e lint e o cérebro) e até 5
-ferramentas do catálogo escolhidas pelos sinais do código e por uma
-entrevista curta. Num repositório que já tem regras e skills em arquivos,
-ele as migra para o cérebro e enxuga os arquivos; num projeto já ligado,
-faz uma auditoria. Num projeto novo, sem código, ele entra em modo
-**fundação**: entrevista as decisões de base (stack, estrutura, testes, API
-e erros, persistência, CI e convenções), grava cada uma no cérebro com o
-porquê e sugere o esqueleto como primeira mudança. As regras e os
-procedimentos nascem depois, dos padrões que as primeiras mudanças
+Ele dá ao repositório um workspace próprio no cérebro (o nome do repositório),
+descobre comandos, convenções e áreas sensíveis e **propõe tudo de uma vez, com
+as decisões que tomou e a fonte de cada uma**: os itens do cérebro (contexto do
+projeto, convenções, regras com escopo, procedimentos), o que vale para todo
+projeto (vai para o workspace `Global`), o bloco de comandos no `AGENTS.md`, o
+`CLAUDE.md` (`@AGENTS.md`), permissões em `.claude/settings.json` (confirmar
+`git push` e `gh pr create`; liberar testes, lint e o cérebro) e até 5
+ferramentas do catálogo escolhidas pelos sinais do código. Você revisa e aprova.
+Num repositório que já tem regras e skills em arquivos, ele as migra para o
+cérebro e enxuga os arquivos; num projeto já ligado, faz uma auditoria. Num
+projeto novo, sem código, ele **propõe** as decisões de base (stack, estrutura,
+testes, API e erros, persistência, CI e convenções) a partir do que você disse
+que o projeto vai ser, e sugere o esqueleto como primeira mudança. As regras e
+os procedimentos nascem depois, dos padrões que as primeiras mudanças
 estabelecem.
 
 A partir daí é só pedir mudanças — a skill `plumb` dispara sozinha.
@@ -104,11 +104,12 @@ O plano é também o handoff: ele aparece em "Mudanças em andamento" no início
 toda sessão, e "continua o PAY-142" retoma pelo andamento e pelas tarefas que
 faltam — sem pasta nenhuma no repositório.
 
-**Paradas.** O Plumb para só em três momentos: para você aprovar o plano (com
-todas as perguntas juntas — responder às perguntas já conta como aprovação),
-antes de algo sair da máquina (push, PR) e num bloqueio real. No meio não há
-"posso seguir?". As perguntas são só as que o pedido, a conversa, o código e o
-cérebro não respondem, cada uma com opções e a recomendada.
+**Decide, você revisa.** O Plumb decide com base no que você disse, no segundo
+cérebro, nas instruções e no código, e o plano mostra cada decisão com a fonte
+("Erro em português — regra do projeto"). Você revisa e aprova, ou corrige uma
+decisão. Pergunta é exceção: só quando a informação não existe em lugar nenhum e
+errar seria caro. Depois do "sim", ele segue até a entrega — para de novo só
+antes de algo sair da máquina (push, PR) ou num impeditivo crítico.
 
 **Conversa.** No terminal, ele fala do que está acontecendo com o código ("✓ O
 Pix já devolve o QR code — testes 5 de 5"), não do método ("T1 concluída, lote
@@ -150,8 +151,9 @@ restrições, critério de pronto e o que fazer se travar.
 
 No repositório ficam só os comandos e o Workflow no `AGENTS.md` e as
 permissões. O resto mora no Knowledge OS
-(SQLite local em `~/.knowledge-os`), organizado em workspace (cliente,
-empresa) → domain (projeto):
+(SQLite local em `~/.knowledge-os`): **um workspace por projeto** (o nome do
+repositório) e o workspace **`Global`**, para o que vale em qualquer projeto.
+Um projeto não vê o outro; todos veem o Global.
 
 | O quê | Item | Chega ao agente |
 |---|---|---|
@@ -161,8 +163,7 @@ empresa) → domain (projeto):
 | Decisão e o porquê | `insight`, com a mudança de origem | Pacote ("Decisões recentes") e busca |
 | Procedimento repetível | `procedure` | Pacote e busca na hora de moldar |
 | Padrão novo, gotcha | `pattern`, `knowledge` | Pacote e busca (ao travar, antes de tudo) |
-| Convenção do cliente, vale em vários repositórios | domain `Geral` do workspace | Em todos os projetos do workspace |
-| Preferência pessoal | `Global / Geral` | Em todo projeto |
+| Diretriz que vale em todo projeto (idioma, estilo, preferências, prática geral) | `Global / Geral` | Em todo projeto |
 
 - **Barato:** perfil `agent` com 6 ferramentas (~1,8 mil tokens de
   definição); o pacote do hook cabe em ~1,2 mil tokens e lista o que ficou
@@ -294,7 +295,7 @@ parágrafo de Workflow que o `/plumb-setup` grava nele.
 |---|---|
 | Triagem por tamanho e caminho leve para correções pequenas | BMAD Quick Flow, Kiro Quick Spec |
 | Uma pasta de mudanças, arquivada ao concluir | OpenSpec |
-| Perguntas limitadas, com respostas gravadas na spec | Spec Kit `/clarify` |
+| O agente decide com fonte, o humano revisa o plano | Spec Kit `/clarify` (invertido: decisões em vez de perguntas) |
 | Critérios de aceite prováveis (Dado/quando/então) | BDD |
 | Evidência antes de dizer "pronto"; TDD; parar quando travar | Superpowers |
 | Revisor com contexto limpo e veredito curto | Superpowers v6 |
