@@ -48,8 +48,8 @@ chat (diga o conteúdo do item).
 
 Despache `plumb-curator` **uma vez**, no modo auditoria, com todos os
 padrões, as evidências (ids das mudanças e as linhas da Retro), os
-rascunhos com o seu palpite para cada um e o resultado dos ajustes
-anteriores. Monte o prompt pelo contrato em
+rascunhos com o seu palpite para cada um, o resultado dos ajustes
+anteriores e o caminho absoluto de `../plumb/references/brain-items.md` (o molde). Monte o prompt pelo contrato em
 `../plumb/references/prompt-contract.md`.
 
 Prefira sempre o ajuste mais barato que ataca a causa:

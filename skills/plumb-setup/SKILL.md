@@ -136,7 +136,8 @@ liste em "Decidi:". Sem sinal nenhum, não sugira ferramenta de tickets.
 
 Despache `plumb-curator` no modo do diagnóstico (estruturação, migração,
 auditoria ou fundação) com todos os achados ou respostas, o workspace e o
-domain, e o caminho absoluto de `references/permissions.md` (desta skill).
+domain, e os caminhos absolutos de `references/permissions.md` (desta skill) e
+de `../plumb/references/brain-items.md` (o molde dos itens).
 Não leia o arquivo do curador antes de despachar.
 Confira o retorno **em silêncio** (nada disso vai para o chat) e corte o que
 falhar: item sem evidência, `summary` que não se segue sem o `content`, bloco do

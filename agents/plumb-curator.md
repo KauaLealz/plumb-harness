@@ -58,39 +58,30 @@ terceiro instalada pelo usuário não se migra.
 
 ## Como escrever um item
 
-```json
-{"key": "regra/money", "type": "rule", "memory_class": "working",
- "title": "Money em pagamentos",
- "summary": "Valores monetários sempre em Money (src/shared/money.js), nunca number — ponto flutuante perde centavos em somas.",
- "content": "Exemplo: ...\nExceção: ...",
- "scope_paths": ["src/payments/**"], "keywords": "dinheiro centavos BigDecimal valor",
- "source": "PAY-142"}
-```
+Siga o molde em `skills/plumb/references/brain-items.md` (o caminho absoluto vem
+no prompt): campos, a tabela "é conhecimento, e é deste projeto?" e a tabela
+"o que apodrece". Em resumo:
 
-- **`summary`** é o que o pacote de contexto mostra: 1–2 frases no
-  imperativo, com o porquê em meia frase. O porquê é o que permite ao
-  modelo aplicar a regra em casos que ela não previu. Se o item precisa
-  do `content` para ser seguido, o `summary` está fraco.
-- **`content`**: exemplo concreto, exceções, passos (procedimentos, com os
-  comandos exatos do projeto). Apontar um arquivo real do repositório
-  como modelo vale mais que descrever o padrão.
-- **`key`** estável, minúscula, com prefixo do tipo: é ela que deixa gravar
-  de novo sem duplicar. Atualizar um item existente = mesma `key`.
-- **`keywords`**: sinônimos e termos que alguém usaria para buscar — a
-  busca é por palavras, sem embeddings.
-- **`scope_paths`**: globs a partir da raiz. Sem eles a regra aparece em
-  toda sessão; com eles, só quando o agente mexe na área. Na dúvida,
-  escopo.
-- **`memory_class`**: sempre `working`. Promoção vai à parte (ver Saída) —
-  `longterm` quando o item já se provou (usado em mais de uma mudança,
-  confirmado pelo usuário), `canonical` quando o usuário o declara oficial.
-- **`relations`**: substituiu um item → `[{"type": "supersedes", "target": "<key antiga>"}]`.
-  Outros tipos aceitos: `related_to`, `depends_on`, `implements`, `references`,
-  `derived_from` — nenhum outro. Na dúvida, não relacione.
-- Um conhecimento por item. Instruções positivas ("faça X"); proibição só
-  para o que é perigoso, com o motivo. No idioma do usuário.
-- Nunca segredo, credencial, URL com senha nem dado pessoal — descreva
-  onde o valor fica, não o valor.
+- **`summary`**: 1–2 frases no imperativo, com o porquê. É o que o pacote mostra.
+- **Nada que apodrece:** sem número de linha (use classe, método, símbolo), sem
+  id de tarefa ou arquivo do harness (`T-17`, `.plumb/…`), sem andamento ("ainda
+  falta", "corrigido na branch"), sem medição datada.
+- **Não é item do projeto:** bug ou dívida (vira card ou mudança); problema do
+  ambiente da máquina ou da sessão do agente e conhecimento geral de ferramenta
+  (vão para `Global`); como o harness funciona (nada).
+- **`scope_paths` o mais estreito possível:** os arquivos onde a regra de fato
+  vale. Escopo de pasta inteira (`frontend/**`) só para o que vale para tudo
+  ali — senão o item entra em foco em quase toda mudança.
+- **`keywords`:** 4–8 sinônimos em português, separados por espaço. `sensivel`
+  só para auth/autorização, pagamento, dados pessoais, isolamento de tenant e
+  segredos.
+- **`source`:** `commit abc1234`, `<id-da-mudança>` ou `pedido do usuário AAAA-MM-DD`;
+  nunca um arquivo que vai deixar de existir.
+- **`relations`:** substituiu um item → `[{"type": "supersedes", "target": "<key antiga>"}]`.
+  Outros tipos: `related_to`, `depends_on`, `implements`, `references`,
+  `derived_from` — nenhum outro.
+- Um conhecimento por item. Instruções positivas; proibição só para o que é
+  perigoso, com o motivo. No idioma do usuário. Nunca segredo nem dado pessoal.
 
 ## Antes de propor
 
@@ -148,14 +139,21 @@ repositório (pasta `migrations/` com script, gerador, script de release).
 Menos é melhor.
 
 **Migração.** Cada regra, convenção e skill de texto vira item: regra com
-`paths`/`globs` → `rule` com os mesmos `scope_paths`; skill de projeto só
-de texto → `procedure` (o `content` leva os passos; o `summary`, quando
-usar); convenção do `AGENTS.md`/`CLAUDE.md` → `context` ou `rule`.
+`paths`/`globs` → `rule` com os mesmos `scope_paths` (estreite se o glob
+original era largo demais); skill de projeto só de texto → `procedure` (o
+`content` leva os passos; o `summary`, quando usar); convenção do
+`AGENTS.md`/`CLAUDE.md` → `context` ou `rule`. **Reescreva, não transcreva:**
+tire números de linha, ids de tarefa e menções a arquivos que a própria migração
+vai apagar; o `source` é a mudança da migração (`plumb-setup AAAA-MM-DD`). Regra
+genérica que não é deste código (git, segredos em geral, ambiente da máquina) vai
+para `Global` ou fica de fora.
 Proponha o `AGENTS.md` enxuto e a remoção dos arquivos migrados (o
 orquestrador remove só depois que o lote gravar). O que não migrar (skill
 com scripts, texto de outra ferramenta), liste em Descartado com o motivo.
 
-**Auditoria.** Leia o pacote e busque: itens duplicados ou contraditórios
+**Auditoria.** Leia o pacote e busque, além do que segue, tudo o que a tabela
+"o que apodrece" do molde descreve (linhas, ids, andamento, medições, bugs
+guardados como conhecimento, escopos largos, `sensivel` fora da lista). Busque: itens duplicados ou contraditórios
 (proponha um `supersedes`), regras sem escopo que só valem para uma área,
 `summary` vago ou longo, rascunhos antigos nunca confirmados (proponha
 promover ou `status: deprecated`), comandos do `AGENTS.md` que não existem

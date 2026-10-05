@@ -25,7 +25,8 @@ Antes de arquivar, trate os sinais da Retro ainda não tratados:
 - **1 ou 2 sinais simples** (`regra`, `decisão`, `travamento` já resolvido,
   `fato velho`): monte você mesmo os itens pelo molde e grave num `item_save`.
 - **3 ou mais, `padrão novo` ou `procedimento`:** **um** despacho do
-  `plumb-curator` com todos os sinais, as Decisões e o pacote que você já tem.
+  `plumb-curator` com todos os sinais, as Decisões, o pacote que você já tem e o
+  caminho absoluto de `brain-items.md` (o molde).
   Nunca um despacho por sinal.
 - Antes de gravar, o item já existe e foi ignorado? O problema é de aderência
   (falta o porquê, um exemplo, `keywords` ou `scope_paths`), não de regra faltando.
