@@ -123,6 +123,9 @@ test('hook do Cursor e mcp.json preservam o que já existe', () => {
   assert.deepEqual(hooks.hooks.stop, [{ command: 'x' }]);
   const mcp = upsertMcpServer({ mcpServers: { github: { url: 'u' } } }, 'knowledge-mcp');
   assert.deepEqual(Object.keys(mcp.mcpServers), ['github', 'knowledge-os']);
+  const quoted = upsertMcpServer({}, '"C:\\Program Files\\py.exe" -m src.cli').mcpServers['knowledge-os'];
+  assert.equal(quoted.command, 'C:\\Program Files\\py.exe');
+  assert.deepEqual(quoted.args, ['-m', 'src.cli']);
 });
 
 test('sem knowledge-mcp instalado, avisa e não registra hook', () => {

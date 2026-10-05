@@ -86,6 +86,8 @@ terceiro instalada pelo usuário não se migra.
   `longterm` quando o item já se provou (usado em mais de uma mudança,
   confirmado pelo usuário), `canonical` quando o usuário o declara oficial.
 - **`relations`**: substituiu um item → `[{"type": "supersedes", "target": "<key antiga>"}]`.
+  Outros tipos aceitos: `related_to`, `depends_on`, `implements`, `references`,
+  `derived_from` — nenhum outro. Na dúvida, não relacione.
 - Um conhecimento por item. Instruções positivas ("faça X"); proibição só
   para o que é perigoso, com o motivo. No idioma do usuário.
 - Nunca segredo, credencial, URL com senha nem dado pessoal — descreva
