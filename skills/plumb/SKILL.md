@@ -180,7 +180,8 @@ ficam só os comandos (`AGENTS.md`) e as permissões — nenhuma pasta do Plumb.
 - **Cérebro fora do ar:** avise em uma linha e siga com o plano no chat e na lista
   de tarefas; o que gravaria vai para `~/.knowledge-os/pending.jsonl` (formato no
   molde) e entra na próxima sessão.
-- Nunca segredo nem dado pessoal num item.
+- Segredo: item `secret` sem valor + o link (`fill_url`) para o usuário preencher na UI;
+  usar por `knowledge-mcp run` (molde). Nunca peça o valor no chat. Dado pessoal: nunca.
 
 ## 0 — Localizar
 

@@ -176,7 +176,8 @@ Não conta no limite de 5: o Plumb depende dele.
 
 | Ferramenta | Dá ao agente | Sinal | Instalação | Custo / obs. |
 |---|---|---|---|---|
-| Injeção de segredos por CLI | Rodar comandos com credenciais sem o valor entrar no contexto | `.env.example`, referências a `op://`, `doppler.yaml`, `.infisical.json` | `op run -- <cmd>` (1Password) · `doppler run -- <cmd>` · `infisical run -- <cmd>` | 0. O agente nunca lê nem imprime o valor |
+| Segredos do cérebro | Rodar comandos com credenciais sem o valor entrar no contexto | `.env.example`, tokens pedidos na conversa | Já vem: item `secret` + `knowledge-mcp run --env VAR=segredo/<nome> -- <cmd>` (molde) | 0. Preferido |
+| Injeção de segredos por CLI de terceiros | O mesmo, com o cofre que o time já usa | referências a `op://`, `doppler.yaml`, `.infisical.json` | `op run -- <cmd>` (1Password) · `doppler run -- <cmd>` · `infisical run -- <cmd>` | 0. O agente nunca lê nem imprime o valor |
 | Stripe | Objetos e logs no modo de teste | `stripe` nas dependências | CLI `stripe` com chave de teste · MCP remoto `https://mcp.stripe.com` *(confirmar)* | M. Só chaves `sk_test_` |
 | Mocks de serviços externos | Simular a falha mais cara de uma integração | Chamadas HTTP a terceiros sem stub nos testes | WireMock (`docker run -p 8080:8080 wiremock/wiremock`) · Testcontainers (biblioteca) | 0 |
 | Carga | Medir latência e throughput | Requisito de performance no card | `k6 run script.js` | 0 |

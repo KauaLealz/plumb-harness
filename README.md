@@ -184,8 +184,10 @@ certo. Quando guardar, de que tipo e onde: `skills/plumb/references/brain-items.
   `/plumb-retro` aposenta o que envelheceu ou nunca foi usado.
 - **Fora do ar:** o Plumb avisa e segue; o que gravaria vai para
   `~/.knowledge-os/pending.jsonl` e entra na próxima sessão.
-- **Seguro:** o servidor recusa segredos; a busca não usa rede nem
-  embeddings.
+- **Segredos sem passar pelo modelo:** o agente cria o segredo vazio, você
+  preenche pelo link da UI local, e ele usa por `knowledge-mcp run`, que
+  entrega o valor só ao comando e redige a saída.
+- **Seguro:** a busca não usa rede nem embeddings.
 
 ## Skills de terceiros incluídas
 

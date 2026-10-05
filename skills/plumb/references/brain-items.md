@@ -93,10 +93,28 @@ Na dúvida entre o repo e o `Geral`, o repo — e diga onde guardou.
 | "Baseline: 229 erros de lint, 56 testes" | Nada (ou `ephemeral` com `ttl_days: 7`) |
 | "Bug: o front faz POST duplo… candidato a correção" | Um card. No cérebro, só se virar uma regra ("efeito que cria recurso precisa de guarda contra execução dupla") |
 
+## Segredos (token, senha, chave de API)
+
+O valor nunca passa por você. Grave o item **sem valor** e passe ao usuário o
+link que a resposta traz (`fill_url`): ele cola o valor na UI local.
+
+```json
+{"key": "segredo/npm-token", "type": "secret", "title": "Token do npm",
+ "summary": "Publicar os pacotes da Polara no npm"}
+```
+
+- Onde: como qualquer item — só este repo, o `Geral` do workspace (o token da
+  empresa) ou o `Global` (o token pessoal do usuário).
+- Usar: `knowledge-mcp run --env NPM_TOKEN=segredo/npm-token -- npm publish`
+  (ou `--stdin segredo/<nome>` para `--password-stdin`). O pacote de contexto
+  lista os segredos e diz se já têm valor.
+- O usuário colou o valor no chat? Não grave nem repita; crie o item vazio,
+  mande o link e sugira trocar a credencial (ela já está no histórico).
+
 ## Não guarde
 
-Segredo, credencial, URL com senha, dado pessoal (o servidor recusa, mas não
-tente). Decisão que vale só para uma mudança (fica nas Decisões dela).
+Dado pessoal; credencial, URL com senha ou token dentro de um item comum (o
+servidor recusa). Decisão que vale só para uma mudança (fica nas Decisões dela).
 
 ## Cérebro fora do ar
 
