@@ -160,11 +160,11 @@ Tudo o que dura mora no MCP `knowledge-os`: convenções, regras com escopo,
 decisões, procedimentos, gotchas **e o plano de cada mudança**. No repositório
 ficam só os comandos (`AGENTS.md`) e as permissões — nenhuma pasta do Plumb.
 
-- **Workspaces:** cada projeto tem o seu (o nome do repositório); o `Global` guarda o
-  que vale em qualquer projeto — idioma, estilo, preferências do usuário, práticas
-  gerais. Diretriz enunciada "para todo projeto", "sempre que eu…", ou sobre o jeito
-  do usuário trabalhar → `Global` (`"workspace": "Global", "domain": "Geral"` na
-  entrada); sobre este código → o projeto. Na dúvida, o projeto, dizendo onde guardou.
+- **Organização:** workspace = contexto de trabalho (a empresa ou cliente, ou
+  `Pessoal`); domain = o repositório; o domain `Geral` de cada workspace guarda o
+  que vale para os repositórios daquele contexto; o workspace `Global` guarda o que
+  vale para o usuário em qualquer lugar. **Quando guardar, de que tipo e onde:**
+  `references/brain-items.md` — leia antes de gravar pela primeira vez na sessão.
 - **Ler com uma consulta.** O hook injeta o pacote do início (com "Mudanças em
   andamento"). Ao planejar, **uma** chamada `context_get(project=".", paths=[arquivos
   que a mudança toca], query="<tema>")`: o que casa vem em foco, com o começo do

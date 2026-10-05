@@ -65,7 +65,7 @@ Depois, uma vez por repositório:
 /plumb-setup
 ```
 
-Ele dá ao repositório um workspace próprio no cérebro (o nome do repositório),
+Ele liga o repositório ao cérebro (workspace = empresa ou contexto, domain = o repositório),
 descobre comandos, convenções e áreas sensíveis e **propõe tudo de uma vez, com
 as decisões que tomou e a fonte de cada uma**: os itens do cérebro (contexto do
 projeto, convenções, regras com escopo, procedimentos), o que vale para todo
@@ -151,9 +151,19 @@ restrições, critério de pronto e o que fazer se travar.
 
 No repositório ficam só os comandos e o Workflow no `AGENTS.md` e as
 permissões. O resto mora no Knowledge OS
-(SQLite local em `~/.knowledge-os`): **um workspace por projeto** (o nome do
-repositório) e o workspace **`Global`**, para o que vale em qualquer projeto.
-Um projeto não vê o outro; todos veem o Global.
+(SQLite local em `~/.knowledge-os`), organizado como o seu trabalho:
+
+```
+Polara                     ← workspace: a empresa, o cliente, ou Pessoal
+ ├─ Geral                  ← convenções que valem para os repositórios da Polara
+ ├─ projpro                ← domain: um repositório
+ └─ synapse
+Global                     ← o que vale para você em qualquer lugar
+```
+
+Uma sessão no projpro carrega o domain dele, o `Geral` da Polara e o `Global` — nunca
+o de outro repositório. Um repo novo do mesmo dono no git cai sozinho no workspace
+certo. Quando guardar, de que tipo e onde: `skills/plumb/references/brain-items.md`.
 
 | O quê | Item | Chega ao agente |
 |---|---|---|
@@ -163,7 +173,8 @@ Um projeto não vê o outro; todos veem o Global.
 | Decisão e o porquê | `insight`, com a mudança de origem | Pacote ("Decisões recentes") e busca |
 | Procedimento repetível | `procedure` | Pacote e busca na hora de moldar |
 | Padrão novo, gotcha | `pattern`, `knowledge` | Pacote e busca (ao travar, antes de tudo) |
-| Diretriz que vale em todo projeto (idioma, estilo, preferências, prática geral) | `Global / Geral` | Em todo projeto |
+| Convenção da empresa ou do cliente | domain `Geral` do workspace | Em todos os repositórios daquele contexto |
+| Diretriz sua em qualquer contexto (idioma, estilo, preferências, ambiente) | `Global / Geral` | Em todo projeto |
 
 - **Barato:** perfil `agent` com 6 ferramentas (~1,8 mil tokens de
   definição); o pacote do hook cabe em ~1,2 mil tokens e lista o que ficou

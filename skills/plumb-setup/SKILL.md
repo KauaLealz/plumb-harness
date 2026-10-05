@@ -55,11 +55,14 @@ comando `knowledge-mcp`; o `npx plumb-harness status` diz o que falta) e pergunt
 segue assim mesmo: os itens vão para `~/.knowledge-os/pending.jsonl` e entram
 no cérebro na primeira sessão com ele no ar.
 
-**Ligação.** Projeto não ligado: ele ganha um workspace próprio, com o nome do
-repositório (`project_link(project=".")`), e diga em "Decidi:". O que vale para
-todos os projetos do usuário (idioma, estilo, práticas gerais que aparecerem nas
-regras antigas ou nas instruções globais) vai para o workspace `Global`, domain
-`Geral` — não para o projeto.
+**Ligação.** Projeto não ligado: `project_link(project=".")` decide sozinho — domain
+= nome do repositório; workspace = o de outro repo do mesmo dono já ligado ou, no
+primeiro repo daquele dono, o nome do dono no remote (sem remote, `Pessoal`). No
+primeiro repo de um dono, proponha em "Decidi:" um nome legível para o workspace
+(`polara-innovations` → `Polara`; a conta pessoal do usuário → `Pessoal`) e passe-o
+no `project_link`. Ao migrar regras antigas: o que vale para os repos daquele
+contexto vai para o domain `Geral` do workspace; o que vale para o usuário em
+qualquer lugar (idioma, estilo, ambiente da máquina) vai para o workspace `Global`.
 
 Identifique também a(s) ferramenta(s) do time: a ferramenta em que você
 está rodando, mais os sinais do repositório (`.claude/` → Claude Code,
@@ -154,7 +157,7 @@ nome do modo, da ferramenta ou de etapas):
 ```
 **Preparar o agenda-api para o Plumb**
 
-O que vou guardar no segundo cérebro (workspace agenda-api) — 5 itens:
+O que vou guardar no segundo cérebro (Polara › agenda-api) — 5 itens:
 - Como o projeto é: Node 20, sem dependências, pagamentos em `src/server.js`
 - Valores sempre em centavos inteiros (vale em `src/payments`)
 - Erros sempre no formato `{ error: string }`
@@ -173,7 +176,8 @@ Ferramentas que eu sugiro:
 - Playwright — conferir telas do front em Vite de verdade
 
 Decidi (revise o que não fizer sentido):
-- Workspace próprio, `agenda-api` — o projeto não se mistura com outros.
+- Guardar em `Polara › agenda-api` — o remote é da polara-innovations; os outros repos da Polara caem no mesmo workspace e dividem o `Geral`.
+- "Commits no formato PAY-<n>" vai para `Polara › Geral` — vale nos repos da empresa.
 - "Respostas em PT-BR" vai para o Global — vale em todo projeto.
 - Um commit por parte pronta, em branch própria — não achei convenção no git log.
 

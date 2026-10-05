@@ -17,6 +17,46 @@ Grave com `item_save(project=".", items=[...])`. Resposta `action: unchanged`
 = já existia igual; `similar` = título parecido já guardado (releia antes de
 duplicar).
 
+## Quando guardar
+
+Guarde em momentos certos, não a cada passo:
+
+| Momento | O que costuma nascer |
+|---|---|
+| O usuário enuncia uma regra, decisão ou preferência ("sempre…", "aqui a gente…", "prefiro…") | `rule`, `insight` ou preferência no `Global` — **na hora**, sem perguntar; confirme em uma linha |
+| Você travou e resolveu algo não óbvio (depois de resolvido, não durante) | `knowledge`: sintoma, causa e o que fazer |
+| No fechamento de cada mudança, num lote só | `insight` das decisões com porquê, `pattern` do que o projeto fez pela primeira vez, `procedure` do que você executou e vai se repetir, `knowledge` do que custou tempo |
+| Uma pergunta sobre o código custou exploração e vai ser feita de novo | `context` (o que o projeto é) ou `knowledge` |
+| Setup, migração e retro | Consolidação: reforçar, juntar, aposentar |
+
+Não guarde a cada comando, nem o que você descobriu com uma leitura de arquivo:
+se é barato redescobrir, não é memória.
+
+## Que tipo — e o teste de cada um
+
+| Tipo | Guarde quando… | Teste antes de gravar |
+|---|---|---|
+| `rule` | Há um sempre/nunca do código, enunciado pelo usuário ou que uma revisão cobraria | Dá para dizer olhando um diff se ele cumpre a regra? |
+| `insight` | Escolheu-se entre alternativas e o porquê vai importar depois | Tem a alternativa descartada e o motivo? Alguém perguntaria "por que é assim?" |
+| `procedure` | Passos que você executou e vão se repetir (migration, release, ambiente, deploy) | Um agente novo executaria só com o `content`, com os comandos exatos? |
+| `pattern` | O projeto resolveu um tipo de problema pela primeira vez e isso deve ser copiado | Aponta o arquivo que serve de modelo? |
+| `knowledge` | Comportamento não óbvio do código que custou tempo e voltaria a custar | Tem sintoma, causa e o que fazer? |
+| `context` | O que o projeto é: produto, quem usa, termos do domínio, mapa do código | Muda raramente? Poucos itens (`contexto/produto`, `contexto/mapa`), sempre atualizados pela mesma key |
+| `task` | O plano de cada mudança (o orquestrador cuida) | — |
+
+Antes de criar, procure (`item_search`): existe item sobre isso? **Atualize pela
+mesma key** em vez de criar outro; se o novo contradiz o antigo, `supersedes`.
+
+## Onde
+
+| Vale para… | Destino |
+|---|---|
+| Só este repositório | O domain do projeto (o padrão do `item_save` com `project=".`) |
+| Os repositórios deste contexto (a empresa ou o cliente): convenções, padrões de design, práticas | Domain `Geral` do mesmo workspace (`"domain": "Geral"` na entrada) |
+| Você, em qualquer contexto: idioma, estilo, preferências, ambiente da sua máquina, ferramenta em geral | Workspace `Global`, domain `Geral` |
+
+Na dúvida entre o repo e o `Geral`, o repo — e diga onde guardou.
+
 ## Antes de gravar: é conhecimento, e é deste projeto?
 
 | Se é… | Não é item do projeto. Vai para… |

@@ -35,7 +35,7 @@ Um prompt em um destes modos:
 - **fundação** — um projeto novo, sem código, com as decisões de fundação
   que o usuário respondeu.
 
-O prompt traz o workspace do projeto (um por projeto, com o nome do repositório; domain `Geral`) e se ele usa Claude Code,
+O prompt traz o workspace (contexto de trabalho: empresa, cliente ou `Pessoal`) e o domain (o repositório) do projeto e se ele usa Claude Code,
 Cursor ou os dois.
 
 ## Onde cada coisa mora
@@ -49,7 +49,8 @@ Cursor ou os dois.
 | Procedimento repetível (criar migration, endpoint novo, release) | Cérebro, `scope_paths` se for de uma área | `procedure` · `proc/...` |
 | Padrão novo (a primeira vez que o projeto faz algo) | Cérebro, com o arquivo-modelo no `summary` | `pattern` · `padrao/...` |
 | Fato, armadilha, comportamento inesperado | Cérebro | `knowledge` · `gotcha/...` |
-| Diretriz que vale em todo projeto (idioma, estilo, preferências do usuário, prática geral) | Workspace `Global`, domain `Geral` | qualquer |
+| Convenção ou padrão que vale para os repositórios do mesmo contexto (empresa, cliente) | Domain `Geral` do mesmo workspace (`"domain": "Geral"` na entrada) | qualquer |
+| Diretriz do usuário em qualquer contexto (idioma, estilo, preferências, ambiente da máquina, ferramenta em geral) | Workspace `Global`, domain `Geral` | qualquer |
 | Decisão que só vale para esta mudança | Não é com você — fica nas Decisões da mudança | — |
 
 Procedimento com scripts ou arquivos de apoio de verdade (não só texto)
