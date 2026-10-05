@@ -22,6 +22,8 @@ projeto, sem `/plumb-setup` (sem AGENTS.md). Modelo padrão da CLI.
 | 2026-10-05 | claude-opus-4-8 | I3 (bug + regra no mesmo pedido, v3.1) | passou | US$ 0,51 (antes ~US$ 1,04 só até o gate 1) | Separou as duas coisas; a regra já existia no cérebro (não duplicou); bug pela trilha direta com vermelho → verde; 12 turnos, 99 s. |
 | 2026-10-05 | claude-opus-4-8 | S1→S2→V1 (PAY-142, v3.1) | passou, com uma regressão achada e corrigida | US$ 0,67 + 2,65 | Gate 1: 1 lote (2 tasks), área sensível, contradição decisão × regra levantada como pergunta. Construção: **1** despacho do implementador, 1 verificador, 1 revisor com lente de segurança, sem `plumb-security` nem curador, 1 `item_save`; suíte 7/7 + curl real. Regressão: na primeira rodada o modelo não achou o card — o Grep por `PAY-142` também casava os exemplos das skills do Plumb e ele descartou o README; corrigido (passo 0.3: procurar o id fora de `.claude/`, `.cursor/`, `.plumb/`). |
 
+| 2026-10-05 | Cursor Auto (`cursor-agent`) | C1 + B2 + M6 (endpoint novo, trilha profunda, v3.1) | passou | — (Cursor não informa custo) | Gate 1 em 74 s (antes 116 s): **uma** consulta ao cérebro (`context_get` com paths e query), 1 lote de 4 tasks (antes 4 despachos). Construção: 1 implementador, 1 verificador, 1 revisor, 1 `plumb-security` (profunda), 0 curador, 2 `item_save`; suíte 10/10. Compatibilidade achada nos testes: `readonly` vira Ask mode e bloqueia shell/MCP (removido das variantes do Cursor); `.cursor/cli.json` de projeto não aceita `version`; hooks do Cursor precisam rodar fora do Git Bash (a variável `SHELL` faz o wrapper PowerShell dos hooks falhar num bash) e o stdin do hook vem com BOM. |
+
 ## Custo fixo de uma execução `claude -p`
 
 Medido com o prompt "Responda apenas: ok", modelo `sonnet`:
