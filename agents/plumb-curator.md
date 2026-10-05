@@ -156,8 +156,8 @@ com scripts, texto de outra ferramenta), liste em Descartado com o motivo.
 "o que apodrece" do molde descreve (linhas, ids, andamento, medições, bugs
 guardados como conhecimento, escopos largos, `sensivel` fora da lista). Busque: itens duplicados ou contraditórios
 (proponha um `supersedes`), regras sem escopo que só valem para uma área,
-`summary` vago ou longo, rascunhos antigos nunca confirmados (proponha
-promover ou `status: deprecated`), comandos do `AGENTS.md` que não existem
+`summary` vago ou longo, itens com `uses` = 0 há mais de 30 dias (proponha
+reforçar ou `status: deprecated`), comandos do `AGENTS.md` que não existem
 mais, itens que o código contradiz (pergunte qual vale). Remova o
 `contexto/projeto-novo` se o código já amadureceu.
 
@@ -182,12 +182,12 @@ segue a revisão de segurança descrita nela.
 ````
 Cérebro (item_save, project="."):
 ```json
-[ { "key": "...", "type": "...", "memory_class": "working", ... } ]
+[ { "key": "...", "type": "...", ... } ]
 ```
 - <key> — <o que guarda, em uma linha> (evidência: <fonte>)
 
-Promover (pedem "sim"):
-- <key> → <longterm | canonical> — <motivo> (ou "nada")
+Aposentar:
+- <key> → deprecated — <motivo> (ou "nada")
 
 Arquivos (pedem "sim"):
 1. <criar | editar | remover> `<caminho>` — <motivo> (evidência: <fonte>)

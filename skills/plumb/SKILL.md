@@ -28,7 +28,7 @@ Classifique pelo que o usuário **pediu**, antes de qualquer outra coisa.
 |---|---|
 | Pergunta ou explicação sobre o código | Responda e pare. Convenção do projeto? `context_get`/`item_search` antes. Não é mudança |
 | Uma regra, diretriz ou decisão ("sempre…", "aqui a gente…") | Grave no cérebro na hora pelo molde (`references/brain-items.md`) e confirme em uma linha. Sem plano, sem curador |
-| Investigar ("por que…", "vê se dá…") | Só leitura. A resposta vai ao usuário; o que durar vira `insight` ou `gotcha` (rascunho). Sem TDD nem plano |
+| Investigar ("por que…", "vê se dá…") | Só leitura. A resposta vai ao usuário; o que durar vira `insight` ou `knowledge`. Sem TDD nem plano |
 | Hotfix ou incidente | Trilha direta com reprodução; revisor depois, sem plano |
 | Dependência, docs, config | Trilha direta |
 | Mudança de código | Trilha direta, padrão ou profunda (seção 1) |
@@ -89,8 +89,7 @@ com base neles e mostre as decisões no plano, cada uma com a fonte, para o
 usuário revisar. Ele corrige o que não fizer sentido.
 
 - **Fontes, nesta ordem:** o que o usuário disse (no pedido ou antes, na conversa)
-  → regras e decisões do cérebro (oficiais antes de rascunhos; a mais recente
-  vence entre duas) → instruções (`AGENTS.md`, instruções globais) → o padrão do
+  → regras e decisões do cérebro (a mais recente vence entre duas) → instruções (`AGENTS.md`, instruções globais) → o padrão do
   código vizinho → a opção mais conservadora (a que muda menos e é fácil de desfazer).
 - **Cada decisão em "Decidi:", com a fonte em meia frase:** `Erro em português — regra do projeto.`,
   `QR code de exemplo, sem integração — o card não pede integração.`
@@ -170,8 +169,9 @@ ficam só os comandos (`AGENTS.md`) e as permissões — nenhuma pasta do Plumb.
   que a mudança toca], query="<tema>")`: o que casa vem em foco, com o começo do
   content. `item_get` só se faltar detalhe. Dúvida avulsa: `item_search(query)`.
 - **`sensitive: true`** na resposta = área de risco: ative a lente de segurança (seção 4).
-- **Gravar:** `working` na hora, sem perguntar. Promoção a `longterm`/`canonical`
-  é feita na `/plumb-retro`, não no fim de cada mudança. Molde em `references/brain-items.md`.
+- **Gravar:** na hora, sem perguntar — não há aprovação; o que você grava já vale.
+  Corrigir = regravar pela mesma key; aposentar = `status: deprecated`. Molde em
+  `references/brain-items.md`.
 - **Plano da mudança:** item `mudanca/<id>` (modelo em `references/change-template.md`).
   O `summary` é o andamento em uma linha; o `content`, o plano. Atualize o
   `summary` a cada avanço (chamada pequena) e o `content` só quando o plano muda e

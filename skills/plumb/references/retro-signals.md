@@ -30,9 +30,9 @@ Antes de arquivar, trate os sinais da Retro ainda não tratados:
   Nunca um despacho por sinal.
 - Antes de gravar, o item já existe e foi ignorado? O problema é de aderência
   (falta o porquê, um exemplo, `keywords` ou `scope_paths`), não de regra faltando.
-- Itens entram `working`, sem perguntar. Na entrega, uma linha "Guardei para as
-  próximas vezes: …" diz o que foi guardado, em linguagem humana. Promoção a
-  `longterm`/`canonical` fica para a `/plumb-retro` — não pergunte na entrega.
+- Grave sem perguntar: o que você grava já vale (não há aprovação). Na entrega,
+  uma linha "Guardei para as próximas vezes: …" diz o que foi guardado, em
+  linguagem humana; o usuário corrige o que não fizer sentido.
   Edição no `AGENTS.md` (um comando que mudou): faça e diga na entrega.
 - Erro de gravação: corrija a entrada que o erro aponta e grave de novo.
 - Feche a Retro com `Números:` (formato no modelo da mudança).

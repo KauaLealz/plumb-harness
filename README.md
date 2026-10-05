@@ -179,9 +179,9 @@ certo. Quando guardar, de que tipo e onde: `skills/plumb/references/brain-items.
 - **Barato:** perfil `agent` com 6 ferramentas (~1,8 mil tokens de
   definição); o pacote do hook cabe em ~1,2 mil tokens e lista o que ficou
   de fora.
-- **Ciclo de vida:** o que as mudanças aprendem entra como rascunho
-  (`working`), sem perguntar; virar `longterm`/`canonical` pede o seu "sim"
-  na `/plumb-retro`, que também aposenta o que envelheceu.
+- **Ciclo de vida:** o que as mudanças aprendem já vale, sem aprovação; a
+  entrega diz o que foi guardado e você corrige o que não fizer sentido. A
+  `/plumb-retro` aposenta o que envelheceu ou nunca foi usado.
 - **Fora do ar:** o Plumb avisa e segue; o que gravaria vai para
   `~/.knowledge-os/pending.jsonl` e entra na próxima sessão.
 - **Seguro:** o servidor recusa segredos; a busca não usa rede nem
@@ -229,12 +229,12 @@ somente leitura por padrão, nada sem o seu "sim". Entradas marcadas
    convenções. Regra enunciada vai ao curador e ao cérebro na hora.
 2. **No fechamento:** 1–2 sinais simples o orquestrador grava sozinho; 3 ou
    mais vão num único despacho do curador. Tudo entra numa chamada
-   (`item_save`, como rascunho, junto com o plano concluído) e a entrega diz,
+   (`item_save`, junto com o plano concluído) e a entrega diz,
    numa linha, o que foi guardado — sem perguntar. Se a regra já existia e foi
    ignorada, o ajuste é reforçá-la, não duplicá-la.
 3. **`/plumb-retro`** (sugerida a cada 5 mudanças): agrupa causas que se
-   repetem, propõe até 5 ajustes com sinal-alvo, promove ou aposenta os
-   rascunhos e, na retro seguinte, confere se o sinal diminuiu — manter,
+   repetem, propõe até 5 ajustes com sinal-alvo, aposenta os itens
+   que envelheceram e, na retro seguinte, confere se o sinal diminuiu — manter,
    reforçar ou reverter. Histórico no item `retro/ultima`; o próprio pacote do
    início da sessão avisa quando há 5 mudanças concluídas desde a última.
 
@@ -319,7 +319,7 @@ parágrafo de Workflow que o `/plumb-setup` grava nele.
 ```
 skills/plumb/              orquestrador + references/ (contrato de prompt, modelo da mudança, testes)
 skills/plumb-setup/        ligação ao cérebro, estruturação, migração e auditoria + references/catalog.md
-skills/plumb-retro/        retrospectiva periódica e consolidação dos rascunhos do cérebro
+skills/plumb-retro/        retrospectiva periódica e limpeza do cérebro
 skills/plumb-find-docs/    documentação atual de bibliotecas (Context7) — cópia fixada
 skills/plumb-find-skills/  descobrir skills sob demanda, com revisão de segurança — cópia fixada
 agents/                    os 7 subagentes
