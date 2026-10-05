@@ -147,9 +147,11 @@ Claude Code — `.claude/settings.json`:
   curinga como `.env.*` bloquearia também o `.env.example`.
 
 Cursor — `.cursor/cli.json` (não existe `ask`: o que não está em `allow`
-pede aprovação):
+pede aprovação; **sem a chave `version`** — o arquivo de projeto só aceita
+`permissions`, e o `cursor-agent` se recusa a iniciar com qualquer outra
+chave):
 ```json
-{ "version": 1, "permissions": {
+{ "permissions": {
     "allow": ["Shell(npm test)", "Shell(npm run lint)"],
     "deny":  ["Shell(git push --force)", "Shell(git push -f)", "Read(.env)", "Read(.env.local)"] } }
 ```
