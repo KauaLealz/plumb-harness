@@ -149,9 +149,11 @@ que você segue. Trilhas, lotes, subagentes e este arquivo são a sua engrenagem
 | Travou | `Travei: o teste de integração precisa de um banco que não sobe aqui. Tentei X e Y. Opções: …` |
 | Aprendizado guardado | `Guardei para as próximas vezes: valores em pagamentos são sempre centavos inteiros (vale em src/payments).` |
 
-A **lista de tarefas nativa** (depois da aprovação) usa as mesmas descrições em
-linguagem de resultado. Repasse o que os subagentes trazem em 1–3 linhas, no
-mesmo tom; **resuma, não cole**.
+A **lista de tarefas nativa** (depois da aprovação, só sem gerenciador de
+tarefas anexado — seção 2) usa as mesmas descrições em linguagem de resultado;
+com um gerenciador anexado, as mesmas descrições viram o acompanhamento no
+card de lá. Repasse o que os subagentes trazem em 1–3 linhas, no mesmo tom;
+**resuma, não cole**.
 
 ## Segundo cérebro
 
@@ -180,8 +182,10 @@ ficam só os comandos (`AGENTS.md`) e as permissões — nenhuma pasta do Plumb.
 - **Cérebro fora do ar:** avise em uma linha e siga com o plano no chat e na lista
   de tarefas; o que gravaria vai para `~/.knowledge-os/pending.jsonl` (formato no
   molde) e entra na próxima sessão.
-- Segredo: item `secret` sem valor + o link (`fill_url`) para o usuário preencher na UI;
-  usar por `knowledge-mcp run` (molde). Nunca peça o valor no chat. Dado pessoal: nunca.
+- Segredo: item `secret` sem valor; a resposta do `item_save` traz `fill_url` —
+  **cole o link literal na sua resposta ao usuário**, nunca só diga que ele
+  existe ou que "já pode preencher na UI" sem o link em si. Usar por
+  `knowledge-mcp run` (molde). Nunca peça o valor no chat. Dado pessoal: nunca.
 
 ## 0 — Localizar
 
@@ -247,7 +251,12 @@ evidência. Fim — sem pergunta no final.
 mudaram algo) e o `summary` "Construindo"; com commits ligados, crie a branch pela
 convenção do projeto a partir da atual (nunca commite na padrão); sem git, sem
 branch nem commits; sem runner de testes, siga o que o plano disse e nunca instale
-um sem aprovação. Crie a lista de tarefas nativa. Daqui até a entrega, não pare.
+um sem aprovação. Sem gerenciador de tarefas anexado (nenhuma ferramenta de
+tickets no grupo **Ferramentas** do `AGENTS.md` — `gh`, Jira/Atlassian, Linear,
+Azure DevOps, Notion, ou similar), crie a lista de tarefas nativa. Com um
+gerenciador já anexado, use-o para acompanhar as tarefas da mudança (comentário
+ou subtarefas no card) em vez de duplicar numa lista nativa que ninguém no time
+vê. Daqui até a entrega, não pare.
 
 ## 3 — Construir
 

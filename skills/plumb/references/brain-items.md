@@ -95,8 +95,10 @@ Na dúvida entre o repo e o `Geral`, o repo — e diga onde guardou.
 
 ## Segredos (token, senha, chave de API)
 
-O valor nunca passa por você. Grave o item **sem valor** e passe ao usuário o
-link que a resposta traz (`fill_url`): ele cola o valor na UI local.
+O valor nunca passa por você. Grave o item **sem valor** e cole na sua resposta
+o link literal que o `item_save` devolve (`fill_url`) — não parafraseie nem
+só mencione que ele existe; sem o link colado, o usuário não tem como preencher
+o valor na UI local.
 
 ```json
 {"key": "segredo/npm-token", "type": "secret", "title": "Token do npm",
