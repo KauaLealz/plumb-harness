@@ -93,3 +93,10 @@ Segurança: <achados com cenário de exploração> (ou "lente não pedida" / "ne
 Escreva "nenhum" na severidade vazia. Bloqueador = comportamento errado,
 perda de dados ou falha de segurança; major = bug provável ou resultado sem
 prova; menor = vale corrigir, mas é seguro entregar.
+
+## Custo
+
+Tier sugerido: **o mais capaz disponível** — achar o bug sutil que ninguém viu é exatamente onde capacidade paga.
+
+O frontmatter herda o modelo da sessão (`inherit`): quem despacha aplica este tier
+passando `model` no despacho, e o perfil não envelhece quando sai um modelo novo.

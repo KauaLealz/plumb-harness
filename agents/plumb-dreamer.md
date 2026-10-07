@@ -253,3 +253,10 @@ Ferramenta que falta (2+ ocorrências):
 Item de outro destino vai no mesmo lote, com `"workspace"` e `"project"`
 na entrada (`"workspace": "Global", "project": "Geral"`); sem eles, vale o
 project do projeto.
+
+## Custo
+
+Tier sugerido: **o mais capaz disponível** — o que ele grava entra no contexto de todas as sessões futuras.
+
+O frontmatter herda o modelo da sessão (`inherit`): quem despacha aplica este tier
+passando `model` no despacho, e o perfil não envelhece quando sai um modelo novo.

@@ -40,23 +40,33 @@ hora; a mudança segue a trilha dela, sem herdar a cerimônia da diretriz.
 
 ## Equipe
 
-| Papel | Subagente | Chame quando |
-|---|---|---|
-| Explorador | `plumb-explorer` | Área do código que você ainda não leu |
-| Planejador | `plumb-planner` | Trilha padrão ou profunda, depois da exploração |
-| Implementador | `plumb-implementer` | Cada fase (ou grupo de fases que toca os mesmos arquivos) da spec aprovada |
-| Testador | `plumb-tester` | Fases de código prontas. Prova que funciona — **não vê o diff** |
-| Revisor | `plumb-reviewer` | Em paralelo com o testador. Lê o diff — **não roda nada**; com `<lente>seguranca</lente>` na trilha profunda e em área sensível |
-| Dreamer | `plumb-dreamer` | Fechamento de toda mudança; estruturação, migração e auditoria |
+| Papel | Subagente | Chame quando | Tier |
+|---|---|---|---|
+| Explorador | `plumb-explorer` | Área do código que você ainda não leu | rápido |
+| Planejador | `plumb-planner` | Trilha padrão ou profunda, depois da exploração | capaz |
+| Implementador | `plumb-implementer` | Cada fase (ou grupo de fases que toca os mesmos arquivos) da spec aprovada | equilibrado |
+| Testador | `plumb-tester` | Fases de código prontas. Prova que funciona — **não vê o diff** | rápido |
+| Revisor | `plumb-reviewer` | Em paralelo com o testador. Lê o diff — **não roda nada**; com `<lente>seguranca</lente>` na trilha profunda e em área sensível | capaz |
+| Dreamer | `plumb-dreamer` | Fechamento de toda mudança; estruturação, migração e auditoria | capaz |
 
 Subagentes **não veem a conversa**: monte todo prompt de delegação por
 `references/prompt-contract.md` (leia uma vez, no primeiro despacho). Não leia
 os arquivos `plumb-*.md` para despachar — o papel já está neles. Subagente não
 instalado: faça o papel você mesmo e avise uma vez.
 
-**Custo.** Cada agente já traz modelo e esforço do papel; o implementador roda
-em `sonnet` e sobe para o modelo da sessão na trilha profunda ou depois de uma
-falha. Cada despacho novo relê o código do zero, então despache **por lote**.
+**Custo.** Nenhum agente crava um modelo: todos herdam o da sessão, e **você
+aplica o tier** da tabela no despacho (parâmetro `model`), escolhendo entre os
+modelos que esta ferramenta oferece hoje:
+
+| Tier | Para que serve | Quem |
+|---|---|---|
+| **rápido** | ler, buscar, rodar comando e reportar — capacidade extra não ajuda | explorador, testador |
+| **equilibrado** | escrever código dentro de uma fase já decidida | implementador |
+| **capaz** | decidir, achar bug sutil, escolher o que dura | planejador, revisor, dreamer |
+
+Suba o implementador para **capaz** na trilha profunda ou depois de uma falha na
+mesma fase. Cada despacho novo relê o código do zero: despache **por fase**, não
+por tarefa solta.
 
 ## Quando parar
 

@@ -3,7 +3,7 @@ name: plumb-explorer
 description: Explorador do Plumb — responde uma pergunta concreta sobre o código lendo arquivos, com citações arquivo:linha, e extrai a convenção que o código de fato segue (não a que a documentação diz). Só leitura. Use para mapear uma área antes de planejar uma mudança ou durante a estruturação de um projeto.
 disallowedTools: Write, Edit, NotebookEdit, mcp__knowledge-os__item_save, mcp__knowledge-os__repo, mcp__knowledge-os__item_delete
 readonly: true
-model: sonnet
+model: inherit
 effort: low
 maxTurns: 30
 ---
@@ -75,3 +75,10 @@ Contradições com o que está escrito:
 Incertezas:
 - <o que não foi possível confirmar e onde procurar> (ou "nenhuma")
 ```
+
+## Custo
+
+Tier sugerido: **rápido e barato** — é leitura, Glob e Grep — capacidade extra não acha arquivo mais rápido.
+
+O frontmatter herda o modelo da sessão (`inherit`): quem despacha aplica este tier
+passando `model` no despacho, e o perfil não envelhece quando sai um modelo novo.

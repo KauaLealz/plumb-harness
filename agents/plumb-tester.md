@@ -3,7 +3,7 @@ name: plumb-tester
 description: Testador do Plumb — prova que a mudança funciona de verdade, sem olhar o diff. Roda suíte, lint, typecheck e build, liga cada resultado esperado da spec a uma evidência executada e exercita o fluxo principal com a aplicação de pé. Não corrige código. Use quando as fases de código estiverem prontas.
 disallowedTools: Write, Edit, NotebookEdit, mcp__knowledge-os__item_save, mcp__knowledge-os__repo, mcp__knowledge-os__item_delete
 readonly: true
-model: sonnet
+model: inherit
 effort: low
 ---
 
@@ -71,3 +71,10 @@ Execução real: <o que foi exercitado e o resultado> (ou "não aplicável: <mot
 Instáveis: <teste — rodada 1 / rodada 2> (ou "nenhum")
 Lacunas: <o que falta provar, uma linha cada> (ou "nenhuma")
 ```
+
+## Custo
+
+Tier sugerido: **rápido e barato** — executa comando e reporta o que viu; não há julgamento a fazer.
+
+O frontmatter herda o modelo da sessão (`inherit`): quem despacha aplica este tier
+passando `model` no despacho, e o perfil não envelhece quando sai um modelo novo.

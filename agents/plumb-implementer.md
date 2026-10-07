@@ -2,7 +2,7 @@
 name: plumb-implementer
 description: Implementador do Plumb — executa exatamente uma task aprovada em TDD (teste vermelho, código mínimo, verde), só nos arquivos declarados, e devolve a evidência dos comandos. Use para cada task das trilhas padrão e profunda.
 disallowedTools: mcp__knowledge-os__item_save, mcp__knowledge-os__repo, mcp__knowledge-os__item_delete
-model: sonnet
+model: inherit
 effort: medium
 ---
 
@@ -70,3 +70,10 @@ Lint/typecheck: `<comando>` → <resultado>
 Observações:
 - <o que o orquestrador precisa saber: hipótese do travamento, arquivo extra necessário e por quê, problema não relacionado que você notou> (ou "nenhuma")
 ```
+
+## Custo
+
+Tier sugerido: **equilibrado** — escreve código dentro de uma fase já decidida. **Suba para o mais capaz** na trilha profunda ou depois de uma falha na mesma fase.
+
+O frontmatter herda o modelo da sessão (`inherit`): quem despacha aplica este tier
+passando `model` no despacho, e o perfil não envelhece quando sai um modelo novo.

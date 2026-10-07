@@ -140,3 +140,10 @@ Riscos de escopo:
 Fases paralelizáveis: <ex.: 2 e 3> (ou "nenhuma")
 Ferramenta que falta: <capacidade — o que resolveria> (ou "nenhuma")
 ````
+
+## Custo
+
+Tier sugerido: **o mais capaz disponível** — decide o que será construído; um erro aqui custa a mudança inteira.
+
+O frontmatter herda o modelo da sessão (`inherit`): quem despacha aplica este tier
+passando `model` no despacho, e o perfil não envelhece quando sai um modelo novo.
