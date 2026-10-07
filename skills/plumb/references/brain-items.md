@@ -73,6 +73,87 @@ cobrem isso.
 | `derived_from` | A nasceu de B | — |
 | `related_to` | Nenhum dos acima | **Default fraco**: se você não sabe qual escolher, provavelmente não deve relacionar |
 
+## Achar o que já está lá: busca, keywords, tags e labels
+
+Três campos parecidos que fazem coisas diferentes. Confundi-los é o motivo mais
+comum de um item existir e nunca ser encontrado.
+
+| Campo | O que faz | Vocabulário |
+|---|---|---|
+| **`keywords`** | **indexado na busca**, junto com título, resumo e conteúdo — é o que faz o item ser *achado* por texto | livre, 4–8 sinônimos em português |
+| **`tags`** | **filtra** a busca: assunto transversal que corta vários tipos e projetos | livre, kebab-case |
+| **`labels`** | **filtra** a busca: natureza do item | controlado — `official`, `critical`, `experimental`, `deprecated`, `reference` |
+
+### Como buscar
+
+```python
+item_search(query="estorno parcial", repo=".")               # texto, no projeto atual
+item_search(query="", tags=["pagamentos"], labels=["critical"], repo=".")
+item_search(query="deploy", types=["procedure"], repo=".")
+item_search(query="cache", everywhere=True)                  # todos os projetos
+item_search(query="webhook", include_inactive=True)          # traz substituídos e obsoletos
+```
+
+O que vale saber do motor:
+
+- Busca em **título + resumo + keywords + conteúdo**, mas **nunca devolve o
+  conteúdo** — para lê-lo, `item_get` com a key.
+- Ordena por relevância, com **peso maior no título**; empate vai para
+  importância, confiança, uso e data.
+- Normaliza o português: acento, plural e radical não atrapalham (`pagamento`
+  acha `pagamentos`).
+- Exigiu todos os termos e não achou nada? Ela tenta de novo com qualquer um —
+  então consulta longa não volta vazia à toa.
+- Por padrão **omite** substituídos, obsoletos e `ephemeral` vencidos.
+  `include_inactive=True` quando você quer o histórico.
+- `tags` e `labels` filtram por **conjunção**: `tags=["a","b"]` traz só o que
+  tem as duas.
+- Sem `repo` nem `workspace`, busca no projeto da pasta atual (não vaza para
+  outros); `everywhere=True` abre para todos.
+
+### Quando pôr tag
+
+Tag serve para o **recorte transversal** que nem o tipo nem o project dão: a
+área do produto que atravessa vários tipos de item (`pagamentos`, `onboarding`,
+`checkout`).
+
+| Ponha tag quando | Não ponha quando |
+|---|---|
+| O assunto atravessa tipos (uma regra, um gotcha e um procedimento de pagamentos) | O nome repetiria o `type` (`regra`, `decisao`) ou o project |
+| Você consegue imaginar alguém pedindo "me traz tudo de X" | É sinônimo do título — isso é `keywords` |
+| O assunto já tem 3+ itens — igual a `subject`, tag **nasce tarde** | Seria usada uma vez só |
+
+Tag e subject se parecem: **subject** é estrutural (o item *mora* nele, um só);
+**tag** é transversal (o item *fala de*, pode ter várias). Na dúvida, tag — ela
+não move nada de lugar.
+
+### Quando pôr label
+
+Label diz a **natureza**, não o assunto. São cinco e não se inventam outras:
+
+| Label | Use quando |
+|---|---|
+| `official` | é a forma oficialmente sancionada pelo time — vence o resto numa dúvida |
+| `critical` | ignorar isso quebra produção, perde dado ou vaza algo |
+| `experimental` | está em teste; pode mudar ou ser revertido |
+| `deprecated` | ainda existe no código, mas não se escreve mais assim |
+| `reference` | é consulta, não é para seguir à risca |
+
+A maioria dos itens **não leva label nenhum** — o normal não precisa de
+marcação. Label só quando o agente precisa tratar aquele item diferente dos
+outros.
+
+### Keywords: o campo que mais rende
+
+É o único indexado dos três, e o mais mal usado: não repita o título (ele já
+está no índice, com peso maior). Ponha o que **outra pessoa** digitaria ao
+procurar — o sinônimo, o termo do dia a dia, o nome em inglês, o erro que a
+pessoa veria.
+
+- ❌ `title: "Money em pagamentos"` · `keywords: "money pagamentos"`
+- ✅ `title: "Money em pagamentos"` · `keywords: "dinheiro valor centavos
+  arredondamento float decimal preço"`
+
 ## Antes de criar: os 3 passos contra duplicata
 
 A `key` é o identificador semântico — se duas coisas mereceriam a mesma key,
@@ -155,7 +236,9 @@ Na dúvida entre o repo e o `Geral`, o repo — e diga onde guardou.
 | `summary` | 1–2 frases no imperativo, **com o porquê**. É o que aparece no pacote; se precisa do `content` para ser seguido, está fraco |
 | `content` | Exemplo, exceção, passos com os comandos exatos |
 | `scope_paths` | Os arquivos onde a regra **de fato** se aplica, o mais estreito possível. Sem escopo = aparece em toda sessão; escopo largo (`frontend/**`) = entra "em foco", com conteúdo, em quase toda mudança — use só para o que vale mesmo para tudo ali |
-| `keywords` | 4–8 sinônimos em português, separados por espaço, que alguém usaria para buscar. Não repita o título |
+| `keywords` | 4–8 sinônimos em português, separados por espaço, que **outra pessoa** usaria para buscar. **Indexado**; não repita o título |
+| `tags` | Assunto transversal, kebab-case. **Filtra** a busca. Só o que já tem 3+ itens |
+| `labels` | Natureza, da lista fixa (`official`, `critical`, `experimental`, `deprecated`, `reference`). **Filtra** a busca. A maioria dos itens não leva nenhum |
 | `sensivel` (em `keywords`) | **Só** para autenticação/autorização, pagamento, dados pessoais, isolamento entre tenants e segredos. Liga a revisão de segurança — marcar demais a banaliza |
 | `source` | De onde veio, num formato só: `commit abc1234`, `<id-da-mudança>` ou `pedido do usuário AAAA-MM-DD`. Nunca um arquivo que deixou de existir |
 | `relations` | `[{"type": "supersedes", "target": "<key antiga>"}]`; outros tipos: `related_to`, `depends_on`, `implements`, `references`, `derived_from` |

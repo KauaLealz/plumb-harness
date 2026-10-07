@@ -191,7 +191,14 @@ ficam só os comandos (`AGENTS.md`) e as permissões — nenhuma pasta do Plumb.
 - **Ler com uma consulta.** O hook injeta o pacote do início (com "Mudanças em
   andamento"). Ao planejar, **uma** chamada `context_get(repo=".", paths=[arquivos
   que a mudança toca], query="<tema>")`: o que casa vem em foco, com o começo do
-  content. `item_get` só se faltar detalhe. Dúvida avulsa: `item_search(query)`.
+  content. `item_get` só se faltar detalhe.
+- **Buscar bem.** `item_search(query)` para dúvida avulsa; `types=` para limitar o
+  tipo (`["procedure"]` antes de executar um processo, `["pattern"]` antes de criar
+  algo que já tem molde); `tags=`/`labels=` para recortar (`labels=["critical"]`
+  numa área sensível); `everywhere=True` para olhar os outros projetos. A busca não
+  devolve o conteúdo — leia com `item_get` o que interessar. Vale buscar antes de
+  explorar código numa área nova (o cérebro pode já saber), ao travar (um gotcha
+  guardado vale mais que uma hipótese) e antes de gravar (duplicata).
 - **`sensitive: true`** na resposta = área de risco: ative a lente de segurança (seção 4).
 - **Gravar:** o que o usuário **ditou** (regra com escopo claro, preferência) vai
   na hora, confirme em uma linha. O que você **inferiu** (`pattern`, `procedure`,

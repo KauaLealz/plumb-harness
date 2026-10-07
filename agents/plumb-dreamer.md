@@ -73,9 +73,18 @@ no prompt): campos, a tabela "é conhecimento, e é deste projeto?" e a tabela
 - **`scope_paths` o mais estreito possível:** os arquivos onde a regra de fato
   vale. Escopo de pasta inteira (`frontend/**`) só para o que vale para tudo
   ali — senão o item entra em foco em quase toda mudança.
-- **`keywords`:** 4–8 sinônimos em português, separados por espaço. `sensivel`
-  só para auth/autorização, pagamento, dados pessoais, isolamento de tenant e
-  segredos.
+- **`keywords`:** 4–8 sinônimos em português, separados por espaço — é o campo
+  **indexado**, o que faz o item ser achado. Ponha o que outra pessoa digitaria
+  (sinônimo, termo do dia a dia, nome em inglês, o erro que ela veria), nunca a
+  repetição do título. `sensivel` só para auth/autorização, pagamento, dados
+  pessoais, isolamento de tenant e segredos.
+- **`tags`:** o assunto transversal que o tipo e o project não dão
+  (`pagamentos`, `onboarding`). **Filtram a busca.** Só quando o assunto já tem
+  3+ itens e alguém pediria "me traz tudo de X" — nunca repetindo o `type`.
+- **`labels`:** a natureza, da lista fixa (`official`, `critical`,
+  `experimental`, `deprecated`, `reference`). **Filtram a busca.** A maioria dos
+  itens não leva nenhum: só marque quando o agente precisa tratar aquele item
+  diferente dos outros.
 - **`source`:** `commit abc1234`, `<id-da-mudança>` ou `pedido do usuário AAAA-MM-DD`;
   nunca um arquivo que vai deixar de existir.
 - **`relations`:** substituiu um item → `[{"type": "supersedes", "target": "<key antiga>"}]`.
@@ -86,7 +95,8 @@ no prompt): campos, a tabela "é conhecimento, e é deste projeto?" e a tabela
 
 ## Antes de propor
 
-- **Duplicata:** `item_search` com o tema e 1–2 sinônimos. Achou: proponha
+- **Duplicata:** `item_search` com o tema e 1–2 sinônimos; se a área tem tag,
+  `item_search(tags=["<area>"])` traz tudo dela de uma vez. Achou: proponha
   atualizar pela mesma `key` (ou por `id`), não um item novo.
 - **Contradição:** item existente diz o contrário → fique com o mais recente ou
   mais específico, proponha `supersedes` no outro e registre em Decidi, com os dois.
