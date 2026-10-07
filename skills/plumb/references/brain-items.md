@@ -1,11 +1,11 @@
 # Molde de item do cérebro
 
-Para gravar você mesmo uma regra, decisão ou gotcha simples (sem despachar o
-curador). Padrões novos, procedimentos e lotes com 3 sinais ou mais vão ao
+Para gravar você mesmo uma regra, decisão ou gotcha simples. Molde de
+composição (`pattern`), procedimento e lote com 3 sinais ou mais vão ao
 `plumb-dreamer`.
 
 ```json
-{"key": "regra/money", "type": "rule",
+{"key": "rule/money", "type": "rule",
  "title": "Money em pagamentos",
  "summary": "Valores sempre em centavos inteiros (Money, em shared/money) — float perde centavos em somas.",
  "content": "Exemplo: 1990 = R$ 19,90. Exceção: relatórios, que formatam só na borda.",
@@ -25,12 +25,70 @@ Guarde em momentos certos, não a cada passo:
 |---|---|
 | O usuário enuncia uma regra, decisão ou preferência ("sempre…", "aqui a gente…", "prefiro…") | `rule`, `insight` ou preferência no `Global` — **na hora**, sem perguntar; confirme em uma linha |
 | Você travou e resolveu algo não óbvio (depois de resolvido, não durante) | `knowledge`: sintoma, causa e o que fazer |
-| No fechamento de cada mudança, num lote só | `insight` das decisões com porquê, `pattern` do que o projeto fez pela primeira vez, `procedure` do que você executou e vai se repetir, `knowledge` do que custou tempo |
+| No fechamento de cada mudança, num lote só | `insight` das decisões com porquê, `procedure` do que você executou e vai se repetir, `knowledge` do que custou tempo (inclusive a primeira vez que o projeto resolveu um tipo de problema), `pattern` se um molde de composição se firmou |
 | Uma pergunta sobre o código custou exploração e vai ser feita de novo | `context` (o que o projeto é) ou `knowledge` |
 | Setup, migração e retro | Consolidação: reforçar, juntar, aposentar |
 
 Não guarde a cada comando, nem o que você descobriu com uma leitura de arquivo:
 se é barato redescobrir, não é memória.
+
+## Grava direto ou pede aprovação
+
+O usuário não precisa aprovar o que ele mesmo mandou; precisa aprovar o que
+você **inferiu**.
+
+| Grava na hora, confirme em uma linha | Mostre e espere o "sim" |
+|---|---|
+| `rule` **ditada** pelo usuário, com escopo claro neste project | Qualquer item no workspace `Global` — vale em todo projeto dele |
+| `secret` (item vazio, sem valor) | `pattern`, `procedure`, `knowledge` — você deduziu que se repete |
+| `spec` (a spec que o usuário já aprovou) | `context` — muda o entendimento do projeto |
+| `insight` de decisão que já estava na spec aprovada | `rule` inferida por você, ou sem escopo claro |
+
+Na dúvida, aprovação: um item errado gravado sem aviso envenena todas as
+sessões seguintes.
+
+## Onde agrupar: workspace, project, subject
+
+| Nível | É | Crie quando | Nunca |
+|---|---|---|---|
+| `workspace` | Contexto de trabalho (a empresa, o cliente, `Pessoal`, `Global`) | Outro contexto — **`workspace_list()` antes**, para não duplicar com outra grafia | Por projeto, por área ou por fase |
+| `project` | **Um repositório**. Exceção única: `Geral`, o que vale para os repositórios daquele workspace | Repositório novo | Por área, time ou tecnologia |
+| `subject` | Área do produto com nome próprio dentro de um project (pagamentos, onboarding) | A área já tem **3 itens ou mais** e eles disputam espaço no pacote; o time usa esse nome falando | Com 1–2 itens; nem como disfarce de `type` (`regras`, `decisões`) |
+
+`subject` **nasce tarde**: comece sem, crie quando o volume pedir. Se um item
+caberia em dois subjects, o recorte está errado.
+
+## Quando relacionar — e quando não
+
+Relacionar custa manutenção. O teste: **o leitor de A precisaria abrir B para
+agir certo?** Se é só "tem a ver", não relacione — `keywords` e busca já
+cobrem isso.
+
+| Tipo | Use quando | Efeito |
+|---|---|---|
+| `supersedes` | O novo **substitui** o antigo | O antigo sai da busca e do contexto, sem perder o histórico |
+| `depends_on` | Seguir A exige ter feito B antes | Procedimento que pressupõe outro |
+| `implements` | A concretiza uma regra ou decisão mais ampla | Molde → regra |
+| `references` | A cita B, mas funciona sem ele | — |
+| `derived_from` | A nasceu de B | — |
+| `related_to` | Nenhum dos acima | **Default fraco**: se você não sabe qual escolher, provavelmente não deve relacionar |
+
+## Antes de criar: os 3 passos contra duplicata
+
+A `key` é o identificador semântico — se duas coisas mereceriam a mesma key,
+são o mesmo item.
+
+1. **Monte a key que você usaria** e busque por ela (`item_get`). Existe?
+   Atualize por ela; nunca crie uma variação (`rule/money-2`).
+2. **`item_search` pelos termos do título.** A resposta traz `similar` quando
+   há título parecido — leia antes de criar.
+3. **Decida:** certo mas incompleto → mesma key, enriquece. Errado ou
+   superado → mesma key se é correção, key nova com `supersedes` se o
+   histórico importa. Só parece, é outro assunto → key nova, e relacione
+   **só** se o leitor de um precisar do outro.
+
+Dois itens com poucos usos dizendo quase a mesma coisa é duplicata
+rastejando: o `/plumb-dream` caça e propõe juntar.
 
 ## Que tipo — e o teste de cada um
 
@@ -39,21 +97,21 @@ se é barato redescobrir, não é memória.
 | `rule` | Há um sempre/nunca do código, enunciado pelo usuário ou que uma revisão cobraria | Dá para dizer olhando um diff se ele cumpre a regra? |
 | `insight` | Escolheu-se entre alternativas e o porquê vai importar depois | Tem a alternativa descartada e o motivo? Alguém perguntaria "por que é assim?" |
 | `procedure` | Passos que você executou e vão se repetir (migration, release, ambiente, deploy) | Um agente novo executaria só com o `content`, com os comandos exatos? |
-| `pattern` | O projeto resolveu um tipo de problema pela primeira vez e isso deve ser copiado | Aponta o arquivo que serve de modelo? |
-| `knowledge` | Comportamento não óbvio do código que custou tempo e voltaria a custar | Tem sintoma, causa e o que fazer? |
-| `context` | O que o projeto é: produto, quem usa, termos do domínio, mapa do código | Muda raramente? Poucos itens (`contexto/produto`, `contexto/mapa`), sempre atualizados pela mesma key |
+| `pattern` | **Toda coisa desse tipo tem essa forma**: molde de composição que se repete ("toda página de listagem tem breadcrumb, título, busca com filtro, lista plana e paginador") | Dá para conferir se um artefato novo segue o molde? Aponta o arquivo-modelo? |
+| `knowledge` | Comportamento não óbvio que custou tempo e voltaria a custar — inclusive a primeira vez que o projeto resolveu um tipo de problema | Tem sintoma, causa e o que fazer? |
+| `context` | O que o projeto é: produto, quem usa, termos do domínio, mapa do código | Muda raramente? Poucos itens (`context/produto`, `context/mapa`), sempre atualizados pela mesma key |
 | `task` | O plano de cada mudança (o orquestrador cuida) | — |
 
 Antes de criar, procure (`item_search`): existe item sobre isso? **Atualize pela
 mesma key** em vez de criar outro; se o novo contradiz o antigo, `supersedes`.
 
-## Onde
+## Em que project
 
 | Vale para… | Destino |
 |---|---|
 | Só este repositório | O project do repositório (o padrão do `item_save` com `repo="."`) |
-| Os repositórios deste contexto (a empresa ou o cliente): convenções, padrões de design, práticas | Project `Geral` do mesmo workspace (`"project": "Geral"` na entrada) |
-| Você, em qualquer contexto: idioma, estilo, preferências, ambiente da sua máquina, ferramenta em geral | Workspace `Global`, project `Geral` |
+| Os repositórios deste contexto (a empresa, o cliente) | Project `Geral` do mesmo workspace (`"project": "Geral"` na entrada) |
+| Você, em qualquer contexto: idioma, estilo, preferências, máquina, ferramenta | Workspace `Global`, project `Geral` (**pede aprovação**) |
 
 Na dúvida entre o repo e o `Geral`, o repo — e diga onde guardou.
 
@@ -73,7 +131,7 @@ Na dúvida entre o repo e o `Geral`, o repo — e diga onde guardou.
 
 | Campo | Regra |
 |---|---|
-| `key` | Estável, minúscula, prefixo do tipo: `regra/`, `decisao/`, `proc/`, `padrao/`, `gotcha/`, `contexto/`. Mesma key = atualiza, não duplica |
+| `key` | Estável, minúscula, prefixo do tipo: `rule/`, `decision/`, `proc/`, `pattern/`, `gotcha/`, `context/`. Mesma key = atualiza, não duplica |
 | `type` | `rule` sempre/nunca · `insight` decisão do time e o porquê · `procedure` passo a passo repetível · `pattern` solução recorrente com o arquivo-modelo · `knowledge` armadilha ou comportamento não óbvio **do código deste projeto** · `context` o que o projeto é (produto, domínio, mapa) |
 | `summary` | 1–2 frases no imperativo, **com o porquê**. É o que aparece no pacote; se precisa do `content` para ser seguido, está fraco |
 | `content` | Exemplo, exceção, passos com os comandos exatos |
@@ -101,13 +159,13 @@ só mencione que ele existe; sem o link colado, o usuário não tem como preench
 o valor na UI local.
 
 ```json
-{"key": "segredo/npm-token", "type": "secret", "title": "Token do npm",
+{"key": "secret/npm-token", "type": "secret", "title": "Token do npm",
  "summary": "Publicar os pacotes da Polara no npm"}
 ```
 
 - Onde: como qualquer item — só este repo, o `Geral` do workspace (o token da
   empresa) ou o `Global` (o token pessoal do usuário).
-- Usar: `knowledge-mcp run --env NPM_TOKEN=segredo/npm-token -- npm publish`
+- Usar: `knowledge-mcp run --env NPM_TOKEN=secret/npm-token -- npm publish`
   (ou `--stdin segredo/<nome>` para `--password-stdin`). O pacote de contexto
   lista os segredos e diz se já têm valor.
 - O usuário colou o valor no chat? Não grave nem repita; crie o item vazio,
@@ -121,5 +179,5 @@ servidor recusa). Decisão que vale só para uma mudança (fica nas Decisões de
 ## Cérebro fora do ar
 
 Uma entrada por linha em `~/.knowledge-os/pending.jsonl`: o mesmo objeto de
-`items` mais `"project": "<caminho absoluto do repositório>"`. A próxima sessão
+`items` mais `"repo": "<caminho absoluto do repositório>"`. A próxima sessão
 grava sozinha (o hook do início esvazia a fila).
