@@ -130,12 +130,11 @@ busca pelo sintoma quando algo trava; e uma gravação em lote ao fechar.
 |---|---|---|
 | Orquestrador | skill `plumb` (sessão principal) | Classifica o pedido, escolhe a rota, conduz os gates e o estado; monta os prompts, delega e grava no cérebro |
 | Explorador | `agents/plumb-explorer.md` | Responde perguntas sobre o código com `arquivo:linha` (só leitura) |
-| Planejador | `agents/plumb-planner.md` | Critérios de aceite, tasks, design, perguntas (só leitura) |
-| Implementador | `agents/plumb-implementer.md` | Um lote de tasks (mesmos arquivos) em TDD, só nos arquivos declarados |
-| Verificador | `agents/plumb-verifier.md` | Prova independente: checks, critério → evidência, execução real |
-| Revisor | `agents/plumb-reviewer.md` | Diff contra a spec e as regras do cérebro: bugs com cenário de falha, escopo, convenções; com a lente de segurança em área sensível |
-| Revisor de segurança | `agents/plumb-security.md` | Trilha profunda: injeção, autorização, segredos, dados pessoais, dinheiro |
-| Curador de contexto | `agents/plumb-curator.md` | O que guardar no cérebro, com tipo, chave, escopo e texto exato — devolve o lote pronto para `item_save` |
+| Planejador | `agents/plumb-planner.md` | A spec: resultados esperados observáveis, fases com papel, dependência e critério de saída (só leitura) |
+| Implementador | `agents/plumb-implementer.md` | Uma fase em TDD, só nos arquivos declarados, com commit atômico |
+| Testador | `agents/plumb-tester.md` | Prova que funciona — **sem ver o diff**: cada resultado esperado com evidência executada |
+| Revisor | `agents/plumb-reviewer.md` | Lê o diff contra a spec — **não roda nada**: bugs com cenário de falha, escopo, convenções, e segurança quando a lente está ligada |
+| Dreamer | `agents/plumb-dreamer.md` | O que guardar no cérebro, com tipo, chave, escopo e texto exato, e que ferramenta falta — devolve o lote pronto para `item_save` |
 
 Os agentes usam `disallowedTools` (edição de arquivos e escrita no
 cérebro) em vez de uma lista fixa, para herdarem as ferramentas MCP que o
@@ -167,12 +166,12 @@ certo. Quando guardar, de que tipo e onde: `skills/plumb/references/brain-items.
 
 | O quê | Item | Chega ao agente |
 |---|---|---|
-| Plano de cada mudança | `spec` (`change/<id>`); `done` ao entregar | "Mudanças em andamento" no início da sessão |
-| Convenção, stack, mapa, áreas sensíveis | `context` / `rule` no domain do projeto | Hook de início de sessão |
+| Spec de cada mudança | `spec` (`change/<id>`); `done` ao entregar | "Mudanças em andamento" no início da sessão |
+| Convenção, mapa, áreas sensíveis, **stack e ferramentas** | `context` / `rule` no project | Hook de início de sessão |
 | Regra de uma área | `rule` com `scope_paths` | `context_get` com os arquivos que a mudança toca |
 | Decisão e o porquê | `insight`, com a mudança de origem | Pacote ("Decisões recentes") e busca |
 | Procedimento repetível | `procedure` | Pacote e busca na hora de moldar |
-| Padrão novo, gotcha | `pattern`, `knowledge` | Pacote e busca (ao travar, antes de tudo) |
+| Molde de composição, gotcha | `pattern`, `knowledge` | Pacote e busca (ao travar, antes de tudo) |
 | Convenção da empresa ou do cliente | domain `Geral` do workspace | Em todos os repositórios daquele contexto |
 | Diretriz sua em qualquer contexto (idioma, estilo, preferências, ambiente) | `Global / Geral` | Em todo projeto |
 
@@ -319,12 +318,13 @@ parágrafo de Workflow que o `/plumb-setup` grava nele.
 ## Estrutura do repositório
 
 ```
-skills/plumb/              orquestrador + references/ (contrato de prompt, modelo da mudança, testes)
-skills/plumb-setup/        ligação ao cérebro, estruturação, migração e auditoria + references/catalog.md
-skills/plumb-dream/        retrospectiva periódica e limpeza do cérebro
-skills/plumb-find-docs/    documentação atual de bibliotecas (Context7) — cópia fixada
-skills/plumb-find-skills/  descobrir skills sob demanda, com revisão de segurança — cópia fixada
-agents/                    os 7 subagentes
+skills/plumb/              orquestrador + references/ (contrato de prompt, modelo da spec, molde do cérebro, testes)
+skills/plumb-setup/        ligação ao cérebro, entrevista de stack, estruturação e migração + references/catalog.md
+skills/plumb-dream/        lê as sessões, audita o cérebro, propõe ajustes e ferramentas
+skills/plumb-find-docs/    falta documentação? (Context7) — cópia fixada
+skills/plumb-find-skills/  falta competência? descobrir skills, com revisão de segurança — cópia fixada
+skills/plumb-find-mcps/    falta acesso? propor MCP por fase do trabalho
+agents/                    os 6 subagentes
 evals/                     casos, resultados e um fixture sem dependências
 bin/cli.js, lib/           instalador npm (install, uninstall, status; registra o cérebro)
 global-instruction.md      bloco gravado em ~/.claude/CLAUDE.md (ou User Rules do Cursor)
