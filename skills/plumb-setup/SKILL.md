@@ -220,7 +220,7 @@ Mostre o conteúdo completo de um arquivo só se o usuário pedir.
    Code; `.cursor/cli.json` e `.cursor/permissions.json` no Cursor.
 6. **`.plumb/` de versões antigas** — mudanças em andamento viram itens
    `mudanca/<id>` (`type: spec`, o arquivo como `content`); as arquivadas, o mesmo
-   com `status: done`; o `retro.md`, o item `retro/ultima`. Depois que o lote
+   com `status: done`; o `dream.md`, o item `dream/last`. Depois que o lote
    gravar, remova a pasta e a linha dela no `.gitignore`.
 7. Registre a resposta sobre commits na linha `Convenções do Plumb:` do bloco do
    `AGENTS.md` (ex.: `commit por tarefa: sim`) — não no cérebro.

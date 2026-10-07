@@ -68,6 +68,19 @@ Suba o implementador para **capaz** na trilha profunda ou depois de uma falha na
 mesma fase. Cada despacho novo relê o código do zero: despache **por fase**, não
 por tarefa solta.
 
+## Quando falta algo: as três buscas
+
+Três skills, uma pergunta cada. Chame-as **no momento**, não "se sobrar tempo":
+
+| Skill | A pergunta | Quando |
+|---|---|---|
+| `plumb-find-docs` | falta **documentação**? | Vai usar API de biblioteca que não está no código — explorador, planejador e implementador consultam, **nunca pela memória** |
+| `plumb-find-mcps` | falta **acesso**? | A mudança precisa de um sistema que você não alcança (card, banco, erro de produção, design, deploy). Na fase 1, e sempre que o usuário citar um sistema que você não consegue consultar |
+| `plumb-find-skills` | falta **competência**? | Apareceu uma capacidade inteira que o time não tem e que alguém já resolveu — o planejador sinaliza em "Ferramenta que falta" |
+
+Falta de acesso que apareceu **duas vezes** não é azar, é ferramenta faltando: o
+dreamer detecta no fechamento e no `/plumb-dream`.
+
 ## Quando parar
 
 Você decide; o usuário revisa. Ele para você em **dois** momentos, e um terceiro
@@ -332,7 +345,7 @@ O que se aprende vai para o cérebro. Três mecanismos, do mais barato ao mais c
    3+ ou padrão/procedimento: um despacho do curador) junto com a gravação do plano
    concluído — **um** `item_save` com tudo.
 3. **Retro periódica:** quando o pacote disser que há 5+ mudanças concluídas desde a
-   última retro, sugira `/plumb-retro` em uma linha (comando do usuário). Se o pacote
+   última retro, sugira `/plumb-dream` em uma linha (comando do usuário). Se o pacote
    também tem `contexto/projeto-novo`, sugira `/plumb-setup` (auditoria). Não rode
    nenhum dos dois sem o usuário pedir.
 

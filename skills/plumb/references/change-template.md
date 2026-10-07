@@ -68,7 +68,7 @@ Números: <n> tarefas · <n> lotes · <n> correções pós-revisão · <n> trava
 - **Decisões** — o "Decidi" do plano, cada uma com a fonte, mais os ajustes que o
   usuário fez na revisão. Só escolhas que alguém questionaria depois.
 - **Retro** — sinais de retroalimentação (tipos em `retro-signals.md`), uma linha
-  cada, anotados na hora. Os Números entram no fechamento; a `/plumb-retro` lê depois.
+  cada, anotados na hora. Os Números entram no fechamento; a `/plumb-dream` lê depois.
 - **Notas** — o handoff. Se o trabalho parar no meio, uma sessão nova precisa
   continuar só com o `summary`, as tarefas desmarcadas e as Notas.
 - Sem cérebro (fora do ar): o plano fica no chat e na lista de tarefas, e o item vai
