@@ -193,13 +193,15 @@ ficam só os comandos (`AGENTS.md`) e as permissões — nenhuma pasta do Plumb.
   que a mudança toca], query="<tema>")`: o que casa vem em foco, com o começo do
   content. `item_get` só se faltar detalhe. Dúvida avulsa: `item_search(query)`.
 - **`sensitive: true`** na resposta = área de risco: ative a lente de segurança (seção 4).
-- **Gravar:** na hora, sem perguntar — não há aprovação; o que você grava já vale.
-  Corrigir = regravar pela mesma key; aposentar = `status: deprecated`. Molde em
-  `references/brain-items.md`.
+- **Gravar:** o que o usuário **ditou** (regra com escopo claro, preferência) vai
+  na hora, confirme em uma linha. O que você **inferiu** (`pattern`, `procedure`,
+  `knowledge`, `context`) e tudo no `Global` passa pelo "sim" dele. Corrigir =
+  regravar pela mesma key; aposentar = `status: deprecated`. Molde e a tabela
+  completa em `references/brain-items.md`.
 - **Spec da mudança:** item `change/<id>` (modelo em `references/spec-template.md`).
-  O `summary` é o andamento em uma linha; o `content`, o plano. Atualize o
-  `summary` a cada avanço (chamada pequena) e o `content` só quando o plano muda e
-  no fechamento — não reenvie o plano inteiro a cada lote.
+  O `summary` é o andamento em uma linha; o `content`, a spec. Atualize o
+  `summary` a cada avanço (chamada pequena) e o `content` só quando a spec muda e
+  no fechamento — não reenvie a spec inteira a cada fase.
 - **Projeto não ligado** (o pacote avisa): sugira `/plumb-setup` uma vez e siga.
 - **Cérebro fora do ar:** avise em uma linha e siga com o plano no chat e na lista
   de tarefas; o que gravaria vai para `~/.knowledge-os/pending.jsonl` (formato no
@@ -208,6 +210,35 @@ ficam só os comandos (`AGENTS.md`) e as permissões — nenhuma pasta do Plumb.
   **cole o link literal na sua resposta ao usuário**, nunca só diga que ele
   existe ou que "já pode preencher na UI" sem o link em si. Usar por
   `knowledge-mcp run` (molde). Nunca peça o valor no chat. Dado pessoal: nunca.
+
+## Com um gestor de tarefas conectado
+
+Jira, Linear, Monday, Trello, ClickUp, GitHub Issues: se houver um MCP de
+tarefas disponível, ele é **a fonte de verdade do trabalho** — e o cérebro
+nunca disputa esse papel com ele.
+
+| Onde | Guarda | Vive enquanto |
+|---|---|---|
+| **Gestor de tarefas** | o **quê** e o **status** — compartilhado com gente | o card existir |
+| **Cérebro** | o **porquê** e o **como** — regra, decisão, padrão, gotcha | para sempre |
+| **Spec** | a ponte entre os dois | a mudança estiver viva |
+
+Nos dois sentidos: o cérebro **nunca** guarda status, andamento ou id de tarefa
+(isso morre com o card); o gestor **nunca** guarda regra durável (ela morreria
+junto com o card fechado).
+
+No fluxo:
+
+| Fase | O que muda |
+|---|---|
+| **0 Localizar** | Pedido é um id (`PAY-142`)? Busque o card: a descrição e os critérios dele são a entrada — não pergunte o que já está escrito lá |
+| **4 Especificar** | A spec **referencia** o card, não copia a descrição. Resultados esperados saem dos critérios do card quando existem |
+| **5 Construir** | Ao começar, status → em andamento; ao fechar a última fase de código, → pronto. **Num lugar só** |
+| **8 Entregar** | Comente no card com a evidência e o link do commit ou PR |
+
+Sem gestor conectado, o status vive na spec e na lista de tarefas nativa, como
+sempre. Se o usuário fala de card e não há ferramenta que o alcance:
+`plumb-find-mcps`.
 
 ## 0 — Localizar
 

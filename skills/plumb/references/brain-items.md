@@ -99,11 +99,30 @@ rastejando: o `/plumb-dream` caça e propõe juntar.
 | `procedure` | Passos que você executou e vão se repetir (migration, release, ambiente, deploy) | Um agente novo executaria só com o `content`, com os comandos exatos? |
 | `pattern` | **Toda coisa desse tipo tem essa forma**: molde de composição que se repete ("toda página de listagem tem breadcrumb, título, busca com filtro, lista plana e paginador") | Dá para conferir se um artefato novo segue o molde? Aponta o arquivo-modelo? |
 | `knowledge` | Comportamento não óbvio que custou tempo e voltaria a custar — inclusive a primeira vez que o projeto resolveu um tipo de problema | Tem sintoma, causa e o que fazer? |
-| `context` | O que o projeto é: produto, quem usa, termos do domínio, mapa do código | Muda raramente? Poucos itens (`context/produto`, `context/mapa`), sempre atualizados pela mesma key |
+| `context` | O que o projeto é: produto, quem usa, termos do domínio, mapa do código, **a stack e as ferramentas** | Muda raramente? Poucos itens (`context/produto`, `context/mapa`, `context/stack`), sempre atualizados pela mesma key |
 | `task` | O plano de cada mudança (o orquestrador cuida) | — |
 
 Antes de criar, procure (`item_search`): existe item sobre isso? **Atualize pela
 mesma key** em vez de criar outro; se o novo contradiz o antigo, `supersedes`.
+
+## `context/stack`: o que o projeto usa e o que o agente alcança
+
+Um item por project, atualizado pela mesma key. É o que evita cada sessão
+perguntar de novo qual é o banco, onde ficam os cards, como se vê erro em
+produção — e é onde o `plumb-find-mcps` descobre o que já está coberto.
+
+```json
+{"key": "context/stack", "type": "context", "title": "Stack e ferramentas",
+ "summary": "O que o projeto usa e o que o agente alcança hoje — consulte antes de propor ferramenta.",
+ "content": "Tarefas: Linear (MCP conectado)\nBanco: Postgres (sem MCP — pedir se precisar de dado real)\nErro em produção: Sentry (MCP conectado, leitura)\nDeploy: Railway (sem MCP)\nDesign: Figma (sem MCP)\nE2E: não usam\nPagamento: Stripe — área sensível\n",
+ "keywords": "stack ferramentas mcp integração acesso"}
+```
+
+Três estados por linha: **conectado** (o agente alcança), **sem MCP** (existe,
+o agente não alcança — candidato), **não usam** (não pergunte de novo).
+
+Preenchido pelo `/plumb-setup` (inferência + entrevista) e atualizado pelo
+`/plumb-dream` quando uma ferramenta entra ou uma lacuna se repete.
 
 ## Em que project
 

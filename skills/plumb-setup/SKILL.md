@@ -144,9 +144,50 @@ Sinal forte sem entrada no catálogo (uma tecnologia que o projeto usa e
 nenhuma linha cobre): procure com a skill `plumb-find-skills`, que exige
 revisão de segurança e o seu "sim" antes de instalar qualquer coisa.
 
-Onde ficam os cards e que ferramentas o time usa: decida pelos sinais (remote
-GitHub → GitHub Issues e `gh`; ids `ABC-123` em commits com link do Jira → Jira) e
-liste em "Decidi:". Sem sinal nenhum, não sugira ferramenta de tickets.
+## 2c — A entrevista: o que o código não conta
+
+Infira primeiro, pergunte depois. O que dá para saber sem perguntar sai de
+`package.json`/`pyproject`/`go.mod`, `docker-compose`, CI, lockfiles, imports,
+remote do git e ids em mensagem de commit — isso vai em "Decidi:", não em
+pergunta.
+
+Pergunte **só** o que passa nos dois filtros:
+
+1. **Não dá para inferir** do repositório.
+2. **Destrava uma fase do trabalho** — daria ao agente um acesso que ele não
+   tem. Se nenhuma fase muda, não pergunte: a ferramenta só custaria contexto.
+
+| Dimensão | O que perguntar | Destrava | Sinal que dispensa a pergunta |
+|---|---|---|---|
+| **Tarefas** | Onde ficam os cards? | Entender · Entregar | remote GitHub com Issues ativas; ids `ABC-123` nos commits |
+| **Design** | Tem design pronto? Onde? | Entender · Construir | só pergunte se o projeto tem interface |
+| **Dados** | Qual banco? Posso olhar dado real? | Entender · Provar | `docker-compose`, driver no lockfile, `DATABASE_URL` no `.env.example` |
+| **Erro em produção** | Como vocês veem o erro que o usuário teve? | Provar · investigação | SDK de observabilidade nas dependências |
+| **Deploy** | Onde isso roda? | Entregar | `vercel.json`, `railway.toml`, `fly.toml`, workflow de deploy |
+| **Docs internas** | A spec e as decisões ficam escritas onde? | Entender | `docs/` no repo já responde |
+| **E2E** | Tem teste de ponta a ponta? | Provar | Playwright/Cypress nas dependências |
+| **Pagamento** | Cobra dinheiro? Por onde? | marca **área sensível** | SDK de pagamento nas dependências |
+| **Auth** | Como autentica? | marca **área sensível** | SDK de auth nas dependências |
+| **Analytics** | Mede comportamento de usuário? | Entender (produto) | pergunte só se for produto com usuário final |
+| **Comunicação** | Precisa avisar alguém quando entrega? | Entregar | pergunte só se houver time |
+
+Regras da entrevista:
+
+- **No máximo 5 perguntas**, as de maior impacto. Setup que vira formulário é
+  setup que ninguém termina.
+- Uma pergunta por vez quando a resposta muda a seguinte (sabendo que é
+  frontend, pergunte de Figma; sabendo que não tem interface, nem pergunte).
+- Cada pergunta diz **por que** e **o que destrava**: "onde ficam os cards? com
+  acesso a eles, eu começo a mudança já com os critérios que você escreveu, em
+  vez de perguntar."
+- Resposta "não usamos" é informação: registre, para a próxima sessão não
+  perguntar de novo.
+- Produto que você não conhece: pergunte a **categoria** ("gestor de tarefas?")
+  e deixe o usuário nomear.
+
+Com as respostas, `plumb-find-mcps` para o que vale a pena conectar. Tudo —
+inferido e respondido — vai para `context/stack` do project: o que o projeto
+usa, qual ferramenta cobre, e o que ficou sem cobertura.
 
 ## 3 — Proposta
 
