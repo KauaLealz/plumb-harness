@@ -44,11 +44,10 @@ hora; a mudança segue a trilha dela, sem herdar a cerimônia da diretriz.
 |---|---|---|
 | Explorador | `plumb-explorer` | Área do código que você ainda não leu |
 | Planejador | `plumb-planner` | Trilha padrão ou profunda, depois da exploração |
-| Implementador | `plumb-implementer` | Cada **lote** de tarefas do plano aprovado |
-| Verificador | `plumb-verifier` | Todos os lotes prontos |
-| Revisor | `plumb-reviewer` | Junto com o verificador; com `<lente>seguranca</lente>` em área sensível |
-| Revisor de segurança | `plumb-security` | Trilha profunda |
-| Curador | `plumb-curator` | Estruturação, migração, auditoria, ou 3+ sinais no fechamento |
+| Implementador | `plumb-implementer` | Cada fase (ou grupo de fases que toca os mesmos arquivos) da spec aprovada |
+| Testador | `plumb-tester` | Fases de código prontas. Prova que funciona — **não vê o diff** |
+| Revisor | `plumb-reviewer` | Em paralelo com o testador. Lê o diff — **não roda nada**; com `<lente>seguranca</lente>` na trilha profunda e em área sensível |
+| Dreamer | `plumb-dreamer` | Fechamento de toda mudança; estruturação, migração e auditoria |
 
 Subagentes **não veem a conversa**: monte todo prompt de delegação por
 `references/prompt-contract.md` (leia uma vez, no primeiro despacho). Não leia
@@ -211,7 +210,7 @@ Olhe rápido o código envolvido antes ("causa óbvia" só se sabe olhando).
 |---|---|---|
 | **direta** | Óbvia e local: typo, config, bug de causa clara, ~1–2 arquivos, sem comportamento ou contrato novo | Nada no cérebro além de aprendizados. Você corrige, roda os checks e reporta com evidência. O pedido já é a aprovação |
 | **padrão** | Todo o resto | Plano `mudanca/<id>`; aprovação do plano antes do código; entrega antes de push/PR |
-| **profunda** | Capacidade nova entre módulos, migração de dados, API pública ou contrato, auth/pagamento/dados pessoais, ou 2+ soluções plausíveis | O mesmo plano + Design (opções, riscos, rollback) + `plumb-security` |
+| **profunda** | Capacidade nova entre módulos, migração de dados, API pública ou contrato, auth/pagamento/dados pessoais, ou 2+ soluções plausíveis | A mesma spec + Design (opções, riscos, rollback) + lente de segurança no revisor |
 
 - Na dúvida, a mais leve. Se o escopo crescer (módulo novo, contrato, migração),
   é bloqueio real: diga o que mudou em uma linha e mostre o plano ajustado.
@@ -290,12 +289,12 @@ Evidência antes de afirmação: nunca "pronto", "corrigido" ou "funciona" sobre
 que não rodou nesta sessão.
 
 1. Despache **em paralelo** (no Cursor, peça os dois juntos):
-   - `plumb-verifier`: suíte completa, lint, typecheck, build, critério → prova, e o
-     fluxo principal exercitado de verdade quando der (curl, CLI). É a única execução da suíte.
-   - `plumb-reviewer`: a key do plano (`mudanca/<id>`) + base do diff. Com
+   - `plumb-tester`: os resultados esperados da spec + os comandos do projeto e como
+     subir a aplicação. Prova que funciona; é a única execução da suíte. **Não mande o
+     diff nem a base dele** — ele testa caixa-preta de propósito.
+   - `plumb-reviewer`: a key da spec (`change/<id>`) + base do diff. Com
      `sensitive: true` (ou auth, pagamento, dados pessoais, entrada externa, segredos
-     no diff) acrescente `<lente>seguranca</lente>`.
-   - `plumb-security` **só na trilha profunda**, além do revisor.
+     no diff) ou na trilha profunda, acrescente `<lente>seguranca</lente>`.
 2. Repasse o veredito em poucas linhas.
 3. Bloqueadores e majors: corrija já (implementador, com nova verificação só do que
    mudou) — sem perguntar. Só vai ao usuário o que for decisão de produto. Menores

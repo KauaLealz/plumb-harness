@@ -14,7 +14,7 @@ que não dá para redescobrir barato — e nada além disso. O conhecimento vai
 para o segundo cérebro (MCP `knowledge-os`); no repositório ficam só os
 comandos e o Workflow no `AGENTS.md` e as permissões — nenhuma pasta do Plumb. Você
 conduz; a exploração vai para `plumb-explorer`, a redação para
-`plumb-curator`.
+`plumb-dreamer`.
 Monte os prompts de delegação pelo contrato em
 `../plumb/references/prompt-contract.md`.
 
@@ -99,7 +99,7 @@ essa é a única pergunta antes de propor. Os temas:
 5. Persistência (banco, ORM, migrations).
 6. CI, deploy e convenções de branch e commit.
 
-Com as respostas, despache `plumb-curator` no modo fundação (com o
+Com as respostas, despache `plumb-dreamer` no modo fundação (com o
 workspace e o project), escolha as
 ferramentas pelo stack decidido (seção 2b, usando as decisões como sinais)
 e siga para a seção 3. Não crie o esqueleto aqui: ele é a primeira
@@ -150,7 +150,7 @@ liste em "Decidi:". Sem sinal nenhum, não sugira ferramenta de tickets.
 
 ## 3 — Proposta
 
-Despache `plumb-curator` no modo do diagnóstico (estruturação, migração,
+Despache `plumb-dreamer` no modo do diagnóstico (estruturação, migração,
 auditoria ou fundação) com todos os achados ou respostas, o workspace e o
 project, e os caminhos absolutos de `references/permissions.md` (desta skill) e
 de `../plumb/references/brain-items.md` (o molde dos itens).

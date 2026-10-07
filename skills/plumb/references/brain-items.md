@@ -2,7 +2,7 @@
 
 Para gravar você mesmo uma regra, decisão ou gotcha simples (sem despachar o
 curador). Padrões novos, procedimentos e lotes com 3 sinais ou mais vão ao
-`plumb-curator`.
+`plumb-dreamer`.
 
 ```json
 {"key": "regra/money", "type": "rule",

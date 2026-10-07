@@ -44,7 +44,7 @@ chat (diga o conteúdo do item).
 
 ## 3 — Propor
 
-Despache `plumb-curator` **uma vez**, no modo auditoria, com todos os
+Despache `plumb-dreamer` **uma vez**, no modo auditoria, com todos os
 padrões, as evidências (ids das mudanças e as linhas da Retro), os
 itens candidatos a aposentar com o seu palpite para cada um, o resultado dos ajustes
 anteriores e o caminho absoluto de `../plumb/references/brain-items.md` (o molde). Monte o prompt pelo contrato em
