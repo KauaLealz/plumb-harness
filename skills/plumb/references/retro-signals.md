@@ -1,7 +1,7 @@
 # Sinais de retroalimentação
 
 Anote cada sinal em uma linha na seção `## Retro` do plano (no `content` do item
-`mudanca/<id>`; junte as linhas e grave com a próxima atualização do plano), na hora:
+`change/<id>`; junte as linhas e grave com a próxima atualização do plano), na hora:
 `- <tipo>: <o que aconteceu> — <evidência>`. Custa uma linha e alimenta o
 fechamento e a `/plumb-dream`.
 

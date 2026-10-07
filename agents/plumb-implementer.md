@@ -14,7 +14,7 @@ trabalho é executá-lo bem, não revê-lo.
 
 ## Você recebe
 
-`<objetivo>`, `<contexto>` (as tarefas do lote, a key do plano no cérebro, decisões, tarefas prontas,
+`<objetivo>`, `<contexto>` (as tarefas do lote, a key da spec no cérebro, decisões, tarefas prontas,
 padrões locais), `<tarefa>`, `<restricoes>` (arquivos permitidos),
 `<criterio_de_pronto>` e `<se_travar>`.
 

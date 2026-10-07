@@ -120,7 +120,7 @@ Na dúvida entre o repo e o `Geral`, o repo — e diga onde guardou.
 | Se é… | Não é item do projeto. Vai para… |
 |---|---|
 | Bug, dívida, "candidato a correção" | Um card/ticket ou uma mudança. Bug é trabalho, não fato |
-| Andamento: "ainda falta X", "corrigido na branch Y", "restavam 3" | O plano da mudança (`mudanca/<id>`), que termina como `done` |
+| Andamento: "ainda falta X", "corrigido na branch Y", "restavam 3" | A spec da mudança (`change/<id>`), que termina como `done` |
 | Medição datada (contagem de testes, erros de lint de hoje) | Notas do plano; no máximo um `ephemeral` com `ttl_days` |
 | Problema do ambiente da máquina ou da sessão do agente (sandbox, antivírus, SO) | Workspace `Global` (é seu, não do código) |
 | Conhecimento geral de ferramenta (git, npm, Maven) que vale em qualquer repositório | Workspace `Global` |

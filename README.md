@@ -92,7 +92,7 @@ entender o pedido → planejar → [você aprova o plano] → construir → veri
 | Trilha | Quando | Cerimônia |
 |---|---|---|
 | **direta** | Typo, config, bug de causa óbvia | Nenhuma: corrige, roda os checks, reporta com evidência |
-| **padrão** | A maior parte do trabalho | Um plano no segundo cérebro (`mudanca/<id>`); você aprova antes do código |
+| **padrão** | A maior parte do trabalho | Um plano no segundo cérebro (`change/<id>`); você aprova antes do código |
 | **profunda** | Feature entre módulos, migração, contrato, auth/pagamento/dados pessoais | O mesmo plano + design com opções + revisão de segurança |
 
 Antes das trilhas, o orquestrador classifica a **intenção**: pergunta (responde e
@@ -167,7 +167,7 @@ certo. Quando guardar, de que tipo e onde: `skills/plumb/references/brain-items.
 
 | O quê | Item | Chega ao agente |
 |---|---|---|
-| Plano de cada mudança | `task` (`mudanca/<id>`); `done` ao entregar | "Mudanças em andamento" no início da sessão |
+| Plano de cada mudança | `spec` (`change/<id>`); `done` ao entregar | "Mudanças em andamento" no início da sessão |
 | Convenção, stack, mapa, áreas sensíveis | `context` / `rule` no domain do projeto | Hook de início de sessão |
 | Regra de uma área | `rule` com `scope_paths` | `context_get` com os arquivos que a mudança toca |
 | Decisão e o porquê | `insight`, com a mudança de origem | Pacote ("Decisões recentes") e busca |

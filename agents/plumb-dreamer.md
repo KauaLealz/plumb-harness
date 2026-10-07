@@ -128,7 +128,7 @@ Só comandos e Workflow — todo o resto vai para o cérebro:
 Mudanças de código seguem o Plumb (skill `plumb`). Sem a skill: escolha a
 trilha (direta / padrão / profunda); nas trilhas padrão e profunda, apresente
 um plano (objetivo, critérios de aceite, tarefas) e peça aprovação antes de
-codar — com o segundo cérebro, guarde-o como item `mudanca/<id>`; escreva os
+codar — com o segundo cérebro, guarde-o como item `change/<id>`; escreva os
 testes primeiro; peça confirmação antes de push ou PR. Em qualquer mudança,
 até um typo: rode os testes e o lint afetados e reporte a evidência — nunca
 diga "pronto" sem isso.
