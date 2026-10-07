@@ -5,7 +5,7 @@ trilha usa — seção vazia é ruído, não rigor. No idioma do usuário (títu
 inclusive).
 
 ```json
-{"key": "mudanca/pay-142", "type": "task",
+{"key": "mudanca/pay-142", "type": "spec",
  "title": "PAY-142 — Pix no checkout",
  "summary": "Aguardando aprovação",
  "source": "PAY-142", "keywords": "pix qr code pagamento",

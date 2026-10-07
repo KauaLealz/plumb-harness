@@ -24,7 +24,7 @@ Claude Code — `.claude/settings.json`:
   **todas** as ferramentas do cérebro que o Plumb usa, não um subconjunto
   (`mcp__knowledge-os__context_get`, `mcp__knowledge-os__item_search`,
   `mcp__knowledge-os__item_get`, `mcp__knowledge-os__item_save`,
-  `mcp__knowledge-os__project_link`, `mcp__knowledge-os__health_check`).
+  `mcp__knowledge-os__repo`, `mcp__knowledge-os__health_check`).
 - `ask`: `Bash(git push *)`, `Bash(gh pr create *)`,
   `Bash(git reset --hard *)`, `Bash(rm -rf *)` e os comandos de deploy ou
   de infraestrutura que o projeto usa (`Bash(vercel --prod *)`,

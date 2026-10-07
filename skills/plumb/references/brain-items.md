@@ -13,7 +13,7 @@ curador). Padrões novos, procedimentos e lotes com 3 sinais ou mais vão ao
  "source": "PAY-142"}
 ```
 
-Grave com `item_save(project=".", items=[...])`. Resposta `action: unchanged`
+Grave com `item_save(repo=".", items=[...])`. Resposta `action: unchanged`
 = já existia igual; `similar` = título parecido já guardado (releia antes de
 duplicar).
 
@@ -51,9 +51,9 @@ mesma key** em vez de criar outro; se o novo contradiz o antigo, `supersedes`.
 
 | Vale para… | Destino |
 |---|---|
-| Só este repositório | O domain do projeto (o padrão do `item_save` com `project=".`) |
-| Os repositórios deste contexto (a empresa ou o cliente): convenções, padrões de design, práticas | Domain `Geral` do mesmo workspace (`"domain": "Geral"` na entrada) |
-| Você, em qualquer contexto: idioma, estilo, preferências, ambiente da sua máquina, ferramenta em geral | Workspace `Global`, domain `Geral` |
+| Só este repositório | O project do repositório (o padrão do `item_save` com `repo="."`) |
+| Os repositórios deste contexto (a empresa ou o cliente): convenções, padrões de design, práticas | Project `Geral` do mesmo workspace (`"project": "Geral"` na entrada) |
+| Você, em qualquer contexto: idioma, estilo, preferências, ambiente da sua máquina, ferramenta em geral | Workspace `Global`, project `Geral` |
 
 Na dúvida entre o repo e o `Geral`, o repo — e diga onde guardou.
 

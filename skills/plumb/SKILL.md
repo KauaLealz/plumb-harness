@@ -162,12 +162,12 @@ decisões, procedimentos, gotchas **e o plano de cada mudança**. No repositóri
 ficam só os comandos (`AGENTS.md`) e as permissões — nenhuma pasta do Plumb.
 
 - **Organização:** workspace = contexto de trabalho (a empresa ou cliente, ou
-  `Pessoal`); domain = o repositório; o domain `Geral` de cada workspace guarda o
+  `Pessoal`); project = o repositório; o project `Geral` de cada workspace guarda o
   que vale para os repositórios daquele contexto; o workspace `Global` guarda o que
   vale para o usuário em qualquer lugar. **Quando guardar, de que tipo e onde:**
   `references/brain-items.md` — leia antes de gravar pela primeira vez na sessão.
 - **Ler com uma consulta.** O hook injeta o pacote do início (com "Mudanças em
-  andamento"). Ao planejar, **uma** chamada `context_get(project=".", paths=[arquivos
+  andamento"). Ao planejar, **uma** chamada `context_get(repo=".", paths=[arquivos
   que a mudança toca], query="<tema>")`: o que casa vem em foco, com o começo do
   content. `item_get` só se faltar detalhe. Dúvida avulsa: `item_search(query)`.
 - **`sensitive: true`** na resposta = área de risco: ative a lente de segurança (seção 4).
@@ -190,7 +190,7 @@ ficam só os comandos (`AGENTS.md`) e as permissões — nenhuma pasta do Plumb.
 ## 0 — Localizar
 
 1. **Mudança em andamento?** O pacote lista "Mudanças em andamento"; sem pacote,
-   `item_search(query="<id ou tema>", types=["task"])`. Achou: `item_get` do plano,
+   `item_search(query="<id ou tema>", types=["spec"])`. Achou: `item_get` do plano,
    diga onde retoma em linguagem de resultado e siga pelo andamento. Não refaça o que está feito.
 2. Use os comandos do `AGENTS.md` e o pacote do cérebro. Sem bloco Plumb no
    `AGENTS.md`, ou projeto não ligado: sugira `/plumb-setup` (comando do usuário,

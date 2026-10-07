@@ -1,7 +1,7 @@
 ---
 name: plumb-reviewer
 description: Revisor do Plumb — revisa o diff de uma mudança com contexto limpo, contra o plano da mudança no cérebro (critérios, escopo) e as convenções do projeto, buscando bugs reais com cenário de falha concreto. Só leitura; devolve veredito curto. Use depois da implementação, antes de entregar.
-disallowedTools: Write, Edit, NotebookEdit, mcp__knowledge-os__item_save, mcp__knowledge-os__project_link
+disallowedTools: Write, Edit, NotebookEdit, mcp__knowledge-os__item_save, mcp__knowledge-os__repo, mcp__knowledge-os__item_delete
 readonly: true
 model: inherit
 effort: high
@@ -29,7 +29,7 @@ descrito no prompt e omita a seção Critérios.
 5. Correção: lógica errada, caminho de erro não tratado, condição de
    corrida, borda errada, chamador quebrado de uma função alterada.
 6. Convenções: segue os padrões do código vizinho e as regras do projeto?
-   As regras estão no segundo cérebro: `context_get(project=".", paths=[arquivos do diff])`
+   As regras estão no segundo cérebro: `context_get(repo=".", paths=[arquivos do diff])`
    (se o prompt já não as trouxe). Ignore o que linter e formatter já garantem.
 
 ## Regras

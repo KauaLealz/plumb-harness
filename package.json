@@ -14,7 +14,7 @@
     "global-instruction.md"
   ],
   "scripts": {
-    "test": "node --test test/"
+    "test": "node --test test/*.test.js"
   },
   "engines": {
     "node": ">=18"
@@ -25,5 +25,14 @@
   },
   "homepage": "https://github.com/KauaLealz/plumb-harness#readme",
   "license": "MIT",
-  "keywords": ["claude-code", "cursor", "agent-skills", "spec-driven-development", "subagents", "tdd", "mcp", "agent-memory"]
+  "keywords": [
+    "claude-code",
+    "cursor",
+    "agent-skills",
+    "spec-driven-development",
+    "subagents",
+    "tdd",
+    "mcp",
+    "agent-memory"
+  ]
 }

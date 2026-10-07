@@ -62,7 +62,7 @@ Não conta no limite de 5: o Plumb depende dele.
 
 | Ferramenta | Dá ao agente | Sinal | Instalação | Custo / obs. |
 |---|---|---|---|---|
-| Knowledge OS (`knowledge-os`) | Segundo cérebro: convenções, regras com escopo, decisões, procedimentos e gotchas entre sessões, projetos e ferramentas | Sempre | `uv tool install --editable <pasta do Knowledge OS>` → `npx plumb-harness install` (registra o MCP com `KNOWLEDGE_OS_TOOLSET=agent` e o hook de início de sessão). `npx plumb-harness status` confere | B (6 ferramentas, ~1,8k tokens) + ~1,2k do pacote no início. Local (SQLite), sem rede. UI: `knowledge-mcp ui` |
+| Knowledge OS (`knowledge-os`) | Segundo cérebro: convenções, regras com escopo, decisões, procedimentos e gotchas entre sessões, projetos e ferramentas | Sempre | `uv tool install --editable <pasta do Knowledge OS>` → `npx plumb-harness install` (registra o MCP e o hook de início de sessão). `npx plumb-harness status` confere | B (33 ferramentas) + o pacote de contexto no início. Local; com `remote_url` numa connection, também push/pull git. UI: `knowledge-mcp ui` |
 
 ## Economia de tokens e contexto
 

@@ -17,11 +17,11 @@ chat (diga o conteúdo do item).
 
 ## 1 — Coletar (barato)
 
-1. `item_get(keys=["retro/ultima"], project=".")`: data da última retro e os
+1. `item_get(keys=["retro/ultima"], repo=".")`: data da última retro e os
    ajustes aplicados nela, com seus sinais-alvo (`missing` = primeira retro).
 2. As mudanças concluídas desde então: `knowledge-mcp recent --since <data> --json`
-   (Bash), filtrando `type: task` do workspace/domain do projeto; sem a data, as
-   últimas `item_search(types=["task"], limit=20)`. Leia só a seção `## Retro` e os
+   (Bash), filtrando `type: spec` do workspace/project do projeto; sem a data, as
+   últimas `item_search(types=["spec"], limit=20)`. Leia só a seção `## Retro` e os
    Números do `content` de cada uma (`item_get` com as keys, de uma vez).
 3. **Saúde do cérebro:** `item_search(types=["rule", "insight", "procedure",
    "pattern", "knowledge"], limit=50)`. Cada resultado traz `uses`: quantas vezes o
@@ -82,14 +82,14 @@ Aplicar? (todos / 1,3 / só aposentar / nenhum)
 
 ## 5 — Aplicar e registrar
 
-Grave só o que foi aprovado, numa chamada: `item_save(project=".", items=[...])`
+Grave só o que foi aprovado, numa chamada: `item_save(repo=".", items=[...])`
 com os itens novos ou reforçados (mesma `key`) e as aposentadorias
 (`{"key": ..., "status": "deprecated"}`). Comandos vão para o
 `AGENTS.md`. No mesmo `item_save`, regrave o registro da retro (substitui o anterior;
 o histórico fica nos ajustes aplicados):
 
 ```json
-{"key": "retro/ultima", "type": "task", "status": "done",
+{"key": "retro/ultima", "type": "spec", "status": "done",
  "title": "Retro de <AAAA-MM-DD>", "summary": "<n> mudanças, <n> ajustes",
  "content": "Mudanças: <keys>\nAplicado: <item ou arquivo> — <ajuste> — alvo: <sinal que deve diminuir>\nAposentados: <n>\nObservar: <padrão de uma ocorrência>\nAnteriores: <ajuste> — mantido | reforçado | revertido, porque <...>"}
 ```

@@ -69,9 +69,9 @@ test('install --both global: skills, agentes e instrução; idempotente; uninsta
   assert.equal(settings.hooks.SessionStart.length, 1, 'hook não duplica');
   assert.match(settings.hooks.SessionStart[0].hooks[0].command, /context --hook claude$/);
   const calls = readFileSync(join(home, 'claude-calls.txt'), 'utf8');
-  assert.match(calls, /mcp add --scope user knowledge-os -e KNOWLEDGE_OS_TOOLSET=agent -e LOG_LEVEL=WARNING -- /);
+  assert.match(calls, /mcp add --scope user knowledge-os -e LOG_LEVEL=WARNING -- /);
   const cursorMcp = JSON.parse(readFileSync(join(home, '.cursor', 'mcp.json'), 'utf8'));
-  assert.equal(cursorMcp.mcpServers['knowledge-os'].env.KNOWLEDGE_OS_TOOLSET, 'agent');
+  assert.equal(cursorMcp.mcpServers['knowledge-os'].env.LOG_LEVEL, 'WARNING');
   const cursorHooks = JSON.parse(readFileSync(join(home, '.cursor', 'hooks.json'), 'utf8'));
   assert.equal(cursorHooks.hooks.sessionStart.length, 1);
 

@@ -1,7 +1,7 @@
 ---
 name: plumb-implementer
 description: Implementador do Plumb — executa exatamente uma task aprovada em TDD (teste vermelho, código mínimo, verde), só nos arquivos declarados, e devolve a evidência dos comandos. Use para cada task das trilhas padrão e profunda.
-disallowedTools: mcp__knowledge-os__item_save, mcp__knowledge-os__project_link
+disallowedTools: mcp__knowledge-os__item_save, mcp__knowledge-os__repo, mcp__knowledge-os__item_delete
 model: sonnet
 effort: medium
 ---
@@ -51,7 +51,7 @@ padrões locais), `<tarefa>`, `<restricoes>` (arquivos permitidos),
   repositório: ticket, PR, deploy, banco compartilhado.
 - Regras do segundo cérebro que vierem no contexto valem como as do projeto.
   Dúvida de convenção que o contexto não responde ("como tratamos erro aqui?"):
-  `item_search(query, project=".")` antes de inventar. Não grave no cérebro —
+  `item_search(query, repo=".")` antes de inventar. Não grave no cérebro —
   aprendizado vai no seu retorno, e o orquestrador decide.
 - Não edite o plano no cérebro — quem marca as tarefas é o orquestrador.
 

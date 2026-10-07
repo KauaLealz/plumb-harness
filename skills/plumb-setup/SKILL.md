@@ -37,8 +37,8 @@ com a sua recomendação. Não invente dúvida que nada no repositório levantou
 
 Veja o que já existe: `AGENTS.md`, `CLAUDE.md`, `.claude/rules/`,
 `.cursor/rules/`, `.claude/skills/`, `.claude/settings.json`, uma pasta `.plumb/` de
-versões antigas (os planos dela migram para o cérebro como itens `task`),
-e o cérebro: `context_get(project=".")`. Classifique:
+versões antigas (os planos dela migram para o cérebro como itens `spec`),
+e o cérebro: `context_get(repo=".")`. Classifique:
 
 - **novo** — ainda não há código de produto (só README, licença, ou
   nada) → modo fundação (seção 1b).
@@ -55,13 +55,26 @@ comando `knowledge-mcp`; o `npx plumb-harness status` diz o que falta) e pergunt
 segue assim mesmo: os itens vão para `~/.knowledge-os/pending.jsonl` e entram
 no cérebro na primeira sessão com ele no ar.
 
-**Ligação.** Projeto não ligado: `project_link(project=".")` decide sozinho — domain
-= nome do repositório; workspace = o de outro repo do mesmo dono já ligado ou, no
-primeiro repo daquele dono, o nome do dono no remote (sem remote, `Pessoal`). No
-primeiro repo de um dono, proponha em "Decidi:" um nome legível para o workspace
-(`polara-innovations` → `Polara`; a conta pessoal do usuário → `Pessoal`) e passe-o
-no `project_link`. Ao migrar regras antigas: o que vale para os repos daquele
-contexto vai para o domain `Geral` do workspace; o que vale para o usuário em
+**Ligação.** Projeto não ligado: antes de inventar um workspace novo, procure um
+já existente que sirva — `item_search(everywhere=true, query="<nome do dono ou da
+empresa no remote>")`. A busca devolve o `project` de cada achado, nunca o
+`workspace` (a ferramenta não lista workspaces) — um project com nome parecido ao
+de outro repo seu é só um indício, não prova. Achou indício: proponha em
+"Decidi:" o workspace candidato (ex.: "parece a mesma empresa do project
+`usequittar`") para o usuário confirmar, em vez de assumir ou de criar um
+segundo workspace a partir do nome cru do repositório — um nome inventado sem
+essa checagem vira duplicata silenciosa (já aconteceu: `ai8-algoritimo-
+imobiliario` ao lado do `AI8` correto, por um repo cujo project real,
+`usequittar`, já vivia em `AI8`). Sem nenhum indício, aí sim é o primeiro repo
+daquele dono: workspace = o nome do dono no remote (sem remote, `Pessoal`).
+Project = nome do repositório. Proponha sempre em "Decidi:" o workspace escolhido
+e a fonte (achado candidato a confirmar, ou novo porque a busca não achou nada)
+— assim o usuário percebe um nome errado antes da gravação, não depois.
+No primeiro repo de um dono, também proponha em "Decidi:" um nome legível para o
+workspace (`polara-innovations` → `Polara`; a conta pessoal do usuário →
+`Pessoal`) e passe-o no `repo`. Ao migrar regras antigas: o que vale para
+os repos daquele
+contexto vai para o project `Geral` do workspace; o que vale para o usuário em
 qualquer lugar (idioma, estilo, ambiente da máquina) vai para o workspace `Global`.
 
 Identifique também a(s) ferramenta(s) do time: a ferramenta em que você
@@ -87,7 +100,7 @@ essa é a única pergunta antes de propor. Os temas:
 6. CI, deploy e convenções de branch e commit.
 
 Com as respostas, despache `plumb-curator` no modo fundação (com o
-workspace e o domain), escolha as
+workspace e o project), escolha as
 ferramentas pelo stack decidido (seção 2b, usando as decisões como sinais)
 e siga para a seção 3. Não crie o esqueleto aqui: ele é a primeira
 mudança, feita pelo fluxo normal. Feche sugerindo
@@ -139,7 +152,7 @@ liste em "Decidi:". Sem sinal nenhum, não sugira ferramenta de tickets.
 
 Despache `plumb-curator` no modo do diagnóstico (estruturação, migração,
 auditoria ou fundação) com todos os achados ou respostas, o workspace e o
-domain, e os caminhos absolutos de `references/permissions.md` (desta skill) e
+project, e os caminhos absolutos de `references/permissions.md` (desta skill) e
 de `../plumb/references/brain-items.md` (o molde dos itens).
 Não leia o arquivo do curador antes de despachar.
 Confira o retorno **em silêncio** (nada disso vai para o chat) e corte o que
@@ -188,11 +201,11 @@ Mostre o conteúdo completo de um arquivo só se o usuário pedir.
 
 ## 4 — Gravar (só depois do "sim")
 
-1. **Cérebro** — `project_link(project=".", workspace, domain)` e depois o
-   lote do curador numa chamada: `item_save(project=".", items=[...])`.
+1. **Cérebro** — `repo(action="link", repo=".", workspace=<W>, project=<P>)` e depois o
+   lote do curador numa chamada: `item_save(repo=".", items=[...])`.
    Erro aponta a entrada: corrija e grave de novo. Cérebro fora do ar:
    uma entrada por linha em `~/.knowledge-os/pending.jsonl` (com `project`) e avise que a
-   ligação fica para `knowledge-mcp link --project . --workspace <W> --domain <D>`.
+   ligação fica para `knowledge-mcp link --repo . --workspace <W> --project <P>`.
    Só remova arquivos migrados depois que o lote gravar.
 2. **AGENTS.md** — insira ou substitua apenas o bloco entre
    `<!-- plumb:start -->` e `<!-- plumb:end -->`; o resto do arquivo fica
@@ -206,7 +219,7 @@ Mostre o conteúdo completo de um arquivo só se o usuário pedir.
    existentes: `.claude/settings.json` (`allow`, `ask`, `deny`) no Claude
    Code; `.cursor/cli.json` e `.cursor/permissions.json` no Cursor.
 6. **`.plumb/` de versões antigas** — mudanças em andamento viram itens
-   `mudanca/<id>` (`type: task`, o arquivo como `content`); as arquivadas, o mesmo
+   `mudanca/<id>` (`type: spec`, o arquivo como `content`); as arquivadas, o mesmo
    com `status: done`; o `retro.md`, o item `retro/ultima`. Depois que o lote
    gravar, remova a pasta e a linha dela no `.gitignore`.
 7. Registre a resposta sobre commits na linha `Convenções do Plumb:` do bloco do
