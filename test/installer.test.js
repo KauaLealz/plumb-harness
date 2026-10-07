@@ -148,3 +148,24 @@ test('install --project grava .mcp.json e o hook no projeto', () => {
   assert.ok(JSON.parse(readFileSync(join(proj, '.cursor', 'hooks.json'), 'utf8')).hooks.sessionStart);
   assert.ok(!existsSync(join(home, 'claude-calls.txt')), 'no projeto não usa claude mcp add');
 });
+
+test('install remove skills e agentes do Plumb que foram renomeados, e preserva homônimos de terceiros', () => {
+  const home = mkdtempSync(join(tmpdir(), 'plumb-'));
+  const skills = join(home, '.claude', 'skills');
+  const agents = join(home, '.claude', 'agents');
+  mkdirSync(join(skills, 'plumb-retro'), { recursive: true });
+  writeFileSync(join(skills, 'plumb-retro', 'SKILL.md'), 'skill antiga\n');
+  mkdirSync(agents, { recursive: true });
+  writeFileSync(join(agents, 'plumb-curator.md'), 'Curador do Plumb — texto antigo\n');
+  // homônimo de terceiro: não é nosso, não some
+  writeFileSync(join(agents, 'plumb-security.md'), 'agente de outra pessoa\n');
+
+  execFileSync(process.execPath, [CLI, 'install', '--claude'],
+    { env: { ...process.env, ...fakes(home) }, encoding: 'utf8' });
+
+  assert.equal(existsSync(join(skills, 'plumb-retro')), false);
+  assert.equal(existsSync(join(skills, 'plumb-dream')), true);
+  assert.equal(existsSync(join(agents, 'plumb-curator.md')), false);
+  assert.equal(existsSync(join(agents, 'plumb-dreamer.md')), true);
+  assert.equal(readFileSync(join(agents, 'plumb-security.md'), 'utf8'), 'agente de outra pessoa\n');
+});
