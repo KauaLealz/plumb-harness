@@ -1,6 +1,6 @@
 # Permissões do projeto
 
-Lido pelo curador nos modos estruturação, migração e fundação (o `/plumb-setup` passa o caminho no prompt).
+Lido pelo orquestrador no `/plumb-setup`, ao gravar as permissões.
 
 **Por que a lista `allow` tem que ser larga.** `ask` não protege nada quando a
 sessão roda em `bypassPermissions`/skip (o Claude Code ignora `ask` nesse modo,
@@ -21,10 +21,13 @@ Claude Code — `.claude/settings.json`:
   destrutivo (`Bash(git status *)`, `Bash(git diff *)`, `Bash(git log *)`,
   `Bash(git add *)`, `Bash(git commit *)`, `Bash(git branch *)`,
   `Bash(git checkout *)`, `Bash(git merge *)`, `Bash(git worktree *)`); e
-  **todas** as ferramentas do cérebro que o Plumb usa, não um subconjunto
-  (`mcp__knowledge-os__context_get`, `mcp__knowledge-os__item_search`,
-  `mcp__knowledge-os__item_get`, `mcp__knowledge-os__item_save`,
-  `mcp__knowledge-os__repo`, `mcp__knowledge-os__health_check`).
+  **todas** as ferramentas do cérebro que o Plumb usa no dia a dia, não um
+  subconjunto (`mcp__knowledge-os__item_search`, `item_get`, `item_graph`,
+  `item_save`, `item_feedback`, `relation_create`, `relation_delete`, `tag_list`,
+  `tag_create`, `workspace_list`, `project_list`, `subject_list`,
+  `connection_list`, `repo`, `health_check`, todas com o prefixo
+  `mcp__knowledge-os__`). Apagar item, tag, workspace, project ou subject e
+  criar conexão ficam de fora: pedem confirmação.
 - `ask`: `Bash(git push *)`, `Bash(gh pr create *)`,
   `Bash(git reset --hard *)`, `Bash(rm -rf *)` e os comandos de deploy ou
   de infraestrutura que o projeto usa (`Bash(vercel --prod *)`,

@@ -62,7 +62,7 @@ Não conta no limite de 5: o Plumb depende dele.
 
 | Ferramenta | Dá ao agente | Sinal | Instalação | Custo / obs. |
 |---|---|---|---|---|
-| Knowledge OS (`knowledge-os`) | Segundo cérebro: convenções, regras com escopo, decisões, procedimentos e gotchas entre sessões, projetos e ferramentas | Sempre | `uv tool install --editable <pasta do Knowledge OS>` → `npx plumb-harness install` (registra o MCP e o hook de início de sessão). `npx plumb-harness status` confere | B (33 ferramentas) + o pacote de contexto no início. Local; com `remote_url` numa connection, também push/pull git. UI: `knowledge-mcp ui` |
+| Knowledge OS (`knowledge-os`) | Segundo cérebro: regras, decisões, procedimentos, contexto e specs entre sessões, projetos e ferramentas | Sempre | `uv tool install --editable <pasta do Knowledge OS>` → `npx plumb-harness install` (registra o MCP e o hook de início de sessão). `npx plumb-harness status` confere | B (32 ferramentas) + o pacote de contexto no início. Local; com `remote_url` numa connection, também push/pull git. UI: `knowledge-mcp ui` |
 
 ## Economia de tokens e contexto
 
@@ -176,7 +176,7 @@ Não conta no limite de 5: o Plumb depende dele.
 
 | Ferramenta | Dá ao agente | Sinal | Instalação | Custo / obs. |
 |---|---|---|---|---|
-| Segredos do cérebro | Rodar comandos com credenciais sem o valor entrar no contexto | `.env.example`, tokens pedidos na conversa | Já vem: item `secret` + `knowledge-mcp run --env VAR=segredo/<nome> -- <cmd>` (molde) | 0. Preferido |
+| Segredos do cérebro | Rodar comandos com credenciais sem o valor entrar no contexto | `.env.example`, tokens pedidos na conversa | Já vem: item `secret` + `knowledge-mcp run --env VAR=secret/<nome> -- <cmd>` (molde) | 0. Preferido |
 | Injeção de segredos por CLI de terceiros | O mesmo, com o cofre que o time já usa | referências a `op://`, `doppler.yaml`, `.infisical.json` | `op run -- <cmd>` (1Password) · `doppler run -- <cmd>` · `infisical run -- <cmd>` | 0. O agente nunca lê nem imprime o valor |
 | Stripe | Objetos e logs no modo de teste | `stripe` nas dependências | CLI `stripe` com chave de teste · MCP remoto `https://mcp.stripe.com` *(confirmar)* | M. Só chaves `sk_test_` |
 | Mocks de serviços externos | Simular a falha mais cara de uma integração | Chamadas HTTP a terceiros sem stub nos testes | WireMock (`docker run -p 8080:8080 wiremock/wiremock`) · Testcontainers (biblioteca) | 0 |
