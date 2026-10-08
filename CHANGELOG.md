@@ -70,8 +70,8 @@ cinco tipos com subtipo, `scope` herdado, `origin`, tags gerenciadas, relações
 
 - Os casos de eval que dependem do servidor v2 ficam para depois da virada do Knowledge OS
   (`evals/cases.md`, marcados).
-- Os subtipos válidos de `howto` e `context` (além de `troubleshoot` e `environment`) dependem
-  da taxonomia final do servidor; as skills mandam escolher pelo erro, que lista os válidos.
+- Os subtipos de `howto`, `context` e `spec` passaram a constar do `brain.md`, iguais aos do
+  servidor v2 (`docs/V2_MVP.md` do Knowledge OS).
 
 ## 4.0.0
 

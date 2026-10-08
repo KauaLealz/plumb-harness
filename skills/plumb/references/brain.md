@@ -64,9 +64,9 @@ omita.
 | Tipo | É | Teste antes de gravar |
 |---|---|---|
 | `rule` | o que vale e deve ser seguido. Subtipos: `code` (convenção de código), `pattern` (molde de composição), `security` (auth, pagamento, dado pessoal, tenant, segredo), `business` (regra de negócio), `process` (como o time trabalha), `decision` (escolha entre alternativas, com o porquê) | Dá para dizer, olhando um diff ou uma decisão, se ela foi cumprida? |
-| `howto` | passo a passo e diagnóstico. Subtipos incluem `troubleshoot` (sintoma, causa, solução) | Um agente novo executaria só com o `content`, com os comandos exatos? |
-| `context` | o que o projeto é: produto, mapa do código, stack e ferramentas, ambiente. Subtipos incluem `environment` | Muda raramente? São poucos itens, sempre atualizados pela mesma key? |
-| `spec` | a spec de uma mudança, e o progresso do setup | O orquestrador cuida; termina `done` |
+| `howto` | passo a passo e diagnóstico. Subtipos: `procedure` (passos repetíveis), `troubleshoot` (sintoma, causa, solução) | Um agente novo executaria só com o `content`, com os comandos exatos? |
+| `context` | o que o projeto é. Subtipos: `product` (o que é, quem usa), `map` (mapa do código), `stack` (stack e ferramentas), `glossary` (termos do domínio), `environment` (como subir e rodar) | Muda raramente? São poucos itens, sempre atualizados pela mesma key? |
+| `spec` | a spec de uma mudança, e o progresso do setup. Subtipos: `change`, `setup`, `dream` | O orquestrador cuida; termina `done` |
 | `secret` | segredo, sem valor (seção 11) | — |
 
 **Modelo do `content` por subtipo.** O servidor só avisa quando falta; cumpra:
@@ -101,7 +101,7 @@ resolvemos algo": isso é `howto/troubleshoot` ou `rule/decision`.
 | `ttl_days` | só para nota temporária; vencido some da busca |
 
 `item_save` devolve `warnings` por entrada (modelo do `content` faltando, key
-fora do padrão, tag nova, nome antigo aceito como alias). **Leia os avisos e
+fora do padrão, tag nova com sugestão de uma parecida). **Leia os avisos e
 corrija na mesma sessão**; não os ignore.
 
 Campos de versões antigas (rótulos, classe de memória, importância, confiança) são
@@ -163,8 +163,8 @@ relation_delete(repo=".", items=[{"source": "...", "type": "...", "target": "...
 ```
 
 `source` e `target` são key ou id; até 20 por chamada; repetir uma relação é
-inofensivo. Trocar o tipo é apagar e criar. `item_save` ainda aceita `relations`
-numa entrada, mas avisa: prefira `relation_create`. `item_graph` serve para ver o
+inofensivo. Trocar o tipo é apagar e criar. O `item_save` **não** aceita
+`relations`: use `relation_create`. `item_graph` serve para ver o
 que está em volta de um item antes de mudá-lo (`depth` 1–3, `limit`, filtros de
 tipo de relação e de tipo de item).
 
@@ -297,7 +297,7 @@ item_feedback(repo=".", items=[
 | `helped` | o item entrou no trabalho e valeu | sobe no ranking |
 | `irrelevant` | o pacote ou a busca trouxe e não serviu | desce no ranking (nunca para `origin=user`) |
 | `wrong` / `outdated` | o trabalho contradisse o item | vira `review`, com a nota |
-| `verified` | a prova confirmou a regra da área | grava `verified_at` e o commit; o servidor passa a avisar `drift` se os arquivos do escopo mudarem depois |
+| `verified` | a prova confirmou a regra da área | grava `verified_at` e o commit (não reativa um item em `review`) |
 
 Só dê `helped` e `irrelevant` ao que você de fato viu entrar no trabalho: feedback
 inventado estraga o ranking.
