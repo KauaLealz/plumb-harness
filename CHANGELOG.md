@@ -1,5 +1,72 @@
 # Changelog
 
+## 5.0.0
+
+O Plumb passa a **entrar em todo pedido**, o cérebro passa a **entrar em toda fase**, e
+o agente `plumb-dreamer` sai: quem decide o que guardar é o orquestrador, que tem a
+conversa. As skills são reescritas para o modelo do Knowledge OS v2 (`change/brain-v2`):
+cinco tipos com subtipo, `scope` herdado, `origin`, tags gerenciadas, relações e grafo,
+`item_feedback`.
+
+### Quebras de compatibilidade
+
+| Antes | Agora |
+|---|---|
+| a skill `plumb` só para **mudança** de código e dispara a critério do modelo | hook `UserPromptSubmit` injeta o lembrete em **toda** mensagem; a skill atende qualquer pedido (pergunta, diretriz, investigação, hotfix, mudança, setup, dream) |
+| `plumb-dreamer` (agente) | removido (o instalador apaga o do Plumb); fechamento, setup e dream são do orquestrador |
+| `references/brain-items.md` | `references/brain.md`, no modelo v2 |
+| item `change/<id>` (`type: spec`) | `spec/<id>`, com `status: draft` → `active` → `done` |
+| tipos `insight`, `procedure`, `knowledge`, `pattern` | `rule` (subtipos code, pattern, security, business, process, decision), `howto` (`troubleshoot`), `context`, `spec`, `secret` |
+| `context_get`, `vocabulary`, `backup`, `artifact`, perfil `agent` de 6 ferramentas | as 32 ferramentas do v2 (`item_search` sem consulta devolve o essencial; `item_graph`, `item_feedback`, `relation_create`, `tag_*`…) |
+| workspace `Global` e project `Geral` como lugares fixos | `scope` (`scoped`, `workspace`, `global`), herdado; o item mora onde é salvo |
+| keys `regra/`, `decisao/`, `padrao/`, `contexto/`, `segredo/` | `rule/`, `howto/`, `context/`, `secret/` (`<tipo>/<nome>`) |
+| `npm test` com glob no script | `scripts/run-tests.mjs` (o glob não expandia no cmd do Windows nem no Node 23+) |
+
+### Adicionado
+
+- **Hooks de entrada** (`skills/plumb/hooks/entry.mjs`, sem dependências, nunca trava a
+  sessão): `UserPromptSubmit` (roteador de 7 linhas + o caminho do transcript),
+  `SessionStart` (avisa de diretrizes da sessão anterior sem gravação) e `Stop` (rede de
+  segurança: bloqueia **uma vez** se o usuário enunciou uma regra e nada foi gravado).
+  No Cursor, o roteador vai no `sessionStart` (o hook por prompt de lá não injeta contexto).
+  `status` mostra `hook de entrada`; `uninstall` remove só os do Plumb.
+- **Contrato do cérebro por fase** no `SKILL.md`: o que ler, o que gravar e que feedback
+  dar em Resposta, Diretriz, Investigação, Localizar, Entender, Alinhar, Especificar,
+  Construir, Provar e Aprender.
+- **Fase Aprender inline**: o orquestrador testa cada candidato pelo tipo, procura
+  duplicata, escolhe o destino (repositório, workspace, global), grava num `item_save` e dá
+  o feedback de uso (`helped`, `irrelevant`, `wrong`, `outdated`, `verified`).
+- **`/plumb-setup` como entrevista por dimensão** (`references/dimensions.md`): dez
+  dimensões, uma por mensagem, `Inferi (evidência)` + `Preciso de você` com recomendação,
+  sem teto de perguntas, gravação por dimensão depois do "sim", progresso retomável em
+  `spec/setup-<repo>`; começa por `connection_list`, `workspace_list` e pelo que já é global.
+  Inferência só com evidência direta; interpretação é pergunta.
+- **`/plumb-dream` analisa a sessão inteira**: lê o transcript pelos dois lados e pelos
+  erros de ferramenta com o extrator `scripts/extract.mjs`, agrupa por causa raiz e
+  propõe o lote por destino com o turno de evidência. Uma fala do usuário basta; o
+  inferido exige evidência. `desde <data>` despacha `plumb-explorer` por transcript;
+  `auditoria` usa `knowledge-mcp report --json`.
+- **Teste de contrato** (`test/contract.test.js`): falha se qualquer skill ou agente citar uma
+  ferramenta do cérebro ou um conceito que o v2 não tem.
+- `install` remove o `plumb-dreamer` do Plumb de instalações anteriores.
+
+### Alterado
+
+- Instrução global e parágrafo de Workflow do `AGENTS.md`: "todo pedido", não "toda mudança".
+- Todos os agentes bloqueiam **toda** escrita no cérebro (itens, relações, tags, estrutura,
+  conexões), não só três ferramentas.
+- Preferência do usuário e convenção da empresa moram num project próprio do contexto
+  (`preferencias` no workspace pessoal global; `compartilhado` com scope `workspace`), não
+  escondidas num repositório.
+- A trilha direta roda os checks (fase Provar sem despacho) e a fase Aprender olha o cérebro.
+
+### Pendente
+
+- Os casos de eval que dependem do servidor v2 ficam para depois da virada do Knowledge OS
+  (`evals/cases.md`, marcados).
+- Os subtipos válidos de `howto` e `context` (além de `troubleshoot` e `environment`) dependem
+  da taxonomia final do servidor; as skills mandam escolher pelo erro, que lista os válidos.
+
 ## 4.0.0
 
 Reorganização do fluxo em torno de uma **spec com fases** e de seis papéis com

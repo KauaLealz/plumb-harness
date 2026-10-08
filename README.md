@@ -1,10 +1,11 @@
 # Plumb
 
 Fluxo spec-driven leve para agentes de código no Claude Code e no Cursor,
-com memória de longo prazo. Peça uma mudança em linguagem natural —
-`"implementa o PAY-142"`, `"corrige o bug do login"` — e o Plumb dimensiona
-o trabalho, combina com você os critérios de aceite, constrói em TDD, prova
-que funciona e pergunta antes de qualquer coisa sair da sua máquina.
+com memória de longo prazo. Peça qualquer coisa — uma pergunta,
+`"implementa o PAY-142"`, `"corrige o bug do login"` — e o Plumb dimensiona o
+trabalho, consulta o que o projeto já aprendeu, combina com você os critérios de
+aceite, constrói em TDD, prova que funciona e pergunta antes de qualquer coisa
+sair da sua máquina.
 
 Você decide **o que será construído** e **o que será entregue**. O resto é
 com o agente, que te mantém informado pelo chat e pela lista de tarefas da
@@ -18,8 +19,8 @@ já no contexto.
 ## Instalação
 
 Pacote npm, sem dependências (Node 18+). Instala globalmente as skills, os
-subagentes, a instrução que faz qualquer sessão reconhecer o Plumb e o
-registro do segundo cérebro. Antes, instale o Knowledge OS (comando
+subagentes, a instrução que faz qualquer sessão reconhecer o Plumb, os hooks de
+entrada e o registro do segundo cérebro. Antes, instale o Knowledge OS (comando
 `knowledge-mcp`, Python 3.11+ com [uv](https://docs.astral.sh/uv/)):
 
 ```bash
@@ -44,17 +45,18 @@ npx github:KauaLealz/plumb-harness install
 | Skills | `~/.claude/skills/` | `~/.cursor/skills/` (com `--both`, o Cursor lê as de `~/.claude/skills/`) |
 | Subagentes | `~/.claude/agents/` | `~/.cursor/agents/`, na variante do Cursor (`model: inherit`, sem `readonly`) |
 | Instrução global | bloco em `~/.claude/CLAUDE.md`, entre marcadores, preservando o resto | o Cursor guarda regras globais só na interface: o instalador imprime o texto para colar em Settings → Rules → User Rules |
-| Segundo cérebro | MCP `knowledge-os` no escopo user (perfil `agent`, 6 ferramentas) + hook `SessionStart` em `~/.claude/settings.json` | `~/.cursor/mcp.json` + hook `sessionStart` em `~/.cursor/hooks.json` |
+| **Entrada** | hooks em `~/.claude/settings.json`: `UserPromptSubmit` (o lembrete do Plumb em **toda** mensagem), `SessionStart` (avisa de diretrizes da sessão anterior que ficaram sem gravar) e `Stop` (rede de segurança: bloqueia **uma vez** se você enunciou uma regra e nada foi gravado) | hook `sessionStart` em `~/.cursor/hooks.json` com o lembrete (o hook por prompt do Cursor não injeta contexto) |
+| Segundo cérebro | MCP `knowledge-os` no escopo user + hook `SessionStart` do pacote de contexto | `~/.cursor/mcp.json` + hook `sessionStart` |
 
-Sem o `knowledge-mcp` no PATH, o instalador avisa e não registra o cérebro
-— rode o install de novo depois de instalá-lo.
+Sem o `knowledge-mcp` no PATH, o instalador avisa e não registra o cérebro —
+rode o install de novo depois de instalá-lo. Os hooks de entrada não dependem dele.
 
 Outros comandos:
 
 ```bash
-npx plumb-harness status                       # versões instaladas e o cérebro
+npx plumb-harness status                       # versões instaladas, hooks e o cérebro
 npx plumb-harness install --both               # atualizar: rode o install de novo
-npx plumb-harness uninstall --claude           # remove skills, agentes, instrução e hook (o cérebro e os dados ficam)
+npx plumb-harness uninstall --claude           # remove skills, agentes, instrução e hooks (o cérebro e os dados ficam)
 npx plumb-harness install --both --project     # só no projeto atual (.claude/, .cursor/, .mcp.json)
 npx plumb-harness install --claude --no-brain  # sem registrar o cérebro
 ```
@@ -65,81 +67,85 @@ Depois, uma vez por repositório:
 /plumb-setup
 ```
 
-Ele liga o repositório ao cérebro (workspace = empresa ou contexto, domain = o repositório),
-descobre comandos, convenções e áreas sensíveis e **propõe tudo de uma vez, com
-as decisões que tomou e a fonte de cada uma**: os itens do cérebro (contexto do
-projeto, convenções, regras com escopo, procedimentos), o que vale para todo
-projeto (vai para o workspace `Global`), o bloco de comandos no `AGENTS.md`, o
-`CLAUDE.md` (`@AGENTS.md`), permissões em `.claude/settings.json` (confirmar
-`git push` e `gh pr create`; liberar testes, lint e o cérebro) e até 5
-ferramentas do catálogo escolhidas pelos sinais do código. Você revisa e aprova.
-Num repositório que já tem regras e skills em arquivos, ele as migra para o
-cérebro e enxuga os arquivos; num projeto já ligado, faz uma auditoria. Num
-projeto novo, sem código, ele **propõe** as decisões de base (stack, estrutura,
-testes, API e erros, persistência, CI e convenções) a partir do que você disse
-que o projeto vai ser, e sugere o esqueleto como primeira mudança. As regras e
-os procedimentos nascem depois, dos padrões que as primeiras mudanças
-estabelecem.
+É uma **entrevista com pesquisa**: o Plumb explora o repositório, liga-o ao
+cérebro (workspace = a empresa ou o contexto, project = o repositório) e percorre
+**dez dimensões**, uma por mensagem — produto e domínio, stack e ambiente, mapa do
+código, comandos, convenções, áreas sensíveis, procedimentos, ferramentas e
+acessos, time e fluxo, e as suas preferências. Em cada uma mostra o que inferiu
+**com a evidência** (arquivo, comando, linha do git) e pergunta o que o código não
+conta, com a recomendação dele; você confirma, corrige ou pula, e a dimensão grava
+depois do seu "sim". Sem teto de perguntas, mas só o que o repositório não
+responde e que melhora o trabalho futuro. O progresso fica numa spec e o setup
+retoma de onde parou. No fim: o bloco de comandos no `AGENTS.md`, o `CLAUDE.md`
+(`@AGENTS.md`), as permissões em `.claude/settings.json` (confirmar `git push` e
+`gh pr create`; liberar testes, lint e o cérebro) e até 5 ferramentas do catálogo
+escolhidas pelos sinais do código. Num repositório que já tem regras e skills em
+arquivos, ele as migra para o cérebro e enxuga os arquivos; num projeto já ligado,
+faz uma auditoria; num projeto novo, sem código, **propõe** as decisões de base com
+o porquê e a alternativa descartada.
 
-A partir daí é só pedir mudanças — a skill `plumb` dispara sozinha.
+A partir daí é só pedir — a skill `plumb` entra sozinha, em todo pedido.
 
 ## Como funciona
 
 ```
-entender o pedido → planejar → [você aprova o plano] → construir → verificar → [você decide push/PR] → entregue
+pedido → rota → consultar o cérebro → [spec: você aprova] → construir → provar → aprender → [você decide push/PR] → entregue
 ```
+
+**Entrada.** Um hook injeta um lembrete curto do Plumb em toda mensagem (no Claude
+Code), e a skill carrega uma vez por conversa. A skill atende **qualquer** pedido,
+com cerimônia proporcional:
+
+| O pedido é… | Rota |
+|---|---|
+| pergunta ou explicação | consulta o cérebro, responde, para |
+| regra, diretriz ou decisão enunciada | grava na hora, confirma em uma linha |
+| investigação | só leitura; o achado durável vira item |
+| hotfix, dependência, docs, correção pequena | **trilha direta**: corrige, roda os checks, reporta com evidência |
+| mudança de código | **padrão** (spec no cérebro, você aprova) ou **profunda** (spec com design e revisão de segurança) |
+| `/plumb-setup`, `/plumb-dream` | entrevista de base; análise da sessão |
 
 | Trilha | Quando | Cerimônia |
 |---|---|---|
 | **direta** | Typo, config, bug de causa óbvia | Nenhuma: corrige, roda os checks, reporta com evidência |
-| **padrão** | A maior parte do trabalho | Um plano no segundo cérebro (`change/<id>`); você aprova antes do código |
-| **profunda** | Feature entre módulos, migração, contrato, auth/pagamento/dados pessoais | O mesmo plano + design com opções + revisão de segurança |
+| **padrão** | A maior parte do trabalho | Uma spec no segundo cérebro (`spec/<id>`); você aprova antes do código |
+| **profunda** | Feature entre módulos, migração, contrato, auth/pagamento/dados pessoais | A mesma spec + design com opções + revisão de segurança |
 
-Antes das trilhas, o orquestrador classifica a **intenção**: pergunta (responde e
-para), regra ou decisão enunciada (grava no cérebro na hora, sem gate), investigação
-(só leitura, o achado vira item), hotfix e dependência/docs (trilha direta) ou mudança
-de código. Pedido misto é separado: a diretriz não herda a cerimônia da mudança.
+A spec é também o handoff: ela aparece nas specs ativas no início de toda
+sessão, e "continua o PAY-142" retoma pelo andamento e pelas fases que faltam —
+sem pasta nenhuma no repositório.
 
-O plano é também o handoff: ele aparece em "Mudanças em andamento" no início de
-toda sessão, e "continua o PAY-142" retoma pelo andamento e pelas tarefas que
-faltam — sem pasta nenhuma no repositório.
-
-**Decide, você revisa.** O Plumb decide com base no que você disse, no segundo
-cérebro, nas instruções e no código, e o plano mostra cada decisão com a fonte
-("Erro em português — regra do projeto"). Você revisa e aprova, ou corrige uma
+**Decide, você revisa.** Numa mudança, o Plumb decide com base no que você disse, no
+segundo cérebro, nas instruções e no código, e a spec mostra cada decisão com a
+fonte ("Erro em português — regra do projeto"). Você revisa e aprova, ou corrige uma
 decisão. Pergunta é exceção: só quando a informação não existe em lugar nenhum e
 errar seria caro. Depois do "sim", ele segue até a entrega — para de novo só
-antes de algo sair da máquina (push, PR) ou num impeditivo crítico.
+antes de algo sair da máquina (push, PR) ou num impeditivo crítico. **Ao gravar
+conhecimento a regra é a oposta:** o que você ditou grava; o que o agente inferiu
+espera o seu "sim", porque um item errado envenena todas as sessões seguintes.
 
 **Conversa.** No terminal, ele fala do que está acontecendo com o código ("✓ O
-Pix já devolve o QR code — testes 5 de 5"), não do método ("T1 concluída, lote
-L2"): sem ids internos, sem nomes de etapa nem de subagente, e sem narrar a
-leitura dos próprios arquivos.
-
-As tasks são agrupadas em **lotes** (mesmos arquivos = um despacho e um commit), a
-suíte completa roda uma vez, no verificador, e a revisão de segurança é uma lente do
-revisor, a não ser na trilha profunda.
-
-O cérebro entra em quatro pontos: o pacote do projeto no início da sessão;
-as regras da área e as decisões e procedimentos parecidos ao moldar; uma
-busca pelo sintoma quando algo trava; e uma gravação em lote ao fechar.
+Pix já devolve o QR code — testes 5 de 5"), não do método ("fase 1 concluída"):
+sem ids internos, sem nomes de etapa nem de subagente, e sem narrar a leitura dos
+próprios arquivos.
 
 ## Papéis
 
 | Papel | Onde | Faz |
 |---|---|---|
-| Orquestrador | skill `plumb` (sessão principal) | Classifica o pedido, escolhe a rota, conduz os gates e o estado; monta os prompts, delega e grava no cérebro |
-| Explorador | `agents/plumb-explorer.md` | Responde perguntas sobre o código com `arquivo:linha` (só leitura) |
+| Orquestrador | skill `plumb` (sessão principal) | Atende o pedido, escolhe a rota, conduz os gates e o estado; consulta e grava o cérebro em cada fase, **inclusive o fechamento** (decide o que dura, com a conversa na mão) |
+| Explorador | `agents/plumb-explorer.md` | Responde perguntas sobre o código com `arquivo:linha` (só leitura); no `/plumb-dream desde…`, varre as sessões antigas |
 | Planejador | `agents/plumb-planner.md` | A spec: resultados esperados observáveis, fases com papel, dependência e critério de saída (só leitura) |
 | Implementador | `agents/plumb-implementer.md` | Uma fase em TDD, só nos arquivos declarados, com commit atômico |
 | Testador | `agents/plumb-tester.md` | Prova que funciona — **sem ver o diff**: cada resultado esperado com evidência executada |
 | Revisor | `agents/plumb-reviewer.md` | Lê o diff contra a spec — **não roda nada**: bugs com cenário de falha, escopo, convenções, e segurança quando a lente está ligada |
-| Dreamer | `agents/plumb-dreamer.md` | O que guardar no cérebro, com tipo, chave, escopo e texto exato, e que ferramenta falta — devolve o lote pronto para `item_save` |
 
-Os agentes usam `disallowedTools` (edição de arquivos e escrita no
-cérebro) em vez de uma lista fixa, para herdarem as ferramentas MCP que o
-projeto instalar (navegador, Sentry, banco somente leitura) e lerem o
-cérebro. Só o orquestrador grava no cérebro, numa chamada por mudança.
+Não há um agente "curador" nem "dreamer": quem decide o que guardar é o orquestrador,
+porque é o único que viu a conversa inteira. Os agentes usam `disallowedTools`
+(edição de arquivos e **toda escrita no cérebro**) em vez de uma lista fixa, para
+herdarem as ferramentas MCP que o projeto instalar (navegador, Sentry, banco
+somente leitura) e lerem o cérebro. Só o orquestrador grava, numa chamada por
+mudança.
 
 Subagentes não veem a conversa. Por isso todo despacho segue o contrato de
 prompt (`skills/plumb/references/prompt-contract.md`): objetivo, contexto
@@ -149,44 +155,52 @@ restrições, critério de pronto e o que fazer se travar.
 ## Segundo cérebro
 
 No repositório ficam só os comandos e o Workflow no `AGENTS.md` e as
-permissões. O resto mora no Knowledge OS
-(SQLite local em `~/.knowledge-os`), organizado como o seu trabalho:
+permissões. O resto mora no Knowledge OS (uma pasta git local por conexão,
+com um arquivo Markdown por item), organizado como o seu trabalho:
 
 ```
-Polara                     ← workspace: a empresa, o cliente, ou Pessoal
- ├─ Geral                  ← convenções que valem para os repositórios da Polara
- ├─ projpro                ← domain: um repositório
- └─ synapse
-Global                     ← o que vale para você em qualquer lugar
+workspace   o contexto: a empresa, o cliente, o seu pessoal
+ └─ project   um repositório (ou um lugar de itens compartilhados)
+     └─ subject   assunto com nome próprio (opcional, nasce tarde)
+         └─ item   rule · howto · context · spec · secret, com subtipo
 ```
 
-Uma sessão no projpro carrega o domain dele, o `Geral` da Polara e o `Global` — nunca
-o de outro repositório. Um repo novo do mesmo dono no git cai sozinho no workspace
-certo. Quando guardar, de que tipo e onde: `skills/plumb/references/brain-items.md`.
+**Onde o item mora e onde ele vale são coisas diferentes.** Mora no project em que
+foi salvo; vale conforme o `scope` — `scoped` (só aquele repositório), `workspace`
+(todos os repositórios do contexto) ou `global` (qualquer projeto) —, herdado do
+subject, do project e do workspace. Uma sessão no projpro encontra o que é do
+projpro, o que vale para a empresa e o que vale para você, nunca o de outro
+repositório que não foi compartilhado. Quando guardar, de que tipo, em que scope
+e como relacionar: `skills/plumb/references/brain.md`.
 
 | O quê | Item | Chega ao agente |
 |---|---|---|
-| Spec de cada mudança | `spec` (`change/<id>`); `done` ao entregar | "Mudanças em andamento" no início da sessão |
-| Convenção, mapa, áreas sensíveis, **stack e ferramentas** | `context` / `rule` no project | Hook de início de sessão |
-| Regra de uma área | `rule` com `scope_paths` | `context_get` com os arquivos que a mudança toca |
-| Decisão e o porquê | `insight`, com a mudança de origem | Pacote ("Decisões recentes") e busca |
-| Procedimento repetível | `procedure` | Pacote e busca na hora de moldar |
-| Molde de composição, gotcha | `pattern`, `knowledge` | Pacote e busca (ao travar, antes de tudo) |
-| Convenção da empresa ou do cliente | domain `Geral` do workspace | Em todos os repositórios daquele contexto |
-| Diretriz sua em qualquer contexto (idioma, estilo, preferências, ambiente) | `Global / Geral` | Em todo projeto |
+| Spec de cada mudança | `spec/<id>` (`draft` → `active` → `done`) | Specs ativas no início da sessão |
+| O que o projeto é, mapa, stack e ferramentas | `context/*` | Pacote do hook |
+| Regra, convenção, molde de composição | `rule/*` (subtipos: code, pattern, security, business, process, decision) | Pacote; a busca com os arquivos da mudança traz as de escopo estreito |
+| Decisão e o porquê | `rule/decision`, com a alternativa descartada | Busca |
+| Procedimento e diagnóstico | `howto/*`, `howto/troubleshoot` | Busca (ao travar, antes de tudo) |
+| Segredo | `secret/*`, **sem valor** | Link para você preencher na UI |
 
-- **Barato:** perfil `agent` com 6 ferramentas (~1,8 mil tokens de
-  definição); o pacote do hook cabe em ~1,2 mil tokens e lista o que ficou
-  de fora.
-- **Ciclo de vida:** o que as mudanças aprendem já vale, sem aprovação; a
-  entrega diz o que foi guardado e você corrige o que não fizer sentido. A
-  `/plumb-dream` aposenta o que envelheceu ou nunca foi usado.
-- **Fora do ar:** o Plumb avisa e segue; o que gravaria vai para
+- **Em toda fase, não só no fim.** O `SKILL.md` traz uma tabela de contrato: o que
+  ler, o que gravar e que feedback dar em cada momento (resposta, diretriz,
+  investigação, localizar, entender, especificar, construir, provar, aprender).
+- **O cérebro aprende com o uso.** No fechamento, o orquestrador avisa o que
+  ajudou, o que não serviu, o que estava velho e o que a prova confirmou
+  (`item_feedback`); o servidor usa isso no ranking, na limpeza e no relatório da
+  auditoria.
+- **Barato:** o pacote do hook cabe em ~1,2 mil tokens e lista o que ficou de
+  fora; o lembrete de entrada tem 7 linhas.
+- **Fora do ar ou sem conexão:** o Plumb avisa e segue; o que gravaria vai para
   `~/.knowledge-os/pending.jsonl` e entra na próxima sessão.
 - **Segredos sem passar pelo modelo:** o agente cria o segredo vazio, você
   preenche pelo link da UI local, e ele usa por `knowledge-mcp run`, que
   entrega o valor só ao comando e redige a saída.
 - **Seguro:** a busca não usa rede nem embeddings.
+
+A referência de ferramentas e do modelo é a do Knowledge OS v2 (32 ferramentas);
+um teste de contrato (`npm test`) falha se qualquer skill citar uma ferramenta ou
+um conceito que o servidor não tem.
 
 ## Skills de terceiros incluídas
 
@@ -222,38 +236,39 @@ somente leitura por padrão, nada sem o seu "sim". Entradas marcadas
 ## Retroalimentação
 
 1. **Sinais na hora:** cada regra enunciada, decisão durável, correção,
-   plano rejeitado, travamento, retrabalho, procedimento repetível, padrão
+   spec rejeitada, travamento, retrabalho, procedimento repetível, padrão
    novo, fato velho ou lacuna de ferramenta vira uma linha na seção Retro
-   do plano. Um `padrão novo` (o primeiro endpoint, a primeira
-   migration) vira, no fechamento, um item `pattern` com escopo apontando o
-   arquivo criado como modelo — é assim que um projeto novo consolida as
-   convenções. Regra enunciada vai ao curador e ao cérebro na hora.
-2. **No fechamento:** 1–2 sinais simples o orquestrador grava sozinho; 3 ou
-   mais vão num único despacho do curador. Tudo entra numa chamada
-   (`item_save`, junto com o plano concluído) e a entrega diz,
-   numa linha, o que foi guardado — sem perguntar. Se a regra já existia e foi
-   ignorada, o ajuste é reforçá-la, não duplicá-la.
-3. **`/plumb-dream`** (sugerida a cada 5 mudanças): agrupa causas que se
-   repetem, propõe até 5 ajustes com sinal-alvo, aposenta os itens
-   que envelheceram e, na retro seguinte, confere se o sinal diminuiu — manter,
-   reforçar ou reverter. Histórico no item `dream/last`; o próprio pacote do
-   início da sessão avisa quando há 5 mudanças concluídas desde a última.
+   da spec. Regra enunciada grava no cérebro na hora — e, se o agente deixar
+   passar, o hook de fim de turno o lembra uma vez.
+2. **No fechamento (fase Aprender, em toda trilha):** o orquestrador testa cada
+   candidato pelo tipo, procura duplicata, escolhe o destino (repositório,
+   workspace ou global) e grava tudo num `item_save`, junto da spec concluída. O
+   que você ditou grava; o que ele inferiu aparece na entrega para o seu "sim".
+   Depois dá o feedback de uso.
+3. **`/plumb-dream`** — a skill que olha a **sessão inteira**: lê o transcript
+   (os dois lados, os erros de ferramenta, as correções) e propõe o lote por
+   destino, cada item com o turno que o sustenta, grava ou confirma. Com
+   `desde <data>` varre as sessões antigas (um explorador por transcript); com
+   `auditoria` revisa a saúde do cérebro (nunca abertos, em revisão, duplicados,
+   tags vazias). Registra o que aplicou em `spec/dream-last` com o sinal-alvo, e o
+   sonho seguinte confere se diminuiu. O início da sessão avisa quando a anterior
+   deixou diretrizes sem gravar.
 
 ## Custo
 
-- `model` e `effort` por agente: explorador e verificador em `sonnet` com
-  esforço baixo; implementador em `sonnet` (o orquestrador sobe para o
-  modelo da sessão na trilha profunda ou depois de uma falha); planejador,
-  revisores e curador no modelo da sessão com esforço alto.
-- Planejamento sem subagente quando a área é pequena; tasks pequenas nos
+- Nenhum agente crava modelo: todos herdam o da sessão, e o orquestrador aplica um
+  tier por papel (rápido para explorador e testador, equilibrado para o
+  implementador, capaz para planejador e revisor). Esforço por agente no
+  frontmatter.
+- Planejamento sem subagente quando a área é pequena; tarefas pequenas nos
   mesmos arquivos num só despacho.
-- Retroalimentação: 1–2 sinais simples o orquestrador grava sozinho; 3+ vão
-  num único despacho do curador, nunca um por sinal; a retro lê só o cabeçalho e a seção Retro dos arquivos arquivados.
-- `AGENTS.md` com até 20 linhas (comandos e Workflow); o conhecimento chega
-  pelo pacote do cérebro, com orçamento. Ao tocar uma área, uma consulta traz as
-  regras dela e o começo do content, sem `item_get` depois.
-- `SKILL.md` do orquestrador com ~14 KB; o que só vale às vezes (lotes em paralelo,
-  tabela de sinais, molde de item) fica em `references/`, lido sob demanda.
+- Fechamento sem subagente: nenhum despacho extra para decidir o que guardar.
+- Lembrete de entrada de 7 linhas por mensagem; a skill carrega uma vez por
+  conversa. `AGENTS.md` com até 20 linhas (comandos e Workflow); o conhecimento
+  chega pelo pacote do cérebro, com orçamento.
+- `SKILL.md` do orquestrador com ~510 linhas; o que só vale às vezes (lotes em
+  paralelo, tabela de sinais, molde da spec, o contrato do cérebro) fica em
+  `references/`, lido sob demanda.
 - Medido nos evals: cada sessão do Claude Code começa com 35–70 mil tokens
   de contexto fixo, quase todo do próprio Claude Code e da sua configuração
   global. Confira o seu com `/context`.
@@ -261,11 +276,11 @@ somente leitura por padrão, nada sem o seu "sim". Entradas marcadas
 ## Recursos nativos usados
 
 Skills e subagentes do Claude Code; `AGENTS.md` importado pelo `CLAUDE.md`;
-hook `SessionStart` com `additionalContext` (pacote do cérebro); MCP no
-escopo user; lista de tarefas da sessão para o progresso; `permissions.ask`
-para push/PR; isolamento em worktree para tasks paralelas; plan mode +
-ExitPlanMode para apresentar o plano quando a sessão está em plan mode. Sem build e
-sem dependências no lado do Plumb.
+hooks `UserPromptSubmit`, `SessionStart` e `Stop` (com `additionalContext` e
+`decision: block`); MCP no escopo user; lista de tarefas da sessão para o
+progresso; `permissions.ask` para push/PR; isolamento em worktree para tarefas
+paralelas; plan mode + ExitPlanMode para apresentar a spec quando a sessão está em
+plan mode. Sem build e sem dependências no lado do Plumb.
 
 **Limitação conhecida:** a regra `Bash(git push *)` não pega variações com
 opções antes do subcomando (`git -c x=y push`). A pergunta de push/PR da entrega continua
@@ -283,20 +298,23 @@ as duas.
 | Skills | `~/.claude/skills/` | `~/.cursor/skills/` (o Cursor também lê `~/.claude/skills/`) |
 | Subagentes | `~/.claude/agents/` com `model`, `effort`, `disallowedTools` | `~/.cursor/agents/` com `model: inherit`, sem `readonly` (gerados pelo instalador) |
 | Comandos do projeto | `AGENTS.md` via `CLAUDE.md` → `@AGENTS.md` | `AGENTS.md`, lido nativamente |
+| Entrada | hooks `UserPromptSubmit` + `SessionStart` + `Stop` | hook `sessionStart` (sem hook por prompt: o lembrete vem uma vez por sessão) |
 | Segundo cérebro | MCP `knowledge-os` (user) + hook `SessionStart` | `~/.cursor/mcp.json` + hook `sessionStart` (`additional_context`) |
 | Permissões | `.claude/settings.json`: `allow`, `ask`, `deny` | `.cursor/cli.json`: `allow`, `deny` (sem "ask": o que não está liberado pede aprovação) + `.cursor/permissions.json` com a política em texto para o modo auto-review |
 | MCP | `claude mcp add` → `.mcp.json` | `.cursor/mcp.json` |
 | Lista de tarefas, plan mode | TaskCreate/TodoWrite, ExitPlanMode | to-dos do agente, modo Plan |
 
-**Limitações no Cursor:** sem `ask`, a confirmação de push/PR depende da
-política de auto-review e da pergunta de push/PR da entrega, não de uma regra
-determinística; tasks em paralelo só rodam em sequência (sem isolamento
-em worktree garantido); os agentes não usam `readonly` (no Cursor ele vira Ask mode e bloqueia shell e MCP), então a regra "não edite" é só do texto do agente, sem bloqueio
-específico da escrita no cérebro; plugins do Claude Code do catálogo (LSP,
-Sentry, Semgrep, Figma) viram a alternativa MCP da mesma linha. A
-compatibilidade foi montada a partir da documentação do Cursor e dos
-formatos da instalação local, **ainda sem um eval rodado no Cursor** — ver
-`evals/cases.md`.
+**Limitações no Cursor:** sem hook por prompt nem `Stop` que injete contexto, a
+entrada depende do lembrete do `sessionStart`, da instrução global e da
+descrição da skill; sem `ask`, a confirmação de push/PR depende da política de
+auto-review e da pergunta da entrega, não de uma regra determinística; tarefas
+em paralelo só rodam em sequência (sem isolamento em worktree garantido); os
+agentes não usam `readonly` (no Cursor ele vira Ask mode e bloqueia shell e MCP),
+então a regra "não edite" é só do texto do agente; o `/plumb-dream` não lê
+transcript (o Cursor não grava o jsonl do Claude Code); plugins do Claude Code do
+catálogo (LSP, Sentry, Semgrep, Figma) viram a alternativa MCP da mesma linha. A
+compatibilidade foi montada a partir da documentação do Cursor e dos formatos da
+instalação local, **ainda sem um eval rodado no Cursor** — ver `evals/cases.md`.
 
 **Outras ferramentas** que leem `AGENTS.md` (Codex e afins) recebem o
 parágrafo de Workflow que o `/plumb-setup` grava nele.
@@ -306,43 +324,50 @@ parágrafo de Workflow que o `/plumb-setup` grava nele.
 | Ideia | Origem |
 |---|---|
 | Triagem por tamanho e caminho leve para correções pequenas | BMAD Quick Flow, Kiro Quick Spec |
-| Uma pasta de mudanças, arquivada ao concluir | OpenSpec |
-| O agente decide com fonte, o humano revisa o plano | Spec Kit `/clarify` (invertido: decisões em vez de perguntas) |
+| Uma spec por mudança, arquivada ao concluir | OpenSpec |
+| O agente decide com fonte, o humano revisa a spec | Spec Kit `/clarify` (invertido: decisões em vez de perguntas) |
+| Entrevista por dimensão antes de especificar, inferência com evidência | Spec Kit `/clarify`, BMAD (elicitação) |
 | Critérios de aceite prováveis (Dado/quando/então) | BDD |
 | Evidência antes de dizer "pronto"; TDD; parar quando travar | Superpowers |
 | Revisor com contexto limpo e veredito curto | Superpowers v6 |
-| Arquivo de progresso, baseline e uma task por vez | Anthropic, *Effective harnesses for long-running agents* |
+| Arquivo de progresso, baseline e uma tarefa por vez | Anthropic, *Effective harnesses for long-running agents* |
 | Contexto fixo mínimo, o resto sob demanda | Kiro steering; Anthropic, *Effective context engineering* |
 | Memória com classes, escopo e consolidação periódica | Knowledge OS; memória de agentes no estilo Letta/MemGPT |
 
 ## Estrutura do repositório
 
 ```
-skills/plumb/              orquestrador + references/ (contrato de prompt, modelo da spec, molde do cérebro, testes)
-skills/plumb-setup/        ligação ao cérebro, entrevista de stack, estruturação e migração + references/catalog.md
-skills/plumb-dream/        lê as sessões, audita o cérebro, propõe ajustes e ferramentas
+skills/plumb/              orquestrador + hooks/entry.mjs + references/ (contrato do cérebro, contrato de prompt, modelo da spec, sinais, testes)
+skills/plumb-setup/        entrevista por dimensão, estruturação e migração + references/ (dimensões, catálogo, permissões)
+skills/plumb-dream/        analisa a sessão inteira, varre sessões antigas, audita o cérebro + scripts/extract.mjs
 skills/plumb-find-docs/    falta documentação? (Context7) — cópia fixada
 skills/plumb-find-skills/  falta competência? descobrir skills, com revisão de segurança — cópia fixada
 skills/plumb-find-mcps/    falta acesso? propor MCP por fase do trabalho
-agents/                    os 6 subagentes
+agents/                    os 5 subagentes
 evals/                     casos, resultados e um fixture sem dependências
-bin/cli.js, lib/           instalador npm (install, uninstall, status; registra o cérebro)
+bin/cli.js, lib/           instalador npm (install, uninstall, status; registra hooks e cérebro)
+scripts/run-tests.mjs      roda os testes sem depender de glob do shell
 global-instruction.md      bloco gravado em ~/.claude/CLAUDE.md (ou User Rules do Cursor)
-test/                      testes do instalador (npm test)
+test/                      testes do instalador, do hook de entrada, do extrator do dream e do contrato com o cérebro (npm test)
 ```
 
 ## Desenvolvimento
 
 Edite o markdown, rode de novo os casos afetados de `evals/cases.md` contra
 `evals/fixture/` e registre em `evals/results.md`. Mantenha o
-`skills/plumb/SKILL.md` com até ~350 linhas; o que só é preciso às vezes vai
+`skills/plumb/SKILL.md` com até ~520 linhas; o que só é preciso às vezes vai
 para `references/`, com um nível só.
 
-O instalador tem testes: `npm test`.
+`npm test` roda os testes do instalador, do hook de entrada, do extrator e o
+**teste de contrato**: lê todos os `.md` de `skills/` e `agents/` e falha se algum
+citar uma ferramenta do cérebro ou um conceito que o Knowledge OS v2 não tem. A
+lista das 32 ferramentas fica em `test/contract.test.js`, com a origem — quando o
+servidor mudar, é lá que se atualiza.
 
 A versão 1 (CLI em TypeScript, 10 skills, memória Memanto/Obsidian, ciclo
-"dream") está no histórico do git, antes do commit da v2. A v3 traz o
-segundo cérebro como memória obrigatória.
+"dream") está no histórico do git, antes do commit da v2. A v3 traz o segundo
+cérebro como memória obrigatória; a v4, a spec com fases; a v5, a entrada
+obrigatória, o cérebro em toda fase e o fim do dreamer.
 
 ## Licença
 
