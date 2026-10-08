@@ -77,8 +77,7 @@ conta, com a recomendação dele; você confirma, corrige ou pula, e a dimensão
 depois do seu "sim". Sem teto de perguntas, mas só o que o repositório não
 responde e que melhora o trabalho futuro. O progresso fica numa spec e o setup
 retoma de onde parou. No fim: o bloco de comandos no `AGENTS.md`, o `CLAUDE.md`
-(`@AGENTS.md`), as permissões em `.claude/settings.json` (confirmar `git push` e
-`gh pr create`; liberar testes, lint e o cérebro) e até 5 ferramentas do catálogo
+(`@AGENTS.md`) e até 5 ferramentas do catálogo
 escolhidas pelos sinais do código. Num repositório que já tem regras e skills em
 arquivos, ele as migra para o cérebro e enxuga os arquivos; num projeto já ligado,
 faz uma auditoria; num projeto novo, sem código, **propõe** as decisões de base com
@@ -154,8 +153,7 @@ restrições, critério de pronto e o que fazer se travar.
 
 ## Segundo cérebro
 
-No repositório ficam só os comandos e o Workflow no `AGENTS.md` e as
-permissões. O resto mora no Knowledge OS (uma pasta git local por conexão,
+No repositório ficam só os comandos e o Workflow no `AGENTS.md`. O resto mora no Knowledge OS (uma pasta git local por conexão,
 com um arquivo Markdown por item), organizado como o seu trabalho:
 
 ```
@@ -278,13 +276,13 @@ somente leitura por padrão, nada sem o seu "sim". Entradas marcadas
 Skills e subagentes do Claude Code; `AGENTS.md` importado pelo `CLAUDE.md`;
 hooks `UserPromptSubmit`, `SessionStart` e `Stop` (com `additionalContext` e
 `decision: block`); MCP no escopo user; lista de tarefas da sessão para o
-progresso; `permissions.ask` para push/PR; isolamento em worktree para tarefas
+progresso; isolamento em worktree para tarefas
 paralelas; plan mode + ExitPlanMode para apresentar a spec quando a sessão está em
 plan mode. Sem build e sem dependências no lado do Plumb.
 
-**Limitação conhecida:** a regra `Bash(git push *)` não pega variações com
-opções antes do subcomando (`git -c x=y push`). A pergunta de push/PR da entrega continua
-valendo nesses casos.
+**Push e PR:** o setup não grava permissões. A pergunta de push/PR da entrega é uma regra do
+fluxo, não uma trava da ferramenta; quem quiser a trava configura `permissions` no próprio
+`settings.json`.
 
 ## Cursor
 
@@ -300,14 +298,12 @@ as duas.
 | Comandos do projeto | `AGENTS.md` via `CLAUDE.md` → `@AGENTS.md` | `AGENTS.md`, lido nativamente |
 | Entrada | hooks `UserPromptSubmit` + `SessionStart` + `Stop` | hook `sessionStart` (sem hook por prompt: o lembrete vem uma vez por sessão) |
 | Segundo cérebro | MCP `knowledge-os` (user) + hook `SessionStart` | `~/.cursor/mcp.json` + hook `sessionStart` (`additional_context`) |
-| Permissões | `.claude/settings.json`: `allow`, `ask`, `deny` | `.cursor/cli.json`: `allow`, `deny` (sem "ask": o que não está liberado pede aprovação) + `.cursor/permissions.json` com a política em texto para o modo auto-review |
 | MCP | `claude mcp add` → `.mcp.json` | `.cursor/mcp.json` |
 | Lista de tarefas, plan mode | TaskCreate/TodoWrite, ExitPlanMode | to-dos do agente, modo Plan |
 
 **Limitações no Cursor:** sem hook por prompt nem `Stop` que injete contexto, a
 entrada depende do lembrete do `sessionStart`, da instrução global e da
-descrição da skill; sem `ask`, a confirmação de push/PR depende da política de
-auto-review e da pergunta da entrega, não de uma regra determinística; tarefas
+descrição da skill; tarefas
 em paralelo só rodam em sequência (sem isolamento em worktree garantido); os
 agentes não usam `readonly` (no Cursor ele vira Ask mode e bloqueia shell e MCP),
 então a regra "não edite" é só do texto do agente; o `/plumb-dream` não lê
@@ -338,7 +334,7 @@ parágrafo de Workflow que o `/plumb-setup` grava nele.
 
 ```
 skills/plumb/              orquestrador + hooks/entry.mjs + references/ (contrato do cérebro, contrato de prompt, modelo da spec, sinais, testes)
-skills/plumb-setup/        entrevista por dimensão, estruturação e migração + references/ (dimensões, catálogo, permissões)
+skills/plumb-setup/        entrevista por dimensão, estruturação e migração + references/ (dimensões, catálogo)
 skills/plumb-dream/        analisa a sessão inteira, varre sessões antigas, audita o cérebro + scripts/extract.mjs
 skills/plumb-find-docs/    falta documentação? (Context7) — cópia fixada
 skills/plumb-find-skills/  falta competência? descobrir skills, com revisão de segurança — cópia fixada

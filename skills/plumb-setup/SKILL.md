@@ -1,6 +1,6 @@
 ---
 name: plumb-setup
-description: Levanta TUDO sobre um repositório e monta a base do segundo cérebro (Knowledge OS) com o usuário — liga o projeto, percorre dez dimensões (produto, stack, mapa, comandos, convenções, áreas sensíveis, procedimentos, ferramentas, time, preferências) com inferência mostrada com evidência e perguntas objetivas, leva regras e skills de projeto existentes para o cérebro, e grava o bloco de comandos no AGENTS.md e as permissões. Entrevista extensa e retomável; grava cada dimensão depois do "sim". Rode uma vez por repositório, ou de novo para auditar.
+description: Levanta TUDO sobre um repositório e monta a base do segundo cérebro (Knowledge OS) com o usuário — liga o projeto, percorre dez dimensões (produto, stack, mapa, comandos, convenções, áreas sensíveis, procedimentos, ferramentas, time, preferências) com inferência mostrada com evidência e perguntas objetivas, leva regras e skills de projeto existentes para o cérebro, e grava o bloco de comandos no AGENTS.md. Entrevista extensa e retomável; grava cada dimensão depois do "sim". Rode uma vez por repositório, ou de novo para auditar.
 disable-model-invocation: true
 ---
 
@@ -12,7 +12,7 @@ instruções globais; com o pedido só no comando, nunca troque para o inglês).
 O objetivo é o usuário começar com uma **base rica e certa**: o que o repositório é,
 como se trabalha nele, o que é perigoso, o que se repete. O conhecimento vai para o
 segundo cérebro (MCP `knowledge-os`); no repositório ficam só os comandos e o
-Workflow no `AGENTS.md` e as permissões — nenhuma pasta do Plumb.
+Workflow no `AGENTS.md` — nenhuma pasta do Plumb.
 
 Isto é uma **entrevista com pesquisa**, não um formulário e não um palpite.
 Você pesquisa o repositório antes, mostra o que achou **com a evidência**, e
@@ -243,19 +243,15 @@ Com as dez dimensões feitas (ou adiadas):
 
 2. **`CLAUDE.md`** (Claude Code) — crie com `@AGENTS.md`, ou acrescente a linha
    se já existir sem ela.
-3. **Permissões** — leia `references/permissions.md` e mescle, preservando todas
-   as configurações e regras existentes: `.claude/settings.json` (`allow`, `ask`,
-   `deny`) no Claude Code; `.cursor/cli.json` e `.cursor/permissions.json` no
-   Cursor. Nunca invente regra fora dele.
-4. **Arquivos migrados** — remova as regras e skills de projeto que foram para o
+3. **Arquivos migrados** — remova as regras e skills de projeto que foram para o
    cérebro e cuja remoção o usuário aprovou, **só depois** de gravadas.
-5. **`.plumb/` de versões antigas** — mudanças em andamento viram itens
+4. **`.plumb/` de versões antigas** — mudanças em andamento viram itens
    `spec/<id>` (o arquivo como `content`, `status: active`); as arquivadas, o mesmo
    com `status: done`. A pasta é ignorada pelo git, então a remoção **não tem volta**:
    só com o "sim" do usuário e depois de conferir com `item_get` que os itens
    **entraram de verdade no cérebro** (a fila offline não conta). Aí remova a pasta e
    a linha dela no `.gitignore`.
-6. **Ferramentas aprovadas** — instale com os comandos do catálogo. MCP no Claude
+5. **Ferramentas aprovadas** — instale com os comandos do catálogo. MCP no Claude
    Code: `claude mcp add --scope project` quando o time todo usa; no Cursor:
    entrada em `.cursor/mcp.json` (tradução na regra 11 do catálogo). As que exigem
    login OAuth: no Claude Code, `/mcp`; no Cursor, o botão de login em Settings →
@@ -263,10 +259,10 @@ Com as dez dimensões feitas (ou adiadas):
    permissão, senão mostre o comando. Confira e registre cada uma no grupo
    "Ferramentas" do `AGENTS.md` e em `context/stack`. Peça ao usuário para conferir
    o `/context` na próxima sessão.
-7. **Tags e subjects** — agora que os itens existem: assunto com 3+ itens →
+6. **Tags e subjects** — agora que os itens existem: assunto com 3+ itens →
    proponha `tag_create` (e `subject_create` só para área com nome próprio e muitos
    itens); o que o usuário aprovar, aplique.
-8. **Encerre a spec** `spec/setup-<repo>` (`status: done`, `summary` com o
+7. **Encerre a spec** `spec/setup-<repo>` (`status: done`, `summary` com o
    resultado) e **verifique**: `item_search(repo=".")` devolve o essencial; o
    `health_check` está sem arquivo quebrado.
 

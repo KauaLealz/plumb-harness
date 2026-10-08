@@ -60,6 +60,12 @@ cinco tipos com subtipo, `scope` herdado, `origin`, tags gerenciadas, relações
   escondidas num repositório.
 - A trilha direta roda os checks (fase Provar sem despacho) e a fase Aprender olha o cérebro.
 
+### Removido
+
+- O `/plumb-setup` não grava mais permissões (`.claude/settings.json`, `.cursor/cli.json`,
+  `.cursor/permissions.json`) e `references/permissions.md` saiu. A pergunta de push/PR da
+  entrega é uma regra do fluxo; quem quiser a trava configura `permissions` por conta própria.
+
 ### Pendente
 
 - Os casos de eval que dependem do servidor v2 ficam para depois da virada do Knowledge OS
