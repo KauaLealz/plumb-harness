@@ -5,10 +5,11 @@ trilha usa — seção vazia é ruído, não rigor. No idioma do usuário (títu
 inclusive).
 
 ```json
-{"key": "change/pay-142", "type": "spec",
+{"key": "spec/pay-142", "type": "spec", "status": "draft", "origin": "agent",
  "title": "PAY-142 — Pix no checkout",
  "summary": "Aguardando aprovação",
  "source": "PAY-142", "keywords": "pix qr code pagamento",
+ "links": [{"title": "Card PAY-142", "url": "<link, se houver>"}],
  "scope_paths": ["src/server.js", "test/payments.test.js"],
  "content": "<o markdown abaixo>"}
 ```
@@ -42,8 +43,8 @@ Riscos e rollback: <...>
       sai quando: <...>
 - [ ] 3. Provar                            ·  tester ∥ reviewer          ·  dep: 1,2
       sai quando: cada resultado esperado com evidência executada, sem bloqueador
-- [ ] 4. Aprender                          ·  dreamer                    ·  dep: 3
-      sai quando: decisões e aprendizados gravados no cérebro
+- [ ] 4. Aprender                          ·  orquestrador               ·  dep: 3
+      sai quando: decisões e aprendizados gravados no cérebro, feedback dado
 
 ## Decisões
 - <decisão> — <fonte: pedido, conversa, cérebro, AGENTS.md, código, ou ajuste do usuário em AAAA-MM-DD>
@@ -58,16 +59,18 @@ Números: <n> fases · <n> correções pós-revisão · <n> travamentos · <n> d
 
 ## Regras dos campos
 
+- **`status`** — `draft` enquanto aguarda aprovação; `active` depois do "sim", em
+  andamento; `done` ao entregar (sai do pacote, continua na busca como histórico).
+- **`origin`** — `agent` (você a redigiu); a spec que o usuário ditou por inteiro
+  é rara.
 - **`summary`** — o andamento, em linguagem de resultado: `Aguardando
   aprovação`, `Construindo: fase 2 de 4 — falta recusar método inválido`,
-  `Provando`, `Concluída: Pix devolve o QR code`. É o que aparece em "Mudanças
-  em andamento" e o que uma sessão retomada lê primeiro. Atualize a cada
-  avanço — só ele, numa chamada pequena (`{"key": "change/pay-142", "summary":
-  "..."}`).
+  `Provando`, `Concluída: Pix devolve o QR code`. É o que aparece nas specs
+  ativas e o que uma sessão retomada lê primeiro. Atualize a cada avanço — só
+  ele, numa chamada pequena (`{"key": "spec/pay-142", "summary": "..."}`).
 - **`content`** — reenvie só quando a spec muda (resposta que altera algo,
   escopo novo) e no fechamento, com as fases marcadas, a Retro e os Números.
-- **`status`** — `active` enquanto está em andamento; `done` ao entregar (sai
-  do pacote, continua na busca como histórico).
+- **`scope`** — omita: a spec é do project (`scoped`).
 
 ### Resultados esperados
 
@@ -98,7 +101,7 @@ sabe que terminou**.
   Nunca "está pronto".
 - **Provar e Aprender são do molde**, não se inventam nem se removem. Na
   trilha direta a fase Provar pode sair; **Aprender nunca sai** — até um typo
-  pode ensinar algo.
+  pode ensinar algo. Aprender é do orquestrador, não de um subagente.
 
 ### O resto
 
@@ -109,7 +112,7 @@ sabe que terminou**.
   `/plumb-dream` lê depois.
 - **Notas** — o handoff. Se o trabalho parar no meio, uma sessão nova precisa
   continuar só com o `summary`, as fases desmarcadas e as Notas.
-- **Card** — com um MCP de tarefas conectado, a spec **referencia** o card e
-  não copia a descrição dele: lá vive o quê e o status; aqui, o como.
+- **Card** — com um MCP de tarefas conectado, a spec **referencia** o card (em
+  `links`) e não copia a descrição dele: lá vive o quê e o status; aqui, o como.
 - Sem cérebro (fora do ar): a spec fica no chat e na lista de tarefas, e o item
   vai para a fila `~/.knowledge-os/pending.jsonl`.

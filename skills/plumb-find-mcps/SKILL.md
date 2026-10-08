@@ -17,7 +17,7 @@ mais instrução.
 
 ## Quando usar
 
-- A mesma falta de acesso apareceu **duas vezes** (o dreamer detecta isso).
+- A mesma falta de acesso apareceu **duas vezes** (o fechamento da mudança e o `/plumb-dream` detectam isso).
 - O usuário menciona um sistema que você não consegue consultar ("o card diz…",
   "em produção dá erro X", "segue o Figma").
 - No `plumb-setup`, ao levantar a stack do projeto.

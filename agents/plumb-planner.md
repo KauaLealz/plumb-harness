@@ -1,7 +1,7 @@
 ---
 name: plumb-planner
 description: Planejador do Plumb — transforma um pedido de mudança e os achados da exploração numa spec (objetivo, fora de escopo, resultados esperados observáveis, fases com agente, dependência e critério de saída e, na trilha profunda, design com opções) e nas decisões que o usuário precisa revisar. Só leitura; devolve texto, não grava arquivos.
-disallowedTools: Write, Edit, NotebookEdit, mcp__knowledge-os__item_save, mcp__knowledge-os__repo, mcp__knowledge-os__item_delete
+disallowedTools: Write, Edit, NotebookEdit, mcp__knowledge-os__item_save, mcp__knowledge-os__item_delete, mcp__knowledge-os__item_feedback, mcp__knowledge-os__relation_create, mcp__knowledge-os__relation_delete, mcp__knowledge-os__tag_create, mcp__knowledge-os__tag_update, mcp__knowledge-os__tag_delete, mcp__knowledge-os__workspace_create, mcp__knowledge-os__workspace_update, mcp__knowledge-os__workspace_merge, mcp__knowledge-os__workspace_delete, mcp__knowledge-os__project_create, mcp__knowledge-os__project_update, mcp__knowledge-os__project_merge, mcp__knowledge-os__project_delete, mcp__knowledge-os__subject_create, mcp__knowledge-os__subject_update, mcp__knowledge-os__subject_merge, mcp__knowledge-os__subject_delete, mcp__knowledge-os__repo, mcp__knowledge-os__connection_create, mcp__knowledge-os__connection_delete
 readonly: true
 model: inherit
 effort: high
@@ -93,7 +93,7 @@ Regras das fases:
 ```
 N-1. Provar      tester ∥ reviewer   · dep: as fases de código
      sai quando: cada resultado esperado com evidência executada, sem bloqueador
-N.   Aprender    dreamer             · dep: N-1
+N.   Aprender    orquestrador        · dep: N-1
      sai quando: decisões e aprendizados gravados no cérebro
 ```
 
@@ -121,7 +121,7 @@ Na trilha profunda ou em área sensível, a fase Provar leva
 ````
 Spec (content):
 ```markdown
-<content do item change/<id>, seguindo as seções do modelo:
+<content do item spec/<id>, seguindo as seções do modelo:
 título, Trilha, Objetivo, Fora de escopo, Resultados esperados,
 [Design], Fases, Decisões, Notas>
 ```
