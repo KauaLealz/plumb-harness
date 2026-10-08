@@ -1,7 +1,7 @@
 {
   "name": "plumb-harness",
-  "version": "4.0.0",
-  "description": "Fluxo spec-driven leve para agentes de código no Claude Code e no Cursor: skills, subagentes, instrução global e segundo cérebro (Knowledge OS).",
+  "version": "5.0.0",
+  "description": "Fluxo spec-driven leve para agentes de código no Claude Code e no Cursor: entra em todo pedido, com skills, subagentes, instrução global, hook de entrada e segundo cérebro (Knowledge OS).",
   "type": "module",
   "bin": {
     "plumb-harness": "bin/cli.js"
@@ -14,7 +14,7 @@
     "global-instruction.md"
   ],
   "scripts": {
-    "test": "node --test test/*.test.js"
+    "test": "node scripts/run-tests.mjs"
   },
   "engines": {
     "node": ">=18"
