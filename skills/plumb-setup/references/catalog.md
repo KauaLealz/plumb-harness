@@ -16,9 +16,12 @@ repositório ou na fala do usuário.
    em vez dos MCPs equivalentes. MCP só quando não há CLI que faça o mesmo,
    ou quando o MCP dá algo que a CLI não dá (OAuth sem token, sessão de
    navegador persistente).
-3. **No máximo 5 sugestões**, ordenadas pela lacuna que fecham no fluxo:
-   verificar (navegador, banco) > entender (docs, tickets) > revisar
-   (segurança) > conveniência.
+3. **No máximo 5 sugestões por rodada**, ordenadas pela lacuna que fecham no
+   fluxo: verificar (navegador, banco) > entender (docs, tickets) > revisar
+   (segurança) > conveniência. Vão ao usuário numa pergunta `multiSelect`, cada
+   opção com o sinal citado e o custo; outra rodada só se ele pedir. O que ele
+   recusa fica registrado em `context/stack` (modelo abaixo) e não se repete.
+   Nada se instala sem o "sim".
 4. **Escopo do projeto** (`claude mcp add --scope project …`, grava em
    `.mcp.json`) para o que o time inteiro usa; escopo `user` para
    preferências pessoais. Nunca commite token em `.mcp.json` — use
@@ -182,10 +185,40 @@ Não conta no limite de 5: o Plumb depende dele.
 | Mocks de serviços externos | Simular a falha mais cara de uma integração | Chamadas HTTP a terceiros sem stub nos testes | WireMock (`docker run -p 8080:8080 wiremock/wiremock`) · Testcontainers (biblioteca) | 0 |
 | Carga | Medir latência e throughput | Requisito de performance no card | `k6 run script.js` | 0 |
 
-## Sinais de onde o time trabalha (decida, não pergunte)
+## Sinais de onde o time trabalha (confirme, não deduza)
+
+Cada sinal abaixo é um **achado para mostrar com a evidência e o usuário confirmar**,
+nunca uma decisão silenciosa:
 
 1. Cards e documentação: remote GitHub e nenhum outro sinal → GitHub Issues;
    ids `ABC-123` com link `atlassian.net` em commits ou README → Jira/Confluence;
-   `linear.app` → Linear. Liste a decisão em "Decidi:".
+   `linear.app` → Linear. Mostre o sinal e pergunte, com essa hipótese em primeiro.
 2. Ferramentas do dia a dia (erros, design, banco, deploy): só as que aparecem nas
    dependências, na CI ou nas configs do repositório.
+
+## Varredura de recomendações (dimensão 8)
+
+Três varreduras, cada uma ligada a uma skill de busca. Os sinais e a priorização
+estão em `dimensions.md`, dimensão 8; aqui, o que consultar:
+
+| Varredura | Olha | Recomenda por |
+|---|---|---|
+| Documentação atual | manifestos (`package.json`, `pyproject.toml`, `go.mod`, `pom.xml`, `Gemfile`, `composer.json`, `Cargo.toml`, `*.csproj`) | `plumb-find-docs` (Context7 via `npx ctx7@latest`; sem contexto fixo) |
+| Acessos | `claude mcp list`, `.mcp.json`, `.cursor/mcp.json`, `~/.cursor/mcp.json` x sistemas do projeto (CI, tarefas, banco, erros, design, deploy) | `plumb-find-mcps`, com as linhas deste catálogo |
+| Competências | `~/.claude/skills`, `.claude/skills`, plugins e skills disponíveis na ferramenta; `~/.claude/CLAUDE.md`, itens globais e de preferência do cérebro | `plumb-find-skills` (cópia revisada, nunca instalação direta) |
+
+## Modelo de `context/stack`
+
+Uma linha por sistema; o que o agente alcança e o que foi combinado. É o que impede
+repetir a mesma recomendação.
+
+```
+Linear — conectado (MCP linear, escopo projeto) · quando: ler o card antes de planejar
+Sentry — sem MCP · candidato: sentry-cli (sinal: @sentry/node em package.json:22)
+Figma — não usam
+Semgrep — recusado — 2026-10-10 (motivo: o CI já roda)
+Documentação (plumb-find-docs): next ^15.1, prisma ^6.2, zod ^3.23
+```
+
+Estados: *conectado*, *sem MCP* (candidato), *não usam*, *recusado* (com a data e o
+motivo). Não guarde id de tarefa nem segredo.
