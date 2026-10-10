@@ -1,6 +1,15 @@
 ---
 name: plumb-find-skills
-description: Finds installable agent skills when the user asks "how do I do X", "find a skill for X" or wants to extend capabilities. Plumb copies a reviewed skill instead of installing it directly.
+description: >-
+  Encontra skills de agente instaláveis quando falta ao time uma competência
+  inteira que alguém já resolveu — use quando o usuário perguntar "como faço X",
+  "tem uma skill para X?", quiser ampliar o que o agente sabe fazer, quando o
+  planejador sinalizar "Ferramenta que falta", ou quando a sessão tiver
+  improvisado uma capacidade que merecia uma skill. A recomendação vai ao
+  usuário por múltipla escolha; o Plumb copia uma skill revisada em vez de
+  instalar direto. / Finds installable agent skills when the user asks "how do
+  I do X", "find a skill for X", wants to extend capabilities, or the work shows
+  a whole competency the team lacks.
 ---
 
 # Find Skills

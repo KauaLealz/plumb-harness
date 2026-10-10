@@ -207,12 +207,24 @@ caberia em dois subjects, o recorte está errado.
 Tag é **vocabulário gerenciado**: serve ao recorte transversal que o tipo e o
 project não dão (`pagamentos`, `lgpd`, `checkout`), e filtra a busca.
 
-- `tag_list` antes de usar uma: reaproveite em vez de criar variação.
-- Crie (`tag_create`) quando o assunto já tem 3 itens ou mais e alguém pediria
-  "me traz tudo de X". Nunca repita o tipo nem o project; nunca use uma vez só.
-- `item_save` com tag nova cria e avisa, sugerindo a parecida: confira.
-- Renomear ou mesclar: `tag_update`. Apagar: `tag_delete`, que mostra a prévia
-  com quantos itens e só remove com `confirm=True`.
+- **Vocabulário curto e reaproveitado.** `tag_list` **antes** de dar tags a um
+  item: reaproveite a existente em vez de criar variação (`pagamentos`, não
+  `pagamento` nem `payments`). No lote, uma consulta cobre todos os itens.
+- **1 a 3 tags de área ou tema por item**, em todo item que grava (rule, howto,
+  context, spec). Área = onde mora no produto (`pagamentos`, `auth`, `checkout`);
+  tema = a preocupação transversal (`lgpd`, `performance`). Mais de 3 é sinal de
+  item grande demais ou de tag que é, na verdade, `subject`.
+- **Tags de estado só na spec** (seção 15): `aguardando-aprovacao`,
+  `em-andamento`, `parada`, mais `worktree` quando há worktree. Não são área:
+  não conte nas 1 a 3, e saem ao concluir.
+- Crie (`tag_create`) só o que o assunto já tem 3 itens ou mais e alguém pediria
+  "me traz tudo de X" — exceto as de estado e `worktree`, que fazem parte do
+  padrão. Nunca repita o tipo nem o project; nunca use uma vez só.
+- `item_save` com tag nova cria e avisa, sugerindo a parecida: confira e
+  regrave com a existente.
+- Renomear ou mesclar variações: `tag_update`. Apagar: `tag_delete`, que mostra a
+  prévia com quantos itens e só remove com `confirm=True`. O setup e o dream
+  consolidam as variações que acharem (com o "sim").
 - Tag e `subject` se parecem: o subject é onde o item **mora** (um só); a tag é
   do que ele **fala** (várias). Na dúvida, tag: não move nada de lugar.
 
@@ -327,3 +339,37 @@ irrelevante), nunca de `origin=user`. Com `keys` mostra a prévia; só apaga com
 `knowledge-mcp report --json` traz o retrato (nunca abertos, em `review`, alta
 taxa de irrelevante, buscas vazias, tags sem item): é a entrada da auditoria do
 `/plumb-dream`.
+
+## 15. Specs ativas: coordenação no próprio item
+
+Vários agentes e sessões podem trabalhar no mesmo repositório. Para se
+enxergarem sem abrir cada spec, a spec carrega a coordenação num padrão fixo
+(sem campo novo no servidor: é o `summary`, o topo do `content`, as tags e o
+`scope_paths`). O modelo completo está em `spec-template.md`.
+
+**`summary`** numa linha fixa: `<estado> · <fase n/total> · <branch> · <worktree> · <agente>`.
+Estados: `Aguardando aprovação`, `Construindo`, `Provando`, `Parada`, `Concluída`
+(esta última: `Concluída: <resultado em uma frase>`). Sem worktree, `sem worktree`.
+Ex.: `Construindo · fase 2/4 · pay-142-pix · .claude/worktrees/pay-142-pix · Claude (sessão 4f2a)`.
+
+**Topo do `content`**, uma por linha: `Trilha`, `Agente` (agente + sessão), `Base`,
+`Branch`, `Worktree`, `Atualizado` (data e hora).
+
+**Tags de estado:** `aguardando-aprovacao` (status `draft`), `em-andamento`
+(`active`), `parada`; `worktree` enquanto houver worktree; mais 1 a 3 de área ou
+tema (seção 8). Ao concluir (`done`) saem as de estado e `worktree`; ficam as de
+área. **`scope_paths`** = as áreas que a mudança toca, o mais estreito possível:
+é com ele que se vê sobreposição entre mudanças.
+
+**Atualização:** a cada fase, na regravação que o orquestrador já faz, ajuste o
+`summary`, a tag de estado e `Atualizado`. Conclusão: os mesmos campos, `status:
+done`.
+
+**Ver o que os outros fazem:** `item_search(repo=".", types=["spec"],
+status=["active","draft"])` mostra o `summary` de cada uma. Sobreposição de
+`scope_paths` com a mudança nova vira pergunta do grill: sequenciar ou
+paralelizar.
+
+**Link da UI:** o servidor devolve `url` em `item_save`, `item_get` e
+`item_search`. Ao criar, atualizar e entregar uma spec, termine a mensagem ao
+usuário com `Spec: <url>`. Resposta sem `url`: não invente; diga a key.

@@ -1,10 +1,16 @@
 ---
 name: plumb-find-docs
 description: >-
-  Fetches current docs and API references for a library, framework, SDK, CLI or cloud
-  service (React, Next.js, Prisma, Spring Boot…). Use for API syntax, config options,
-  version migrations and library-specific debugging, even when you think you know the
-  answer: training data may be outdated. Prefer over web search.
+  Busca a documentação atual e a referência de API de uma biblioteca, framework,
+  SDK, CLI ou serviço de nuvem (React, Next.js, Prisma, Spring Boot…) ANTES de
+  escrever código que a usa — na checagem de ferramentas ao entender um pedido,
+  na spec e na implementação, inclusive em correções pequenas. Use para sintaxe
+  de API, opções de configuração, migração de versão e erro específico de uma
+  biblioteca, mesmo quando você acha que sabe a resposta: o treino pode estar
+  desatualizado. Prefira isto à busca na web. / Fetches current docs and API
+  references for a library, framework, SDK, CLI or cloud service BEFORE writing
+  code that uses it — during the tools check when understanding a request, in
+  planning and while implementing, even for small fixes.
 ---
 
 # Documentation Lookup

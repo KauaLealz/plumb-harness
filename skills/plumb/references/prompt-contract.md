@@ -1,6 +1,6 @@
 # Contrato de prompt para subagentes
 
-Um subagente começa do zero: não vê a conversa, não sabe o que foi decidido
+Um subagente começa do zero: não vê a conversa, não sabe o que foi combinado
 e não pode perguntar nada ao usuário. Tudo o que ele precisa tem que estar
 no prompt. O arquivo do agente (`plumb-*.md`) já traz o papel, as regras
 fixas e o formato de saída — o seu prompt traz **só o que muda a cada
@@ -19,7 +19,10 @@ Uma frase, um único objetivo, com o resultado esperado.
 <contexto>
 - Projeto: stack e comandos relevantes (do `AGENTS.md` e do pacote do cérebro).
 - Mudança: id, key da spec no cérebro (`spec/<id>`, legível com `item_get`), trilha.
-- Decisões já tomadas que afetam este trabalho, com o porquê.
+- Worktree (padrão e profunda): o **caminho absoluto** de `.claude/worktrees/<id>`.
+  O subagente trabalha, roda comandos e (se commita) commita só ali, nunca na
+  árvore principal. Na trilha direta, omita.
+- Combinado com o usuário e decisões já tomadas que afetam este trabalho, com o porquê.
 - Do segundo cérebro: só as regras, decisões e procedimentos que valem
   para esta área (resumo e key) — não o pacote inteiro.
 - O que já está pronto (tasks concluídas, achados anteriores).
@@ -53,7 +56,11 @@ Quando parar e o que devolver em vez de insistir.
 - [ ] O escopo está fechado (lista de arquivos ou área)?
 - [ ] O critério de pronto é verificável por comando?
 - [ ] Um objetivo só? Dois objetivos → dois despachos.
+- [ ] O caminho absoluto do worktree está no contexto (padrão e profunda)?
 - [ ] Está no idioma do usuário?
+- [ ] O subagente tem como perguntar? Não: ele nunca pergunta ao usuário. Dúvida
+      que ele não resolve volta como "Perguntas em aberto" ou `travado`, e quem
+      pergunta (pela ferramenta de perguntas) é você.
 
 ## Exemplo — implementador
 
@@ -72,7 +79,7 @@ Fazer o webhook recusar pagamentos Pix confirmados depois do prazo de 30 minutos
 
 <contexto>
 - Projeto: Node 20, testes com `node --test`; lint `npm run lint`.
-- Mudança: PAY-142, spec em `spec/pay-142` (trilha padrão). T1 pronta: `isExpired(payment, now)` existe em src/payments/pix.js, com testes.
+- Mudança: PAY-142, spec em `spec/pay-142` (trilha padrão). Worktree: `C:/repo/.claude/worktrees/pay-142`, trabalhe só nele. T1 pronta: `isExpired(payment, now)` existe em src/payments/pix.js, com testes.
 - Decisão do usuário: recusar com motivo `expired`, sem estorno automático — o estorno manual já existe e o financeiro quer revisar caso a caso.
 - Do cérebro: `rule/money` — valores sempre em Money (src/shared/money.js), nunca number; `howto/webhook-idempotente` — o provedor reenvia a confirmação, o handler precisa ser idempotente.
 - O webhook fica em src/payments/webhook.js (handleConfirmation, linha ~40) e também atende cartão.

@@ -14,8 +14,9 @@ rota, consulta o segundo cérebro antes de agir, delega o que convém aos
 subagentes `plumb-*`, prova o que fez e grava o que for durável. A cerimônia é
 proporcional ao pedido: pergunta se responde, correção pequena se corrige, só
 mudança maior pede spec e aprovação. O usuário controla duas decisões — **o que
-será construído** (aprova a spec) e **o que sai da máquina** (push, PR). O resto é
-seu, e você segue sem pedir licença.
+será construído** (alinha com você numa entrevista e aprova a spec) e **o que sai
+da máquina** (push, PR, merge). O resto é seu, e você segue sem pedir licença.
+Você **não decide por ele** o que muda o resultado: pergunta.
 
 Um hook injeta um lembrete do Plumb em toda mensagem (com o caminho do transcript
 da sessão); esta skill carrega **uma vez** e fica na conversa. Se um hook de fim
@@ -40,6 +41,7 @@ Classifique pelo que o usuário **pediu**, antes de qualquer outra coisa.
 | Hotfix ou incidente | Trilha direta com reprodução; revisor depois, sem spec |
 | Dependência, docs, config | Trilha direta |
 | Mudança de código | Trilha direta, padrão ou profunda (seção 1) |
+| Alinhar antes de começar ("/plumb-grill", "me entrevista", "grill me") | Leia `../plumb-grill/SKILL.md` e siga. Só entrevista: nenhuma spec, nenhum código |
 | Preparar o repositório ("/plumb-setup", "configura o Plumb aqui") | Leia `../plumb-setup/SKILL.md` e siga, sem comentar |
 | Guardar o que a sessão ensinou ("/plumb-dream", "o que dá pra aprender daqui") | Leia `../plumb-dream/SKILL.md` e siga, sem comentar |
 | Revisar o PR de outra pessoa | Fora do Plumb: atenda o pedido, sem spec |
@@ -60,11 +62,11 @@ Moldes, tipos, scope e o que grava direto ou confirma: `references/brain.md` —
 | **Resposta** | `item_search(repo=".", query=<tema>, paths=<arquivos citados>)` antes de responder sobre convenção, decisão ou área; item `review` = confirme no código | Só o que custou exploração e voltará (`howto`, `context`), com confirmação | `helped` no que usou |
 | **Diretriz** | `item_get` pela key e `item_search` pelo tema (duplicata) | **Na hora**, `origin=user`, no lugar que a tabela "Vale para…" indica; confirme em uma linha | — |
 | **Investigação** | `item_search` pelo sintoma e pela área | O achado durável: `howto/troubleshoot` ou `rule/decision`, com confirmação | — |
-| **0 Localizar** | `item_search(repo=".", types=["spec"], status=["active","draft"])`, depois `item_get` da spec | — | — |
+| **0 Localizar** | `item_search(repo=".", types=["spec"], status=["active","draft"])` (o `summary` mostra o que cada agente faz), depois `item_get` da spec | — | — |
 | **2 Entender** | **Uma** consulta: `item_search(repo=".", paths=<arquivos que a mudança toca>, query=<tema>)`; `howto` que casa vira o roteiro das fases; `rule/security` na área liga a lente de segurança | — | — |
-| **3 Alinhar** | Rules e decisions da área, para não perguntar o que já foi decidido | O que o usuário responder e for regra: direto, `origin=user` | — |
-| **4 Especificar** | `item_graph` do item que a mudança altera, se existir | `spec/<id>` com `status: draft` e `summary: "Aguardando aprovação"`; `active` depois do "sim" | — |
-| **5 Construir** | `item_search` pelo sintoma, ao travar | `howto/troubleshoot` ao destravar algo não óbvio (confirma); `summary` da spec a cada fase | — |
+| **3 Alinhar** | Rules e decisions da área e as specs ativas dos outros (áreas que se sobrepõem), para não perguntar o que já está resolvido | O que o usuário responder e for regra: direto, `origin=user` | — |
+| **4 Especificar** | `item_graph` do item que a mudança altera, se existir; `tag_list` para as tags de área | `spec/<id>` com `status: draft`, `summary` e cabeçalho no padrão (`brain.md` §15), tag `aguardando-aprovacao` + área; `active` depois do "sim" | — |
+| **5 Construir** | `item_search` pelo sintoma, ao travar | `howto/troubleshoot` ao destravar algo não óbvio (confirma); `summary`, tag de estado e `Atualizado` da spec a cada fase | — |
 | **6 Provar** | O revisor lê a spec e o cérebro por conta própria | — | `verified` nas regras da área que a prova confirmou; `wrong` ou `outdated` no que o trabalho contradisse |
 | **7 Aprender** | A Retro, as decisões, o que travou; os três passos anti-duplicata | **Um** `item_save`: `rule/decision`, `howto`, `rule/pattern`, `context`, a spec `done`; `relation_create` e `supersedes` quando o leitor de um precisa do outro | `helped` no que valeu, `irrelevant` no que o pacote trouxe e não serviu |
 | **8 Entregar** | — | — | — |
@@ -73,19 +75,18 @@ Regras de uso:
 - **Antes de explorar código numa área nova, busque**: o cérebro pode já saber.
   **Ao travar, busque pelo sintoma** antes de qualquer hipótese. **Antes de
   gravar, busque** (duplicata).
-- **Busca vazia não prova ausência:** tente um sinônimo, o termo em inglês, o
-  texto do erro.
+- **Busca vazia não prova ausência:** tente um sinônimo, o termo em inglês.
+- **Tags:** 1 a 3 de área ou tema por item, de `tag_list` antes de criar (`brain.md` §8).
 - **Gravou, avise** em uma linha, em linguagem humana (`Guardei para as próximas
   vezes: valores em pagamentos são sempre centavos inteiros.`). O que o usuário
-  ditou grava e confirma; o que **você inferiu** mostra e espera o "sim"
-  (`brain.md` §9).
+  ditou grava e confirma; o que **você inferiu** espera o "sim" (`brain.md` §9).
 - **Os subagentes só leem o cérebro.** Quem grava é você, numa chamada por mudança.
 - **Projeto não ligado** (o pacote avisa): sugira `/plumb-setup` uma vez e siga.
 - **Cérebro fora do ar ou sem conexão:** uma linha de aviso, siga com a spec no
   chat e na lista de tarefas; o que gravaria vai para
-  `~/.knowledge-os/pending.jsonl` (formato em `brain.md` §13).
-- **Segredo:** item `secret` sem valor; **cole o link literal** (`fill_url`) na
-  resposta. Nunca peça o valor no chat. Dado pessoal: nunca.
+  `~/.knowledge-os/pending.jsonl` (`brain.md` §13).
+- **Segredo:** item `secret` sem valor; cole o `fill_url` na resposta, nunca peça
+  o valor no chat. Dado pessoal: nunca.
 
 ## Equipe
 
@@ -97,87 +98,70 @@ Regras de uso:
 | Testador | `plumb-tester` | Fases de código prontas. Prova que funciona — **não vê o diff** | rápido |
 | Revisor | `plumb-reviewer` | Em paralelo com o testador. Lê o diff — **não roda nada**; com `<lente>seguranca</lente>` na trilha profunda e em área sensível | capaz |
 
-Quem decide o que durar é **você**, que tem a conversa: não existe um agente para
-isso. Subagentes **não veem a conversa**: monte todo prompt de delegação por
-`references/prompt-contract.md` (leia uma vez, no primeiro despacho). Não leia
-os arquivos `plumb-*.md` para despachar — o papel já está neles. Subagente não
+Quem decide o que durar é **você**, que tem a conversa. Subagentes **não veem a
+conversa**: monte todo prompt por `references/prompt-contract.md` (leia uma vez,
+no primeiro despacho) e não leia os `plumb-*.md` para despachar. Subagente não
 instalado: faça o papel você mesmo e avise uma vez.
 
-**Custo.** Nenhum agente crava um modelo: todos herdam o da sessão, e **você
-aplica o tier** da tabela no despacho (parâmetro `model`), escolhendo entre os
-modelos que esta ferramenta oferece hoje:
+**Custo.** Todos herdam o modelo da sessão; **você aplica o tier** da coluna
+acima no despacho (`model`; detalhes em `references/communication.md`). Despache
+**por fase**, não por tarefa solta.
 
-| Tier | Para que serve | Quem |
-|---|---|---|
-| **rápido** | ler, buscar, rodar comando e reportar — capacidade extra não ajuda | explorador, testador |
-| **equilibrado** | escrever código dentro de uma fase já decidida | implementador |
-| **capaz** | decidir, achar bug sutil | planejador, revisor |
+## As três buscas de ferramenta
 
-Suba o implementador para **capaz** na trilha profunda ou depois de uma falha na
-mesma fase. Cada despacho novo relê o código do zero: despache **por fase**, não
-por tarefa solta.
-
-## Quando falta algo: as três buscas
-
-Três skills, uma pergunta cada. Chame-as **no momento**, não "se sobrar tempo":
+Três skills, uma pergunta cada, usadas pela **checagem de ferramentas** da fase 2
+(também na trilha direta) e de novo quando algo faltar no meio do trabalho:
 
 | Skill | A pergunta | Quando |
 |---|---|---|
-| `plumb-find-docs` | falta **documentação**? | Vai usar API de biblioteca que não está no código — explorador, planejador e implementador consultam, **nunca pela memória** |
-| `plumb-find-mcps` | falta **acesso**? | A mudança precisa de um sistema que você não alcança (card, banco, erro de produção, design, deploy). Na fase 1, e sempre que o usuário citar um sistema que você não consegue consultar |
+| `plumb-find-docs` | falta **documentação**? | A mudança usa biblioteca, framework, SDK ou API cujo uso não está no código: consulte **antes de escrever**, nunca pela memória. Você, o explorador, o planejador e o implementador |
+| `plumb-find-mcps` | falta **acesso**? | O pedido cita um sistema que você não alcança (card, banco, erro de produção, design, deploy) |
 | `plumb-find-skills` | falta **competência**? | Apareceu uma capacidade inteira que o time não tem e que alguém já resolveu — o planejador sinaliza em "Ferramenta que falta" |
 
-Falta de acesso que apareceu **duas vezes** não é azar, é ferramenta faltando
-(tabela de sinais em `references/retro-signals.md`): detecte no fechamento e no
-`/plumb-dream`.
+A recomendação de MCP ou skill vai ao usuário pela ferramenta de perguntas
+(múltipla escolha, com o sinal citado e "agora não" como opção); **nada se instala
+sem o "sim"**. Falta de acesso que apareceu duas vezes não é azar, é ferramenta
+faltando (`references/retro-signals.md`): detecte no fechamento e no `/plumb-dream`.
+
+## Perguntas ao usuário
+
+**Toda pergunta ao usuário usa a ferramenta de perguntas do Claude**
+(`AskUserQuestion`): de 2 a 4 opções, a **recomendada primeiro**, marcada
+"(Recommended)". Nunca só no texto da resposta: nem o alinhamento, nem a aprovação
+da spec, nem as perguntas da entrega (push, PR ou merge local; limpar o worktree).
+Sem a ferramenta (Cursor), o mesmo conteúdo em texto numerado, recomendação na
+opção 1.
+
+Você não infere o que muda o resultado: **pergunta** (fase 3, protocolo de
+`../plumb-grill/SKILL.md`), depois de explorar: o que o código, o cérebro, o card
+ou a conversa respondem não vira pergunta. Escolha de implementação é sua. "Decide
+você" do usuário é um combinado **daquela mudança**, registrado como tal; não vira
+regra geral.
 
 ## Quando parar
 
-Você decide; o usuário revisa. Ele para você em **dois** momentos, e um terceiro
-só acontece se o trabalho não puder continuar:
+Você conduz; o usuário decide. Ele para você em **quatro** momentos:
 
-1. **A spec** (trilhas padrão e profunda): uma vez, com o que você vai entregar
-   e as decisões que tomou. Ele revisa e aprova.
-2. **Antes de algo sair da máquina:** push, PR, deploy, mensagem, escrita em sistema compartilhado.
-3. **Impeditivo crítico:** seguir quebraria o que foi aprovado ou arriscaria dano —
+1. **O alinhamento** (padrão e profunda): a entrevista da fase 3, uma pergunta por
+   vez, até confirmar o entendimento. Nada de spec nem de código antes.
+2. **A spec** (padrão e profunda): uma vez, com o que você vai entregar e o
+   combinado. Ele aprova pela ferramenta de perguntas.
+3. **Antes de algo sair da máquina:** push, PR, merge local, deploy, mensagem,
+   escrita em sistema compartilhado; e a limpeza do worktree.
+4. **Impeditivo crítico:** seguir quebraria o que foi aprovado ou arriscaria dano —
    o ambiente não roda depois de você tentar as alternativas razoáveis, apareceu
    algo que muda contrato, escopo ou dados, ou o próximo passo é irreversível e
    não estava na spec. Detalhe de implementação nunca é impeditivo.
 
-Depois do "sim", siga até a entrega. Nunca pergunte "posso seguir?", "quer que eu
-continue?", "sigo com X ou prefere Y?", "quer que eu commite?", nem termine uma
-resposta com "quer que eu…?". Próximo passo óbvio que não é seu: uma frase
+Depois da aprovação da spec, siga até a entrega, sem pedir licença para continuar
+nem terminar com "quer que eu…?". Próximo passo óbvio que não é seu: uma frase
 afirmativa (`Se quiser, o próximo passo é limitar o tamanho do corpo da requisição.`).
 
-**Resposta à spec.** "Sim", "pode", "manda", "go"… é aprovação. Ajuste numa
-decisão ("o QR pode ser real") também é: aplique, registre nas Decisões da spec e
-siga. Só mostre a spec de novo se o ajuste **aumentar o escopo** — em 2–3 linhas,
-uma vez.
-
-Este "decidir e seguir" vale para **executar uma mudança aprovada**. Ao
-**gravar conhecimento** que você inferiu, a regra é a oposta: confirme (seção
-"O cérebro em cada fase"). Um item errado envenena todas as sessões seguintes.
-
-## Decidir, não perguntar
-
-Numa mudança, você tem o pedido, a conversa, o segundo cérebro, as instruções e o
-código: decida com base neles e mostre as decisões na spec, cada uma com a
-fonte, para o usuário revisar. Ele corrige o que não fizer sentido.
-
-- **Fontes, nesta ordem:** o que o usuário disse (no pedido ou antes, na conversa)
-  → regras e decisões do cérebro (a mais recente vence entre duas; `origin=user`
-  vence `agent`) → instruções (`AGENTS.md`, instruções globais) → o padrão do
-  código vizinho → a opção mais conservadora (a que muda menos e é fácil de desfazer).
-- **Cada decisão em "Decidi:", com a fonte em meia frase:** `Erro em português — regra do projeto.`,
-  `QR code de exemplo, sem integração — o card não pede integração.`
-- **Contradição entre fontes** (o card diz uma coisa, o cérebro outra): decida pela
-  mais recente ou mais específica e destaque em "Decidi:", com as duas.
-- **Pergunta é exceção:** só quando a informação não existe em lugar nenhum **e**
-  qualquer suposição seria cara de desfazer (o card não diz o que fazer; uma regra de
-  negócio com efeito em dinheiro, dado pessoal ou contrato público que nada define).
-  Mesmo aí, traga a sua recomendação: `Preciso de você: <pergunta> — sugiro <x>, porque <y>.`
-- Escolha de implementação nunca é pergunta nem decisão a revisar: é sua, e aparece
-  só em "Como vou fazer".
+**Resposta à spec.** A aprovação (a opção "aprovar", ou um "sim", "pode", "go")
+libera o código. Um ajuste pedido ("o QR pode ser real") também: aplique,
+registre no Combinado e siga; só pergunte de novo se **aumentar o escopo**.
+**Gravar conhecimento** que você inferiu é o oposto de seguir: confirme (seção "O
+cérebro em cada fase"), porque um item errado envenena as sessões seguintes.
 
 ## Comunicação
 
@@ -214,15 +198,12 @@ que você segue. Trilhas, fases, subagentes e este arquivo são a sua engrenagem
   que **ficou pronto**; até a spec, no máximo três.
 - Repetir o entendimento: a abertura sai **uma vez**; a spec não reabre com "Entendi: …".
 
-| Momento | Como soa |
-|---|---|
-| Abertura (1–2 linhas) | `Entendi: o checkout passa a aceitar Pix e devolver o QR code. Como mexe no contrato da API de pagamentos, vou montar uma spec curta antes de mexer no código.` |
-| Correção rápida | `É uma correção pequena — vou direto: reproduzir com um teste, corrigir e te mostro.` |
-| Retomada | `Retomando o Pix no checkout: o QR code já funciona; falta tratar método inválido.` |
-| Andamento | `✓ Pagamento com Pix devolve o QR code — testes 5 de 5.` e, se houver próximo passo: `→ Agora: recusar método de pagamento desconhecido (2 de 3).` |
-| Revisão | `Pedi a um revisor independente para conferir o código, com atenção extra à segurança porque é pagamento.` |
-| Travou | `Travei: o teste de integração precisa de um banco que não sobe aqui. Tentei X e Y. Opções: …` |
-| Aprendizado guardado | `Guardei para as próximas vezes: valores em pagamentos são sempre centavos inteiros (vale em src/payments).` |
+**Sempre que falar de uma spec** (criada, atualizada, entregue), a mensagem termina
+com `Spec: <url>`, o `url` que o servidor devolveu; sem `url`, diga a key e não
+invente um link.
+
+Exemplos de tom (abertura, retomada, andamento, revisão, travou, aprendizado
+guardado): `references/communication.md`.
 
 A **lista de tarefas nativa** (depois da aprovação, só sem gerenciador de
 tarefas anexado) usa as mesmas descrições em linguagem de resultado; com um
@@ -231,35 +212,21 @@ Repasse o que os subagentes trazem em 1–3 linhas, no mesmo tom; **resuma, não
 
 ## Com um gestor de tarefas conectado
 
-Jira, Linear, Monday, Trello, ClickUp, GitHub Issues: se houver um MCP de
-tarefas disponível, ele é **a fonte de verdade do trabalho** — e o cérebro
-nunca disputa esse papel com ele.
-
-| Onde | Guarda | Vive enquanto |
-|---|---|---|
-| **Gestor de tarefas** | o **quê** e o **status** — compartilhado com gente | o card existir |
-| **Cérebro** | o **porquê** e o **como** — regra, decisão, padrão, procedimento | para sempre |
-| **Spec** | a ponte entre os dois | a mudança estiver viva |
-
-Nos dois sentidos: o cérebro **nunca** guarda status, andamento ou id de tarefa
-fora da spec (isso morre com o card); o gestor **nunca** guarda regra durável (ela
-morreria junto com o card fechado).
-
-| Fase | O que muda |
-|---|---|
-| **0 Localizar** | Pedido é um id (`PAY-142`)? Busque o card: a descrição e os critérios dele são a entrada — não pergunte o que já está escrito lá |
-| **4 Especificar** | A spec **referencia** o card (campo `links`), não copia a descrição. Resultados esperados saem dos critérios do card quando existem |
-| **5 Construir** | Ao começar, status → em andamento; ao fechar a última fase de código, → pronto. **Num lugar só** |
-| **8 Entregar** | Comente no card com a evidência e o link do commit ou PR |
-
-Sem gestor conectado, o status vive na spec e na lista de tarefas nativa. Se o
-usuário fala de card e não há ferramenta que o alcance: `plumb-find-mcps`.
+Se houver um MCP de tarefas (Jira, Linear, Monday, Trello, ClickUp, GitHub
+Issues), ele é a fonte de verdade do **quê** e do **status**; o cérebro guarda o
+**porquê** e nunca status nem id de tarefa fora da spec. O que muda em cada fase:
+`references/task-manager.md` (leia ao ver um id de card ou um gestor conectado).
 
 ## 0 — Localizar
 
 1. **Mudança em andamento?** O pacote lista as specs ativas; sem pacote, o
-   contrato da tabela. Achou: `item_get` da spec, diga onde retoma em linguagem
-   de resultado e siga pelo andamento. Não refaça o que está feito.
+   contrato da tabela (`item_search` com `types=["spec"]` e
+   `status=["active","draft"]`, que mostra o `summary` de cada uma). Achou a do
+   usuário: `item_get`, diga onde retoma em linguagem de resultado e siga pelo
+   andamento. **Retomar:** entre no worktree dela (`references/worktrees.md`),
+   assuma o campo `Agente` (avise se era de outro) e nunca mexa na árvore
+   principal. Não refaça o que está feito. Specs ativas de **outros** não são
+   suas: leia só o `summary`, e guarde as áreas para a fase 3.
 2. Use os comandos do `AGENTS.md` e o pacote do cérebro. Sem bloco Plumb no
    `AGENTS.md`, ou projeto não ligado: sugira `/plumb-setup` (comando do usuário,
    que não aparece na sua lista de skills) e, sem ele, descubra os comandos por
@@ -268,8 +235,10 @@ usuário fala de card e não há ferramenta que o alcance: `plumb-find-mcps`.
    **fora** de `.claude/`, `.cursor/` e `node_modules/` (as skills do Plumb usam ids
    como exemplo) e leia o arquivo que o define (README, docs, `CHANGELOG`); com
    remote GitHub, `gh issue view`. Sem achar, pergunte o que o card pede — não suponha.
-4. O usuário só perguntou o que está em andamento? Liste as mudanças em andamento
-   com o andamento de cada uma, e pare.
+4. O usuário só perguntou o que está em andamento? Liste as specs ativas pelo
+   `summary` (estado, fase, branch, quem) e aponte os órfãos: worktree sem spec
+   ativa, spec ativa sem worktree, `Atualizado` com mais de 3 dias (sugira a tag
+   `parada`, com o "sim" — `references/worktrees.md`, seção Órfãos). E pare.
 
 ## 1 — Escolher a trilha
 <!-- numeração: 0 e esta seção são de triagem; o fluxo de fases começa logo abaixo -->
@@ -278,8 +247,8 @@ Olhe rápido o código envolvido antes ("causa óbvia" só se sabe olhando).
 
 | Trilha | Quando | Fases que roda |
 |---|---|---|
-| **direta** | Óbvia e local: typo, config, bug de causa clara, ~1–2 arquivos, sem comportamento ou contrato novo | 0, 1, **5**, **6** (os checks) e **7** — sem spec, sem entrevista, sem despacho de prova. Você corrige, roda os checks e reporta. O pedido já é a aprovação |
-| **padrão** | Todo o resto | **Todas.** Spec `spec/<id>`, aprovação antes do código, entrega antes de push/PR |
+| **direta** | Óbvia e local: typo, config, bug de causa clara, ~1–2 arquivos, sem comportamento ou contrato novo | 0, 1, **5**, **6** (os checks) e **7** — sem spec, sem despacho de prova, sem worktree (árvore principal). Só uma pergunta se o pedido for ambíguo. Você corrige, roda os checks e reporta. O pedido já é a aprovação |
+| **padrão** | Todo o resto | **Todas.** Alinhar (grill), spec `spec/<id>`, aprovação antes do código, worktree próprio, entrega antes de push/PR |
 | **profunda** | Capacidade nova entre módulos, migração de dados, API pública ou contrato, auth/pagamento/dados pessoais, ou 2+ soluções plausíveis | Todas, com Design na spec e `<lente>seguranca</lente>` no revisor |
 
 A fase **7 (Aprender) roda sempre**, inclusive na direta: é o que faz o cérebro
@@ -294,8 +263,8 @@ bem, mas olhe).
   direta; comando durante o planejamento nas outras). Correção que você nunca viu falhar é palpite.
 - **Id:** o do ticket; senão um slug de 2–5 palavras (`corrige-expiracao-pix`).
 
-**Direta:** se o pacote não cobre a área, uma consulta com os arquivos; você
-implementa (vermelho → verde se for bug), roda testes e lint dos arquivos tocados,
+**Direta:** a checagem de ferramentas da fase 2 vale aqui também. Se o pacote não
+cobre a área, uma consulta com os arquivos; você implementa (vermelho → verde se for bug), roda testes e lint dos arquivos tocados,
 commita se a convenção do projeto é commitar, e reporta em 2–3 linhas com a
 evidência. Depois, o fechamento da fase 7 em silêncio. Fim — sem pergunta no final.
 
@@ -309,64 +278,88 @@ evidência. Depois, o fechamento da fase 7 em silêncio. Fim — sem pergunta no
    roteiro das fases; decisão anterior que a mudança contraria vira pergunta.
    Resultado de segurança na área (`rule/security`, ou item que o pacote marca
    como sensível) liga a lente de segurança na fase 6.
-3. **Falta acesso?** A mudança depende de card, banco, erro de produção, design
-   ou deploy que você não alcança: `plumb-find-mcps`. Dúvida de API de
-   biblioteca: `plumb-find-docs`, nunca a memória.
+3. **Checagem de ferramentas** — você faz, em todas as trilhas (inclusive a
+   direta), antes de escrever código: (a) **bibliotecas e APIs** que a mudança usa
+   e que o código não mostra → `plumb-find-docs`, nunca a memória; (b) **sistema
+   citado sem acesso** (card, banco, erro de produção, design, deploy) →
+   `plumb-find-mcps`; (c) **competência inteira que o time não tem** →
+   `plumb-find-skills`. A recomendação de (b) e (c) vai pela ferramenta de
+   perguntas (múltipla escolha, com o sinal citado); nada se instala sem o "sim".
 
-## 3 — Alinhar (só quando precisa)
+## 3 — Alinhar (grill)
 
-Entreviste o usuário **antes** de especificar quando — e só quando — as duas
-coisas valem juntas: o pedido é ambíguo num ponto que muda o que será
-construído, **e** descobrir depois custaria refazer. Três perguntas no máximo,
-cada uma com a sua recomendação.
+Padrão e profunda: **obrigatório**. Direta: só se o pedido for ambíguo, e então uma
+pergunta. Leia `../plumb-grill/SKILL.md` (uma vez) e entreviste o usuário **antes**
+de especificar: uma pergunta por vez, pela ferramenta de perguntas, cada uma com a
+sua recomendação em primeiro, percorrendo a árvore de decisões na ordem das
+dependências, até haver entendimento compartilhado.
 
-Não entreviste o que o código, o cérebro, o card ou a conversa já respondem:
-isso é "decidir, não perguntar", e vale mais que uma pergunta educada.
+- **Explore antes de perguntar:** o que o código, o cérebro, o card ou a conversa
+  já respondem não vira pergunta.
+- **Specs ativas dos outros** (fase 0): se as áreas (`scope_paths`) da mudança
+  nova se sobrepõem às de uma spec ativa de outro agente, isso é uma pergunta do
+  grill: **sequenciar** (esperar a outra) ou **paralelizar** (worktrees separados,
+  juntando depois), recomendando o que conflita menos.
+- **Não aja** (spec, worktree, código) até o usuário confirmar o resumo do
+  entendimento. O resumo confirmado vira o "Combinado" da spec.
+- O planejador não decide: o que ele devolver em "Perguntas em aberto" é a
+  próxima pergunta do grill, não uma decisão sua.
 
 ## 4 — Especificar (padrão e profunda)
 
-1. **Planejar.** `plumb-planner` com o pedido, **o que o usuário já disse na
-   conversa**, os achados da exploração, o que o cérebro trouxe, as ferramentas
-   disponíveis, a trilha e, se toca API, banco, serviço externo, auth, pagamento,
-   dados pessoais ou fluxo crítico, o caminho absoluto de `references/testing.md`.
-   Devolve a spec, as decisões com a fonte de cada uma e, raramente, o que não dá
-   para decidir. Área pequena que você já leu: especifique você, pelo formato do
-   planejador; na profunda, sempre despache.
+1. **Planejar.** `plumb-planner` com o pedido, **o Combinado do grill e o que o
+   usuário já disse na conversa**, os achados da exploração, o que o cérebro
+   trouxe, as ferramentas disponíveis, a trilha e, se toca API, banco, serviço
+   externo, auth, pagamento, dados pessoais ou fluxo crítico, o caminho absoluto
+   de `references/testing.md`. Devolve a spec e, se algo ficou sem resposta,
+   "Perguntas em aberto". Área pequena que você já leu: especifique você, pelo
+   formato do planejador; na profunda, sempre despache.
 2. **Conferir.** Cada resultado esperado tem o "observa-se"? Cada fase tem papel,
    dependência e critério de saída? As fases Provar e Aprender estão lá? Fora de
-   escopo explícito? Cada pergunta que sobrou é mesmo exceção (seção Decidir, não
-   perguntar)? Se não, vire decisão.
+   escopo explícito? Sobrou pergunta em aberto? Volte à fase 3 e pergunte: não
+   escreva uma suposição na spec.
 3. **Falta competência?** O planejador devolveu "Ferramenta que falta":
-   `plumb-find-skills`.
-4. **Gravar** a spec: `item_save` de `spec/<id>` com `status: draft` e
-   `summary: "Aguardando aprovação"` (modelo em `references/spec-template.md`).
-5. **Apresentar** (formato no fim) e esperar. Em plan mode, apresente como o plano
+   `plumb-find-skills`, e a recomendação vai pela ferramenta de perguntas.
+4. **Gravar** a spec: `item_save` de `spec/<id>` com `status: draft`, o `summary`
+   `Aguardando aprovação · fase 0/<n> · <branch> · sem worktree · <agente>`, o
+   cabeçalho no topo do `content`, tags `aguardando-aprovacao` + 1 a 3 de área
+   (de `tag_list`) e `scope_paths` das áreas (modelo em `references/spec-template.md`,
+   padrão em `brain.md` §15).
+5. **Apresentar** (formato no fim, terminando com `Spec: <url>`) e pedir a
+   aprovação pela ferramenta de perguntas. Em plan mode, apresente como o plano
    da ferramenta e grave depois da aprovação.
 
-**Depois da aprovação:** `status: active`, `summary` "Construindo", e as respostas
-nas Decisões da spec (só se mudaram algo); com commits ligados, crie a branch pela
-convenção do projeto a partir da atual (nunca commite na padrão); sem git, sem
-branch nem commits; sem runner de testes, siga o que a spec disse e nunca instale
-um sem aprovação. Sem gerenciador de tarefas anexado (nenhuma ferramenta de
-tickets no grupo **Ferramentas** do `AGENTS.md` — `gh`, Jira/Atlassian, Linear,
-Azure DevOps, Notion, ou similar), crie a lista de tarefas nativa. Com um
-gerenciador já anexado, use-o para acompanhar as tarefas da mudança (comentário
-ou subtarefas no card) em vez de duplicar numa lista nativa que ninguém no time
-vê. Daqui até a entrega, não pare.
+**Depois da aprovação:** `status: active`, tag `em-andamento` no lugar de
+`aguardando-aprovacao`, `summary` "Construindo", `Atualizado`, e os ajustes no
+Combinado (só se mudaram algo). Com git, **crie o worktree** da mudança
+(`references/worktrees.md`: `.claude/worktrees/<id>`, branch própria a partir da
+atual, dependências preparadas pela linha `Worktree:` do `AGENTS.md`), grave
+`Branch`, `Worktree` e a tag `worktree` na spec, e daí em diante tudo roda lá
+(nunca commite na branch padrão). Sem git: sem worktree, branch nem commits.
+Sem runner de testes, siga o que a spec disse e nunca instale um sem aprovação.
+Sem gerenciador de tarefas anexado (nenhuma ferramenta de tickets no grupo
+**Ferramentas** do `AGENTS.md` — `gh`, Jira/Atlassian, Linear, Azure DevOps,
+Notion, ou similar), crie a lista de tarefas nativa. Com um gerenciador já
+anexado, use-o para acompanhar as tarefas da mudança (comentário ou subtarefas
+no card) em vez de duplicar numa lista nativa que ninguém no time vê. Daqui até
+a entrega, não pare.
 
 ## 5 — Construir
 
-Antes da primeira fase, rode a suíte uma vez; falhas que já existiam não são
-suas: anote nas Notas da spec e avise.
+Tudo roda **no worktree** da mudança (`references/worktrees.md`). Antes da
+primeira fase, rode a suíte uma vez; falhas que já existiam não são suas: anote
+nas Notas da spec e avise.
 
 Por **fase** (ou grupo de fases que toca os mesmos arquivos), em ordem:
 
-1. Despache `plumb-implementer` com a fase inteira (contrato de prompt, as regras
-   do cérebro que valem para os arquivos dela, o critério de saída e o comando).
+1. Despache `plumb-implementer` com a fase inteira (contrato de prompt, o
+   caminho absoluto do worktree, as regras do cérebro que valem para os arquivos
+   dela, o critério de saída e o comando).
 2. Rode você o critério de saída **da fase** — confie na evidência, não no
    relato. A suíte completa é do testador.
-3. Marque a fase na spec e atualize o `summary` (`Construindo: fase 2 de 4 — falta
-   recusar método inválido`); commite se ligados (`<id>: <resumo>`).
+3. Marque a fase na spec e atualize, na mesma regravação, o `summary`
+   (`Construindo · fase 2/4 · …`), a tag de estado e `Atualizado`
+   (`brain.md` §15); commite no worktree se ligados (`<id>: <resumo>`).
 4. Uma linha de andamento no chat.
 
 - **Qual a próxima:** a fase cuja `dep:` já está satisfeita. Depois de uma
@@ -388,7 +381,11 @@ Por **fase** (ou grupo de fases que toca os mesmos arquivos), em ordem:
 Evidência antes de afirmação: nunca "pronto", "corrigido" ou "funciona" sobre o
 que não rodou nesta sessão.
 
-1. Despache **em paralelo** (no Cursor, peça os dois juntos):
+0. Traga a base para a branch da mudança por merge e rode os testes de novo no
+   worktree (`references/worktrees.md`, "Atualizar com a base"). Spec: `summary`
+   `Provando`.
+1. Despache **em paralelo** (no Cursor, peça os dois juntos), com o caminho
+   absoluto do worktree:
    - `plumb-tester`: os resultados esperados da spec + os comandos do projeto e como
      subir a aplicação. Prova que funciona; é a única execução da suíte. **Não mande o
      diff nem a base dele** — ele testa caixa-preta de propósito.
@@ -396,12 +393,12 @@ que não rodou nesta sessão.
      `rule/security` na área (ou auth, pagamento, dados pessoais, entrada externa,
      segredos no diff) ou na trilha profunda, acrescente `<lente>seguranca</lente>`.
 2. Repasse o veredito em poucas linhas.
-3. Bloqueadores e majors: corrija já (implementador, com nova verificação só do que
-   mudou) — sem perguntar. Só vai ao usuário o que for decisão de produto. Menores
-   ficam listados na entrega.
+3. Bloqueadores e majors: corrija já (implementador, nova verificação só do que
+   mudou), sem perguntar; só decisão de produto vai ao usuário. Menores ficam
+   listados na entrega.
 4. Mudança visível na interface e ferramenta de navegador: exercite o fluxo você mesmo uma vez.
-5. **Feedback ao cérebro** (na fase 7, junto do lote): o que a prova confirmou
-   vira `verified`; o que o trabalho contradisse, `wrong` ou `outdated`.
+5. **Feedback** (fase 7): o que a prova confirmou vira `verified`; o que o
+   trabalho contradisse, `wrong` ou `outdated`.
 
 ## 7 — Aprender
 
@@ -410,7 +407,7 @@ ensinar algo. É **você** quem faz, inline, porque só você viu a conversa int
 Nenhum subagente decide o que dura.
 
 1. **Junte os candidatos:** os sinais da Retro (`references/retro-signals.md`), as
-   Decisões da spec, o que travou e como destravou, o que o usuário corrigiu ou
+   Combinado da spec, o que travou e como destravou, o que o usuário corrigiu ou
    repetiu, o que faltou alcançar.
 2. **Teste cada um** pelo tipo (`brain.md` §3): tem o porquê e a alternativa
    descartada? Um agente novo executaria só com o `content`? Dá para conferir num
@@ -424,43 +421,46 @@ Nenhum subagente decide o que dura.
    `agent` para o resto).
 5. **Separe:** o que o usuário **ditou** ou a spec já aprovada **grava**; o que
    você **inferiu** (`howto`, `rule/pattern`, `context`, `rule/decision` que não
-   estava na spec) e tudo com `scope=global` **pede o "sim"** — mostre em uma
-   linha cada, junto da entrega.
+   estava na spec) e tudo com `scope=global` **pede o "sim"**: uma linha cada na
+   entrega, e a confirmação pela ferramenta de perguntas.
 6. **Grave num `item_save` só**, junto da spec concluída (`status: done`,
-   `summary: "Concluída: <resultado em uma frase>"`, `content` final com fases
-   marcadas, Retro e Números). Leia os `warnings` e corrija. Relações
+   `summary: "Concluída: <resultado em uma frase>"`, `Atualizado`, `content` final
+   com fases marcadas, Retro e Números; saem as tags de estado e `worktree`, ficam
+   as de área). Leia os `warnings` e corrija. Relações
    (`relation_create`) só quando o leitor de um precisa do outro.
 7. **Feedback** (`item_feedback`, em lote): `helped` no que entrou no trabalho e
    valeu, `irrelevant` no que veio e não serviu, `verified`/`wrong`/`outdated`
    conforme a fase 6. Só o que você viu de fato.
-8. **Ferramenta que falta:** com duas evidências (tabela em
-   `references/retro-signals.md`), leve ao usuário junto com a entrega —
-   `plumb-find-mcps` para falta de acesso, `plumb-find-skills` para competência.
+8. **Ferramenta que faltou:** o que a sessão mostrou faltar (tabela em
+   `references/retro-signals.md`, com o sinal citado) vai ao usuário junto da
+   entrega, pela ferramenta de perguntas — `plumb-find-mcps` para acesso,
+   `plumb-find-skills` para competência.
 9. **Sobrou sinal que você não tratou** (sessão longa, vários assuntos)? Diga, no
    fim da entrega: `Para guardar o resto desta sessão: /plumb-dream`.
 
 ## 8 — Entregar
 
-Apresente a entrega (formato no fim) já com tudo fechado: commits feitos (se
-ligados), aprendizados gravados e a spec concluída.
+Apresente a entrega (formato no fim, terminando com `Spec: <url>`) já com tudo
+fechado: commits feitos no worktree (se ligados), a base trazida e os testes de
+novo verdes, aprendizados gravados e a spec concluída.
 
-A única pergunta da entrega é se algo sai da máquina: push, PR (com branch,
-título e corpo exatos) ou deixar local. Sem git remoto ou sem pedido de PR: não
-pergunte — diga onde ficou (`Está commitado na branch pay-142-pix.`) e termine.
+As perguntas da entrega vão pela ferramenta de perguntas, numa chamada só,
+recomendação primeiro: **o que sai da máquina** (push da branch, abrir PR com
+título e corpo exatos, ou merge local na base — ou deixar como está) e, depois do
+que escolher, **limpar o worktree** (`references/worktrees.md`; só com o "sim",
+recomendado quando a branch foi integrada ou enviada). Mais as confirmações do que
+você inferiu (fase 7). Sem git remoto: pergunte só do merge local e do worktree.
+Direta ou sem git: nada a perguntar — diga onde ficou (`Está commitado na branch
+pay-142-pix.`) e termine.
 
 ## Retroalimentação
 
-O que se aprende vai para o cérebro, do mais barato ao mais caro:
-
-1. **Sinais, na hora:** uma linha na seção `Retro` da spec por sinal (tipos e o que
-   fazer em `references/retro-signals.md`). `regra` grava na hora.
-2. **No fechamento:** a fase 7, inline, num `item_save` só.
-3. **`/plumb-dream`:** quando a sessão teve muito que a fase 7 não cobre, ou o
-   pacote do hook avisar que a sessão anterior deixou diretrizes sem gravar,
-   sugira o `/plumb-dream` em uma linha (comando do usuário). Ele analisa a
-   sessão inteira e audita o cérebro. Não rode sem o usuário pedir.
-
-Rascunho errado apontado pelo usuário: `status: archived` e confirme em uma linha.
+Do mais barato ao mais caro: **sinais na hora** (uma linha na `Retro` da spec,
+tipos em `references/retro-signals.md`; `regra` grava na hora), **a fase 7** no
+fechamento e o **`/plumb-dream`**, que o usuário roda quando a sessão teve muito
+que a fase 7 não cobre (ou o pacote avisar de diretrizes não gravadas): sugira em
+uma linha, nunca rode sozinho. Rascunho errado apontado pelo usuário:
+`status: archived` e confirme em uma linha.
 
 ## Formatos da spec e da entrega
 
@@ -475,21 +475,24 @@ O que vou entregar:
 - Sem `method`, segue como cartão — quem já integra não percebe nada.
 - Método desconhecido passa a dar erro 400 "método inválido".
 
-Como vou fazer: tudo em `src/server.js`, com testes primeiro em `test/payments.test.js`.
-Um revisor independente confere no fim, com atenção à segurança (é pagamento).
+Combinado com você:
+- QR code de exemplo, sem integração com o banco.
+- Erro em português.
+- Pix vencido não avisa o pagador, só muda o status.
 
-Decidi (revise o que não fizer sentido):
-- QR code de exemplo, sem integração com o banco — o card não pede integração.
-- Erro em português — regra do projeto no segundo cérebro.
-- Pix vencido não avisa o pagador, só muda o status — o card não fala em aviso.
-- Um commit por parte pronta, na branch `pay-142-pix` — convenção do AGENTS.md.
+Como vou fazer: tudo em `src/server.js`, com testes primeiro em `test/payments.test.js`,
+num espaço de trabalho separado, na branch `pay-142-pix`. Um revisor independente
+confere no fim, com atenção à segurança (é pagamento).
 
-Posso seguir? (sim / ajuste qualquer decisão acima)
+Spec: http://127.0.0.1:8765/ui/#/c/...
 ```
 
+Depois da spec, a aprovação vem pela ferramenta de perguntas ("Aprovar e começar"
+primeiro; "Ajustar" em seguida) — sem "Posso…?" no texto.
+
 - "O que vou entregar" são os resultados esperados em linguagem de comportamento.
-- "Decidi" traz tudo o que o usuário poderia querer outro jeito, cada item com a fonte.
-- "Preciso de você:" só aparece na exceção da seção Decidir, não perguntar.
+- "Combinado com você" traz o que o usuário definiu no alinhamento, nada que ele
+  não tenha dito ou confirmado.
 - Riscos entram numa linha, em português claro, só se existirem.
 
 **Entrega:**
@@ -506,7 +509,12 @@ apontou um risco que já existia (o corpo da requisição não tem limite de tam
 — vale um card separado.
 
 Guardei para as próximas vezes: como o Pix entra no contrato de pagamentos.
-Confirma? Valores em pagamentos são sempre centavos inteiros (vale em src/payments) — deduzi do código, não foi dito.
+Deduzi do código, não foi dito: valores em pagamentos são sempre centavos inteiros (vale em src/payments).
 
-Está commitado na branch `pay-142-pix`. Abro o PR "PAY-142: Pix como método de pagamento"? (sim / só push / deixa local)
+Está commitado na branch `pay-142-pix`, no espaço de trabalho separado.
+Spec: http://127.0.0.1:8765/ui/#/c/...
 ```
+
+Em seguida, pela ferramenta de perguntas: o que fazer com a branch (abrir o PR
+"PAY-142: Pix como método de pagamento" — recomendado —, só push, merge local ou
+deixar), se grava o que você deduziu e se limpa o espaço de trabalho.

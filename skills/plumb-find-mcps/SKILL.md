@@ -1,11 +1,15 @@
 ---
 name: plumb-find-mcps
 description: >-
-  Encontra e propõe servidores MCP quando falta ao agente *acesso* a um sistema
-  externo — ler o card de uma tarefa, consultar o banco, ver o erro que aconteceu
-  em produção, olhar o design, conferir o deploy. Use quando a mesma falta de
-  acesso aparecer no trabalho, quando o usuário mencionar uma ferramenta que você
-  não alcança, ou no setup de um projeto.
+  Encontra e recomenda servidores MCP quando falta ao agente *acesso* a um
+  sistema externo — ler o card de uma tarefa, consultar o banco, ver o erro que
+  aconteceu em produção, olhar o design, conferir o deploy. Use na checagem de
+  ferramentas ao entender um pedido que cita um sistema que você não alcança
+  ("o card diz…", "dá erro em produção", "segue o design"), quando o mesmo
+  acesso faltar de novo no trabalho, no setup e no dream. A recomendação vai ao
+  usuário por múltipla escolha; nada é instalado sem o "sim". / Finds and
+  recommends MCP servers when the agent lacks access to an external system
+  (ticket, database, production errors, design, deploy).
 ---
 
 # Encontrar MCPs
@@ -17,7 +21,7 @@ mais instrução.
 
 ## Quando usar
 
-- A mesma falta de acesso apareceu **duas vezes** (o fechamento da mudança e o `/plumb-dream` detectam isso).
+- A checagem de ferramentas (ao entender o pedido) achou um sistema citado sem acesso, ou a mesma falta de acesso apareceu mais de uma vez (o fechamento da mudança e o `/plumb-dream` detectam isso).
 - O usuário menciona um sistema que você não consegue consultar ("o card diz…",
   "em produção dá erro X", "segue o Figma").
 - No `plumb-setup`, ao levantar a stack do projeto.

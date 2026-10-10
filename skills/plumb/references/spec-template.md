@@ -7,7 +7,8 @@ inclusive).
 ```json
 {"key": "spec/pay-142", "type": "spec", "status": "draft", "origin": "agent",
  "title": "PAY-142 — Pix no checkout",
- "summary": "Aguardando aprovação",
+ "summary": "Aguardando aprovação · fase 0/4 · pay-142-pix · sem worktree · Claude (sessão 4f2a)",
+ "tags": ["aguardando-aprovacao", "pagamentos"],
  "source": "PAY-142", "keywords": "pix qr code pagamento",
  "links": [{"title": "Card PAY-142", "url": "<link, se houver>"}],
  "scope_paths": ["src/server.js", "test/payments.test.js"],
@@ -16,10 +17,20 @@ inclusive).
 
 ```markdown
 # PAY-142: Pix no checkout
-Trilha: padrão · Branch: <branch ou -> · Card: <link ou ->
+Trilha: padrão
+Agente: <agente> · sessão <id curto>
+Base: <branch de onde parte>
+Branch: <branch da mudança ou —>
+Worktree: <.claude/worktrees/<id> ou —>
+Atualizado: AAAA-MM-DD HH:MM
+Card: <link ou —>
 
 ## Objetivo
 <1–3 frases: o problema e o resultado. Link do ticket, se houver.>
+
+## Combinado
+<!-- o entendimento confirmado no grill: uma linha por decisão, com o porquê -->
+- <decisão do usuário> — <porquê, em meia frase>
 
 ## Fora de escopo
 - <o que alguém poderia supor incluído, mas não está>
@@ -46,9 +57,6 @@ Riscos e rollback: <...>
 - [ ] 4. Aprender                          ·  orquestrador               ·  dep: 3
       sai quando: decisões e aprendizados gravados no cérebro, feedback dado
 
-## Decisões
-- <decisão> — <fonte: pedido, conversa, cérebro, AGENTS.md, código, ou ajuste do usuário em AAAA-MM-DD>
-
 ## Notas
 <bloqueios, registros de travamento, problemas fora do escopo>
 
@@ -63,11 +71,19 @@ Números: <n> fases · <n> correções pós-revisão · <n> travamentos · <n> d
   andamento; `done` ao entregar (sai do pacote, continua na busca como histórico).
 - **`origin`** — `agent` (você a redigiu); a spec que o usuário ditou por inteiro
   é rara.
-- **`summary`** — o andamento, em linguagem de resultado: `Aguardando
-  aprovação`, `Construindo: fase 2 de 4 — falta recusar método inválido`,
-  `Provando`, `Concluída: Pix devolve o QR code`. É o que aparece nas specs
-  ativas e o que uma sessão retomada lê primeiro. Atualize a cada avanço — só
-  ele, numa chamada pequena (`{"key": "spec/pay-142", "summary": "..."}`).
+- **`summary`** — linha fixa `<estado> · <fase n/total> · <branch> · <worktree> ·
+  <agente>`; estados: `Aguardando aprovação`, `Construindo`, `Provando`,
+  `Parada`, `Concluída` (`Concluída: Pix devolve o QR code`). É o que as outras
+  sessões veem nas specs ativas e o que uma sessão retomada lê primeiro.
+  Atualize a cada fase, junto da tag de estado e de `Atualizado`, na regravação
+  que já faz (chamada pequena: `{"key": "spec/pay-142", "summary": "...", "tags": [...]}`).
+- **`tags`** — estado (`aguardando-aprovacao` com `draft`, `em-andamento` com
+  `active`, `parada`) + 1 a 3 de área ou tema (de `tag_list`) + `worktree` quando
+  houver. Ao concluir saem as de estado e `worktree`. Padrão completo: `brain.md` §15.
+- **`scope_paths`** — as áreas que a mudança toca: é o que revela sobreposição
+  com a spec de outro agente.
+- **Link** — o `url` que o servidor devolve; toda mensagem ao usuário sobre a
+  spec (criada, atualizada, entregue) termina com `Spec: <url>`.
 - **`content`** — reenvie só quando a spec muda (resposta que altera algo,
   escopo novo) e no fechamento, com as fases marcadas, a Retro e os Números.
 - **`scope`** — omita: a spec é do project (`scoped`).
@@ -105,8 +121,10 @@ sabe que terminou**.
 
 ### O resto
 
-- **Decisões** — o "Decidi" da spec, cada uma com a fonte, mais os ajustes que
-  o usuário fez na revisão. Só escolhas que alguém questionaria depois.
+- **Combinado** — o que o usuário definiu no grill e na aprovação, cada item
+  com o porquê e a data quando for um ajuste posterior. "Decide você" também é
+  um combinado, registrado como tal e só para esta mudança. Nada entra aqui que
+  o usuário não tenha dito ou confirmado.
 - **Retro** — sinais de retroalimentação (tipos em `retro-signals.md`), uma
   linha cada, anotados na hora. Os Números entram no fechamento; o
   `/plumb-dream` lê depois.

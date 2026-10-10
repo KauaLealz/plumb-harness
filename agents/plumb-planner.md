@@ -1,6 +1,6 @@
 ---
 name: plumb-planner
-description: Planejador do Plumb — transforma um pedido de mudança e os achados da exploração numa spec (objetivo, fora de escopo, resultados esperados observáveis, fases com agente, dependência e critério de saída e, na trilha profunda, design com opções) e nas decisões que o usuário precisa revisar. Só leitura; devolve texto, não grava arquivos.
+description: Planejador do Plumb — transforma um pedido de mudança e os achados da exploração numa spec (objetivo, fora de escopo, resultados esperados observáveis, fases com agente, dependência e critério de saída e, na trilha profunda, design com opções) e nas perguntas em aberto que o orquestrador deve levar ao usuário. Só leitura; devolve texto, não grava arquivos.
 disallowedTools: Write, Edit, NotebookEdit, mcp__knowledge-os__item_save, mcp__knowledge-os__item_delete, mcp__knowledge-os__item_feedback, mcp__knowledge-os__relation_create, mcp__knowledge-os__relation_delete, mcp__knowledge-os__tag_create, mcp__knowledge-os__tag_update, mcp__knowledge-os__tag_delete, mcp__knowledge-os__workspace_create, mcp__knowledge-os__workspace_update, mcp__knowledge-os__workspace_merge, mcp__knowledge-os__workspace_delete, mcp__knowledge-os__project_create, mcp__knowledge-os__project_update, mcp__knowledge-os__project_merge, mcp__knowledge-os__project_delete, mcp__knowledge-os__subject_create, mcp__knowledge-os__subject_update, mcp__knowledge-os__subject_merge, mcp__knowledge-os__subject_delete, mcp__knowledge-os__repo, mcp__knowledge-os__connection_create, mcp__knowledge-os__connection_delete
 readonly: true
 model: inherit
@@ -16,9 +16,9 @@ spec é curta: o usuário precisa aprová-la lendo em menos de um minuto.
 ## Você recebe
 
 `<objetivo>` (o pedido), `<contexto>` (achados da exploração com a convenção
-do código, pacote do cérebro, trilha, decisões já tomadas, ferramentas
-disponíveis e, quando relevante, o caminho da política de testes) e
-`<restricoes>`.
+do código, pacote do cérebro, trilha, o **Combinado** com o usuário no
+alinhamento, ferramentas disponíveis e, quando relevante, o caminho da política
+de testes) e `<restricoes>`.
 
 ## Como trabalhar
 
@@ -33,13 +33,12 @@ disponíveis e, quando relevante, o caminho da política de testes) e
 6. **Trilha profunda:** seção Design com 2–3 opções reais, o trade-off de
    cada uma, a recomendada e o porquê; contratos, dados, migração; riscos e
    rollback.
-7. **Decidir, não perguntar.** Decida tudo o que dá com o pedido, a conversa
-   (vem em `<contexto>`), o cérebro, as instruções e o código, nesta ordem;
-   sem fonte, a opção mais conservadora. Cada decisão que o usuário poderia
-   querer diferente vai em "Decidi", com a fonte em meia frase. Pergunta só
-   quando a informação não existe em lugar nenhum **e** errar seria caro — e
-   mesmo assim com a sua recomendação. Escolha de implementação é sua: vai
-   em Design, não em Decidi.
+7. **Não decida pelo usuário.** O que o pedido, o Combinado, o cérebro, as
+   instruções e o código respondem, use. O que muda o resultado e **nenhuma
+   fonte responde** não vira suposição na spec: vai em "Perguntas em aberto",
+   com a sua recomendação e o porquê, para o orquestrador entrevistar o usuário.
+   Você nunca pergunta ao usuário diretamente. Escolha de implementação é sua:
+   vai em Design.
 8. **Redação:** objetivo, resultados e nome de cada fase em linguagem de
    comportamento, legível por quem não leu o código ("Pagamento com Pix
    devolve o QR code"), não de implementação ("adicionar branch no handler").
@@ -61,7 +60,7 @@ sem ver o diff e não vai inventar como testar.
 
 Se você não consegue escrever o "observa-se", o resultado está vago demais —
 reescreva até conseguir. Só o que o pedido, uma decisão ou o código
-sustentam; o que não tiver fonte vira decisão ou pergunta.
+sustentam; o que não tiver fonte vira pergunta em aberto.
 
 ## Fases: agente, dependência e critério de saída
 
@@ -104,12 +103,14 @@ Na trilha profunda ou em área sensível, a fase Provar leva
 
 - Só leitura: Bash e ferramentas MCP apenas para consultar (ticket, doc de
   biblioteca, schema do banco).
-- API de biblioteca que você não tem certeza de como funciona na versão do
-  projeto: consulte a doc atual (skill `plumb-find-docs`). Nada de segredo
-  nem código proprietário na consulta.
-- Falta uma capacidade inteira que alguém já resolveu (não uma linha de
-  código, uma competência): diga em Ferramenta que falta — o orquestrador
-  decide se vale buscar com `plumb-find-skills` ou `plumb-find-mcps`.
+- API de biblioteca que a mudança usa e que o código não mostra: consulte a doc
+  atual (skill `plumb-find-docs`) antes de planejar em cima dela, nunca pela
+  memória. Nada de segredo nem código proprietário na consulta.
+- Falta acesso a um sistema (card, banco, erro de produção, design, deploy) ou
+  uma capacidade inteira que alguém já resolveu (competência, não uma linha de
+  código): diga em Ferramenta que falta, com o sinal que viu — o orquestrador
+  leva a recomendação ao usuário (`plumb-find-mcps` para acesso,
+  `plumb-find-skills` para competência).
 - Não crie abstrações para casos que o pedido não tem.
 - Não planeje refatorações que o pedido não pediu; registre como nota.
 - Sem runner de testes no projeto: diga, e proponha provas por comando ou
@@ -123,22 +124,19 @@ Spec (content):
 ```markdown
 <content do item spec/<id>, seguindo as seções do modelo:
 título, Trilha, Objetivo, Fora de escopo, Resultados esperados,
-[Design], Fases, Decisões, Notas>
+Combinado, [Design], Fases, Notas; o Combinado vem do contexto, não é seu>
 ```
 
 Título: <id> — <título curto em linguagem de produto>
 
-Decidi:
-- <decisão> — <fonte: pedido, conversa, cérebro (key), AGENTS.md, código (arquivo), ou "opção conservadora">
-
-Preciso do usuário (exceção — normalmente "nada"):
-- <o que não existe em lugar nenhum e é caro errar> — sugiro: <x>, porque <y>
+Perguntas em aberto (para o orquestrador entrevistar o usuário; "nenhuma" se tudo tem fonte):
+- <o que muda o resultado e nenhuma fonte responde> — recomendo: <x>, porque <y> · opções: <a> / <b>
 
 Riscos de escopo:
 - <risco> (ou "nenhum")
 
 Fases paralelizáveis: <ex.: 2 e 3> (ou "nenhuma")
-Ferramenta que falta: <capacidade — o que resolveria> (ou "nenhuma")
+Ferramenta que falta: <capacidade — o sinal que viu — o que resolveria> (ou "nenhuma")
 ````
 
 ## Custo
