@@ -3,8 +3,9 @@
 Fluxo spec-driven leve para agentes de código no Claude Code e no Cursor,
 com memória de longo prazo. Peça qualquer coisa — uma pergunta,
 `"implementa o PAY-142"`, `"corrige o bug do login"` — e o Plumb dimensiona o
-trabalho, consulta o que o projeto já aprendeu, combina com você os critérios de
-aceite, constrói em TDD, prova que funciona e pergunta antes de qualquer coisa
+trabalho, consulta o que o projeto já aprendeu, entrevista você até os dois terem o
+mesmo entendimento, combina os critérios de
+aceite, constrói em TDD num worktree próprio, prova que funciona e pergunta antes de qualquer coisa
 sair da sua máquina.
 
 Você decide **o que será construído** e **o que será entregue**. O resto é
@@ -88,7 +89,7 @@ A partir daí é só pedir — a skill `plumb` entra sozinha, em todo pedido.
 ## Como funciona
 
 ```
-pedido → rota → consultar o cérebro → [spec: você aprova] → construir → provar → aprender → [você decide push/PR] → entregue
+pedido → rota → consultar o cérebro → [grill: você responde] → [spec: você aprova] → construir no worktree → provar → aprender → [você decide push/PR/merge] → entregue
 ```
 
 **Entrada.** Um hook injeta um lembrete curto do Plumb em toda mensagem (no Claude
@@ -102,6 +103,7 @@ com cerimônia proporcional:
 | investigação | só leitura; o achado durável vira item |
 | hotfix, dependência, docs, correção pequena | **trilha direta**: corrige, roda os checks, reporta com evidência |
 | mudança de código | **padrão** (spec no cérebro, você aprova) ou **profunda** (spec com design e revisão de segurança) |
+| `/plumb-grill <tema>`, "me entrevista" | só a entrevista, sem spec nem código |
 | `/plumb-setup`, `/plumb-dream` | entrevista de base; análise da sessão |
 
 | Trilha | Quando | Cerimônia |
@@ -114,14 +116,48 @@ A spec é também o handoff: ela aparece nas specs ativas no início de toda
 sessão, e "continua o PAY-142" retoma pelo andamento e pelas fases que faltam —
 sem pasta nenhuma no repositório.
 
-**Decide, você revisa.** Numa mudança, o Plumb decide com base no que você disse, no
-segundo cérebro, nas instruções e no código, e a spec mostra cada decisão com a
-fonte ("Erro em português — regra do projeto"). Você revisa e aprova, ou corrige uma
-decisão. Pergunta é exceção: só quando a informação não existe em lugar nenhum e
-errar seria caro. Depois do "sim", ele segue até a entrega — para de novo só
-antes de algo sair da máquina (push, PR) ou num impeditivo crítico. **Ao gravar
+**Grill: o agente pergunta, você decide.** Em mudança padrão ou profunda o Plumb
+não adivinha: antes da spec ele entrevista você no modelo *grill-me* — **uma
+pergunta por vez**, sempre com a recomendação dele em primeiro, na ordem em que
+uma decisão depende da outra. Antes de perguntar ele explora o código, o cérebro
+e o card: o que eles já respondem não vira pergunta. A entrevista termina num
+resumo do entendimento, e só com o seu "sim" vira spec; na trilha direta só há
+pergunta se o pedido for ambíguo. `/plumb-grill <tema>` roda só a entrevista,
+quando você quer alinhar sem construir. **Toda pergunta** — grill, setup, dream,
+aprovação, entrega — vai pela ferramenta de perguntas do Claude (opções
+clicáveis); no Cursor, que não a tem, vira lista numerada com a recomendação na
+opção 1. Depois da aprovação ele segue até a entrega e para de novo só antes de
+algo sair da máquina (push, PR, merge) ou num impeditivo crítico. **Ao gravar
 conhecimento a regra é a oposta:** o que você ditou grava; o que o agente inferiu
 espera o seu "sim", porque um item errado envenena todas as sessões seguintes.
+
+**Worktree por mudança.** Mudança padrão ou profunda trabalha em
+`.claude/worktrees/<id>`, numa branch própria, e a árvore principal fica intacta
+(a direta segue nela). Antes da entrega o Plumb traz a base para a branch (merge,
+sem reescrever histórico), roda os testes de novo e pergunta: push, PR ou merge
+local; o worktree só é limpo com o seu "sim". O setup pergunta como preparar um
+worktree novo (instalar dependências, copiar `.env`) e grava na linha
+`Worktree:` do `AGENTS.md`.
+
+**Coordenação no próprio item.** Vários agentes na mesma base se enxergam pela
+spec, sem campo nem ferramenta nova: o `summary` segue
+`<estado> · <fase n/total> · <branch> · <worktree> · <agente>`, o topo do conteúdo
+traz Trilha, Agente, Base, Branch, Worktree e Atualizado, e as tags dizem o
+estado (`aguardando-aprovacao`, `em-andamento`, `parada`; ao concluir saem) e a
+área (1 a 3, reaproveitadas de `tag_list`). Quem abre uma mudança numa área onde
+outra spec está ativa pergunta se sequencia ou paraleliza; "o que está em
+andamento?" lista as specs pelo resumo e aponta órfãos (worktree sem spec ativa,
+spec ativa sem worktree, sem atualização há mais de 3 dias); retomar entra no
+worktree e assume o campo Agente. Toda vez que cria, atualiza ou entrega uma
+spec, o Plumb cola o link `url` dela na interface do cérebro.
+
+**Ferramentas no momento certo.** Na fase de entender, uma checagem: a mudança
+usa biblioteca → `plumb-find-docs` antes de escrever (também na trilha direta);
+o card cita um sistema sem acesso → `plumb-find-mcps`; falta uma competência →
+`plumb-find-skills`. A recomendação chega pela ferramenta de perguntas e nada é
+instalado sem o seu "sim". O setup varre dependências, MCPs e skills já
+instalados e recomenda o que fecha lacunas; o dream faz o mesmo a partir da
+sessão, citando a evidência.
 
 **Conversa.** No terminal, ele fala do que está acontecendo com o código ("✓ O
 Pix já devolve o QR code — testes 5 de 5"), não do método ("fase 1 concluída"):
@@ -188,7 +224,7 @@ e como relacionar: `skills/plumb/references/brain.md`.
   (`item_feedback`); o servidor usa isso no ranking, na limpeza e no relatório da
   auditoria.
 - **Barato:** o pacote do hook cabe em ~1,2 mil tokens e lista o que ficou de
-  fora; o lembrete de entrada tem 7 linhas.
+  fora; o lembrete de entrada tem 10 linhas.
 - **Fora do ar ou sem conexão:** o Plumb avisa e segue; o que gravaria vai para
   `~/.knowledge-os/pending.jsonl` e entra na próxima sessão.
 - **Segredos sem passar pelo modelo:** o agente cria o segredo vazio, você
@@ -261,8 +297,8 @@ somente leitura por padrão, nada sem o seu "sim". Entradas marcadas
 - Planejamento sem subagente quando a área é pequena; tarefas pequenas nos
   mesmos arquivos num só despacho.
 - Fechamento sem subagente: nenhum despacho extra para decidir o que guardar.
-- Lembrete de entrada de 7 linhas por mensagem; a skill carrega uma vez por
-  conversa. `AGENTS.md` com até 20 linhas (comandos e Workflow); o conhecimento
+- Lembrete de entrada de 10 linhas por mensagem; a skill carrega uma vez por
+  conversa. `AGENTS.md` com até 24 linhas (comandos, Worktree e Workflow); o conhecimento
   chega pelo pacote do cérebro, com orçamento.
 - `SKILL.md` do orquestrador com ~510 linhas; o que só vale às vezes (lotes em
   paralelo, tabela de sinais, molde da spec, o contrato do cérebro) fica em
@@ -333,7 +369,8 @@ parágrafo de Workflow que o `/plumb-setup` grava nele.
 ## Estrutura do repositório
 
 ```
-skills/plumb/              orquestrador + hooks/entry.mjs + references/ (contrato do cérebro, contrato de prompt, modelo da spec, sinais, testes)
+skills/plumb/              orquestrador + hooks/entry.mjs + references/ (contrato do cérebro, contrato de prompt, modelo da spec, worktrees, sinais, testes)
+skills/plumb-grill/        entrevista grill-me: uma pergunta por vez, com recomendação (/plumb-grill)
 skills/plumb-setup/        entrevista por dimensão, estruturação e migração + references/ (dimensões, catálogo)
 skills/plumb-dream/        analisa a sessão inteira, varre sessões antigas, audita o cérebro + scripts/extract.mjs
 skills/plumb-find-docs/    falta documentação? (Context7) — cópia fixada
@@ -363,7 +400,8 @@ servidor mudar, é lá que se atualiza.
 A versão 1 (CLI em TypeScript, 10 skills, memória Memanto/Obsidian, ciclo
 "dream") está no histórico do git, antes do commit da v2. A v3 traz o segundo
 cérebro como memória obrigatória; a v4, a spec com fases; a v5, a entrada
-obrigatória, o cérebro em toda fase e o fim do dreamer.
+obrigatória, o cérebro em toda fase e o fim do dreamer; a v6, o grill, o worktree por
+mudança, a coordenação na spec e a recomendação de ferramentas.
 
 ## Licença
 

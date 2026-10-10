@@ -1,5 +1,52 @@
 # Changelog
 
+## 6.0.0
+
+O Plumb deixa de decidir por conta própria: **entrevista** o usuário no modelo
+grill-me, trabalha cada mudança num **worktree** próprio, deixa a coordenação entre
+agentes no **próprio item de spec** e passa a **recomendar ferramentas** (docs, MCPs,
+skills) no momento certo.
+
+### Quebras de compatibilidade
+
+| Antes | Agora |
+|---|---|
+| "Decidir, não perguntar": o agente inferia e a spec listava "Decidi:" com a fonte | grill obrigatório em padrão e profunda (na direta, só se o pedido for ambíguo); a spec traz "Combinado", o que o usuário decidiu |
+| perguntas em texto no fim da mensagem | toda pergunta pela ferramenta de perguntas do Claude, recomendação em primeiro; sem a ferramenta (Cursor), lista numerada |
+| mudança na árvore principal | padrão e profunda em `.claude/worktrees/<id>`, branch própria; a entrega pergunta push, PR ou merge local |
+| bloco Plumb do `AGENTS.md` com até 20 linhas | até 24 (entra a linha `Worktree:`) |
+| recomendar ferramenta só com duas evidências e só diante de uma "falta" | uma evidência citada basta no dream; checagem de ferramentas na fase Entender |
+
+### Adicionado
+
+- **`/plumb-grill <tema>`** (`skills/plumb-grill`): entrevista uma pergunta por vez, com a
+  recomendação primeiro, explorando código, cérebro e card antes de perguntar; termina
+  num resumo do entendimento e só vira spec com o "sim". Também roda sozinho, sem spec.
+- **Worktree por mudança** (`references/worktrees.md`): criar, preparar, trazer a base,
+  entregar, limpar, retomar e achar órfãos. `.claude/worktrees/` vai para
+  `.git/info/exclude`.
+- **Coordenação na spec**, sem tool nem campo novo no servidor: `summary` no formato
+  `<estado> · <fase n/total> · <branch> · <worktree> · <agente>`, cabeçalho padronizado,
+  tags de estado (`aguardando-aprovacao`, `em-andamento`, `parada`) e de área, reaproveitando
+  `tag_list`. "O que está em andamento?" lista as specs e aponta órfãos; pedido em área
+  com spec ativa de outro agente pergunta se sequencia ou paraleliza.
+- **Link `url`** da spec colado ao usuário ao criar, atualizar e entregar (exige o servidor
+  que devolve `url` em `item_save`, `item_get` e `item_search`).
+- **As três buscas no momento certo**: biblioteca → `plumb-find-docs` (também na trilha
+  direta), sistema sem acesso → `plumb-find-mcps`, competência que falta →
+  `plumb-find-skills`; descrições reescritas em português e inglês; o roteador as cita.
+- **Setup em grill pesado**: uma pergunta por vez, dimensão de ferramentas varre
+  dependências, MCPs e skills instalados e recomenda por múltipla escolha; pergunta como
+  preparar um worktree novo. **Dream** recomenda a partir da sessão, com a evidência citada.
+- Roteador de 10 linhas (era 7) e instrução global com grill, worktree, ferramenta de
+  perguntas e as três buscas. Evals novos: G1–G3, D4, W2–W6, T1, U1, R1–R3 (os antigos
+  G1, U1 e R1 viraram V3, B3 e S4).
+
+### Removido
+
+- O comportamento "Decidir, não perguntar" e o bloco "Decidi:" da spec.
+- Perguntas só em texto quando a ferramenta de perguntas existe.
+
 ## 5.0.0
 
 O Plumb passa a **entrar em todo pedido**, o cérebro passa a **entrar em toda fase**, e

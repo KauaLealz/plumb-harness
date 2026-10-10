@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
-import { cpSync, mkdirSync, mkdtempSync, symlinkSync, utimesSync, writeFileSync } from 'node:fs';
+import { cpSync, mkdirSync, mkdtempSync, readFileSync, symlinkSync, utimesSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -34,6 +34,18 @@ test('o roteador cabe em 20 linhas e manda carregar a skill, classificar e consu
   assert.match(text, /skill `plumb`/);
   assert.match(text, /Classifique/);
   assert.match(text, /segundo cérebro/);
+  assert.match(text, /grill/);
+  assert.match(text, /\/plumb-grill/);
+  assert.match(text, /worktree/);
+  assert.match(text, /ferramenta de perguntas/);
+  for (const busca of ['plumb-find-docs', 'plumb-find-mcps', 'plumb-find-skills']) assert.ok(text.includes(busca), busca);
+  assert.doesNotMatch(text, /Decidi|decidir, não perguntar/i);
+});
+
+test('a instrução global fala de grill, worktree, ferramenta de perguntas e das três buscas', () => {
+  const text = readFileSync(new URL('../global-instruction.md', import.meta.url), 'utf8');
+  for (const re of [/grill/, /worktree/, /ferramenta de perguntas/, /plumb-find-docs/, /plumb-find-mcps/, /plumb-find-skills/]) assert.match(text, re);
+  assert.doesNotMatch(text, /Decidi|decidir, não perguntar/i);
 });
 
 test('claude-prompt injeta o roteador com o caminho do transcript e nunca bloqueia', () => {

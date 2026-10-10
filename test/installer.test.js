@@ -58,6 +58,7 @@ test('install --both global: skills, agentes e instrução; idempotente; uninsta
   run('install', '--both');
   assert.ok(existsSync(join(home, '.claude', 'skills', 'plumb', 'SKILL.md')));
   assert.ok(existsSync(join(home, '.claude', 'skills', 'plumb-setup', 'references', 'catalog.md')));
+  assert.ok(existsSync(join(home, '.claude', 'skills', 'plumb-grill', 'SKILL.md')), 'o /plumb-grill é instalado');
   assert.ok(!existsSync(join(home, '.cursor', 'skills')), 'com os dois, o Cursor lê .claude/skills');
   assert.match(readFileSync(join(home, '.cursor', 'agents', 'plumb-explorer.md'), 'utf8'), /^model: inherit$/m);
   // os agentes herdam o modelo da sessão; o tier por papel fica no corpo, não no frontmatter
