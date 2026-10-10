@@ -36,7 +36,7 @@ Classifique pelo que o usuário **pediu**, antes de qualquer outra coisa.
 | Conversa (agradecimento, "ok", opinião sem pedido) | Responda. Nenhuma ferramenta |
 | Uma regra, diretriz, preferência ou decisão ("sempre…", "aqui a gente…", "a partir de agora…") | **Diretriz:** grave na hora pelo `references/brain.md` e confirme em uma linha. Sem spec |
 | Investigar ("por que…", "vê se dá…") | **Investigação:** só leitura. A resposta vai ao usuário; o que durar vira `howto/troubleshoot` ou `rule/decision` (confirma). Sem TDD nem spec |
-| Hotfix ou incidente | Trilha direta com reprodução; revisor depois, sem spec |
+| Hotfix ou incidente | Trilha direta pelo loop de diagnóstico de bug (seção 1); revisor depois, sem spec |
 | Dependência, docs, config | Trilha direta |
 | Mudança de código | Trilha direta, padrão ou profunda (seção 1) |
 | Alinhar antes de começar ("/plumb-grill", "me entrevista", "grill me") | Leia `../plumb-grill/SKILL.md` e siga. Só entrevista: nenhuma spec, nenhum código |
@@ -255,8 +255,14 @@ bem, mas olhe).
   é bloqueio real: diga o que mudou em uma linha e mostre a spec ajustada.
 - **"Pula a spec, só faz":** obedeça como na direta, diga o que vai provar e mesmo
   assim verifique; push ou PR só com o "sim".
-- **Bug, em qualquer trilha:** reproduza antes de mudar código (teste que falha na
-  direta; comando durante o planejamento nas outras). Correção que você nunca viu falhar é palpite.
+- **Bug, em qualquer trilha — o loop de diagnóstico:** reproduzir → minimizar →
+  hipótese → instrumentar → corrigir a causa → regressão. Em ordem: (1) **reproduza**
+  com um teste que falha (direta e padrão) ou um comando que mostra o erro (durante o
+  planejamento) — correção que você nunca viu falhar é palpite; (2) **minimize** ao
+  menor caso que ainda falha; (3) levante a **hipótese** da causa, não do sintoma;
+  (4) **instrumente** (log, asserção) para confirmar a causa antes de mudar código —
+  um palpite confirmado vence um chute; (5) **corrija a causa**, não o sintoma;
+  (6) deixe o teste do passo 1 na suíte como **regressão**, para o bug não voltar.
 - **Id:** o do ticket; senão um slug de 2–5 palavras (`corrige-expiracao-pix`).
 
 **Direta:** a checagem de ferramentas da fase 2 vale aqui também. Se o pacote não cobre

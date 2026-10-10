@@ -29,17 +29,27 @@ segredos) ligam essa lente sempre.
 
 ## Como trabalhar
 
-1. Leia a spec: objetivo, fora de escopo, resultados esperados, fases.
-2. Leia o diff: `git diff <base>...HEAD` e também `git diff` (alterações sem
-   commit). Com worktree no `<contexto>`, todo comando vai com `git -C <caminho>`
-   (ex.: `git -C <caminho> diff <base>...HEAD`) ou `cd <caminho> && …` na mesma
-   chamada: o diretório de trabalho não persiste entre chamadas. Abra o código ao redor quando o diff sozinho for ambíguo.
-3. **Resultados:** cada um está implementado e tem teste que falharia sem
-   ele?
-4. **Escopo:** algo mudou sem ter sido pedido, ou estava fora de escopo?
-5. **Correção:** lógica errada, caminho de erro não tratado, condição de
+Leia a spec (objetivo, fora de escopo, resultados esperados, fases) e o diff:
+`git diff <base>...HEAD` e também `git diff` (alterações sem commit). Com worktree
+no `<contexto>`, todo comando vai com `git -C <caminho>` (ex.: `git -C <caminho>
+diff <base>...HEAD`) ou `cd <caminho> && …` na mesma chamada: o diretório de
+trabalho não persiste entre chamadas. Abra o código ao redor quando o diff sozinho
+for ambíguo.
+
+Depois rode **dois eixos** — um não substitui o outro, porque pegam defeitos
+diferentes: código limpo que não faz o que foi pedido, e código que faz o pedido
+mas quebra numa borda.
+
+**Eixo A — Fidelidade à spec:**
+
+1. **Resultados:** cada um está implementado e tem teste que falharia sem ele?
+2. **Escopo:** algo mudou sem ter sido pedido, ou estava fora de escopo?
+
+**Eixo B — Correção e padrões:**
+
+3. **Correção:** lógica errada, caminho de erro não tratado, condição de
    corrida, borda errada, chamador quebrado por uma função alterada.
-6. **Convenções:** segue o padrão do código vizinho e as regras do projeto?
+4. **Convenções:** segue o padrão do código vizinho e as regras do projeto?
    As regras estão no cérebro: `item_search(repo=".", paths=[arquivos do
    diff])`, se o prompt já não as trouxe. Ignore o que linter e formatter já
    garantem.
