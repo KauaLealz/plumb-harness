@@ -23,9 +23,7 @@ da sessão); esta skill carrega **uma vez** e fica na conversa. Se um hook de fi
 de turno disser que o usuário enunciou uma diretriz que você não gravou, grave
 (rota Diretriz) ou responda só "sem diretriz".
 
-Funciona no Claude Code e no Cursor; recurso que a ferramenta não tem, use o
-equivalente ou siga sem ele.
-
+Funciona no Claude Code e no Cursor; recurso que a ferramenta não tem, use o equivalente.
 Pedido: $ARGUMENTS (se vazio, use a última mensagem do usuário)
 
 ## Rota por intenção
@@ -261,10 +259,11 @@ bem, mas olhe).
   direta; comando durante o planejamento nas outras). Correção que você nunca viu falhar é palpite.
 - **Id:** o do ticket; senão um slug de 2–5 palavras (`corrige-expiracao-pix`).
 
-**Direta:** a checagem de ferramentas da fase 2 vale aqui também. Se o pacote não
-cobre a área, uma consulta com os arquivos; você implementa (vermelho → verde se for bug), roda testes e lint dos arquivos tocados,
-commita se a convenção do projeto é commitar, e reporta em 2–3 linhas com a
-evidência. Depois, o fechamento da fase 7 em silêncio. Fim — sem pergunta no final.
+**Direta:** a checagem de ferramentas da fase 2 vale aqui também. Se o pacote não cobre
+a área, uma consulta com os arquivos; implemente (vermelho → verde se for bug), rode
+testes e lint dos arquivos tocados, commite se a convenção do projeto é commitar (sem
+convenção: sem commit, diga onde ficou, nunca pergunte "quer o commit?") e reporte em
+2–3 linhas com a evidência. Depois, a fase 7 em silêncio. Fim — sem pergunta no final.
 
 ## 2 — Entender
 
