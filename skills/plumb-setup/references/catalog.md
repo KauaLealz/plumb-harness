@@ -18,8 +18,8 @@ repositório ou na fala do usuário.
    navegador persistente).
 3. **No máximo 5 sugestões por rodada**, ordenadas pela lacuna que fecham no
    fluxo: verificar (navegador, banco) > entender (docs, tickets) > revisar
-   (segurança) > conveniência. Vão ao usuário numa pergunta `multiSelect`, cada
-   opção com o sinal citado e o custo; outra rodada só se ele pedir. O que ele
+   (segurança) > conveniência. Vão ao usuário em perguntas `multiSelect` de até 4 opções (5 sugestões =
+   duas perguntas da mesma rodada), cada opção com o sinal citado e o custo; outra rodada só se ele pedir. O que ele
    recusa fica registrado em `context/stack` (modelo abaixo) e não se repete.
    Nada se instala sem o "sim".
 4. **Escopo do projeto** (`claude mcp add --scope project …`, grava em

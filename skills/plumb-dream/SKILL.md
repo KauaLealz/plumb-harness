@@ -101,7 +101,7 @@ Os três terminam igual: propor (seção 4), aplicar e registrar (seção 5).
 | um item que o pacote trouxe e estava errado, velho ou contradito pelo trabalho | item podre | `item_feedback` (`wrong`/`outdated`) ou regravar pela key |
 | "o card diz…", "em produção dá…", "segue o Figma" sem você alcançar | falta de acesso | recomendação de MCP (`plumb-find-mcps`) |
 | você errou ou improvisou a API de uma biblioteca (erro de chamada, método que não existe, versão trocada) | falta documentação atual | recomendação de consulta (`plumb-find-docs`), registrada em `context/stack` |
-| você improvisou duas vezes uma competência (revisão de segurança, migração, teste de interface, a stack específica) ou o usuário a pediu e você não tinha | falta competência | recomendação de skill (`plumb-find-skills`) |
+| você improvisou uma competência (revisão de segurança, migração, teste de interface, a stack específica) ou o usuário a pediu e você não tinha | falta competência | recomendação de skill (`plumb-find-skills`) |
 | comando do `AGENTS.md` que falhou ou não existe | fato velho | corrigir o `AGENTS.md` |
 | um hook de fim de turno reclamou que uma diretriz não foi gravada | você deixou passar | `rule/*`, `origin=user` |
 
@@ -246,7 +246,7 @@ O que faltou durante o trabalho
 - **O que faltou:** uma pergunta `multiSelect` com as recomendações, cada opção com a
   **evidência da sessão citada** (trecho da fala ou do erro), o que dá ao agente e o
   **custo de contexto** (0 / B / M / A, legenda em `../plumb-setup/references/catalog.md`).
-  No máximo 5 por rodada (mais uma rodada só se o usuário pedir). Ordem: o que fecha
+  No máximo 5 por rodada, em perguntas de até 4 opções (5 vão em duas; mais uma rodada só se o usuário pedir). Ordem: o que fecha
   lacuna de verificação > entender > revisar > conveniência; CLI antes de MCP. Já
   recusado antes (`recusado` em `context/stack`)? Não repita.
 
@@ -294,7 +294,7 @@ usuário:
 
 ```json
 {"key": "spec/dream-last", "type": "spec", "status": "done", "origin": "agent",
- "title": "Sonho de <AAAA-MM-DD>", "summary": "Concluída · <n> itens, <n> sessões, <n> ajustes · <branch> · — · <agente>",
+ "title": "Sonho de <AAAA-MM-DD>", "summary": "Concluída: <n> itens, <n> sessões, <n> ajustes",
  "content": "Trilha: dream
 Agente: <agente> · <sessão>
 Base: <branch>
@@ -308,9 +308,8 @@ Modo: sessão atual | desde <data> | auditoria\nLido até: <data>\nAplicado: <it
 Cérebro fora do ar: uma entrada por linha em `~/.knowledge-os/pending.jsonl`
 (formato em `brain.md` §13) e avise.
 
-O `summary` e o cabeçalho seguem o padrão de spec (`brain.md`): linha fixa `<estado>
-· <fase n/total> · <branch> · <worktree> · <agente>` (aqui o estado é `Concluída`; o
-dream não tem worktree, então `—`). Sem tag de estado, porque a spec está `done`.
+O cabeçalho segue o padrão de spec (`brain.md`); o `summary`, por estar concluída, é
+`Concluída: <resultado em uma frase>`. Sem tag de estado, porque a spec está `done`.
 
 Feche em uma linha: quantos itens entraram, as ferramentas aceitas e recusadas, o que
 ficou para observar e quando vale o próximo sonho (`na próxima sessão longa, ou

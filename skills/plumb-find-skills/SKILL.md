@@ -108,7 +108,8 @@ critical issues in about 13% of published skills and confirmed malicious ones.
 So, instead of installing directly:
 
 1. Show the user the candidate (source, stars/installs, license, last update)
-   and ask whether to proceed.
+   and ask the user whether to proceed through the question tool (a numbered text list
+   if there is none).
 2. If yes, read its `SKILL.md` and every file in `scripts/` before installing,
    and run a skill security scanner if one is available (e.g. the
    `agent-tooling` skill's scanner, or getsentry's `skill-scanner`).
@@ -154,7 +155,7 @@ Example:
 
 ```
 I searched for skills related to "xyz" but didn't find any matches.
-I can still help you with this task directly! Would you like me to proceed?
+I can still help you with this task directly. (Offer to continue through the question tool.)
 
 If this is something you do often, you could create your own skill:
 npx skills init my-xyz-skill

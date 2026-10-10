@@ -31,7 +31,9 @@ segredos) ligam essa lente sempre.
 
 1. Leia a spec: objetivo, fora de escopo, resultados esperados, fases.
 2. Leia o diff: `git diff <base>...HEAD` e também `git diff` (alterações sem
-   commit). Abra o código ao redor quando o diff sozinho for ambíguo.
+   commit). Com worktree no `<contexto>`, todo comando vai com `git -C <caminho>`
+   (ex.: `git -C <caminho> diff <base>...HEAD`) ou `cd <caminho> && …` na mesma
+   chamada: o diretório de trabalho não persiste entre chamadas. Abra o código ao redor quando o diff sozinho for ambíguo.
 3. **Resultados:** cada um está implementado e tem teste que falharia sem
    ele?
 4. **Escopo:** algo mudou sem ter sido pedido, ou estava fora de escopo?

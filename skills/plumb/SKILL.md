@@ -79,7 +79,7 @@ Regras de uso:
 - **Tags:** 1 a 3 de área ou tema por item, de `tag_list` antes de criar (`brain.md` §8).
 - **Gravou, avise** em uma linha, em linguagem humana (`Guardei para as próximas
   vezes: valores em pagamentos são sempre centavos inteiros.`). O que o usuário
-  ditou grava e confirma; o que **você inferiu** espera o "sim" (`brain.md` §9).
+  ditou grava e confirma; o que **você inferiu** pede o "sim" pela ferramenta de perguntas (`brain.md` §9).
 - **Os subagentes só leem o cérebro.** Quem grava é você, numa chamada por mudança.
 - **Projeto não ligado** (o pacote avisa): sugira `/plumb-setup` uma vez e siga.
 - **Cérebro fora do ar ou sem conexão:** uma linha de aviso, siga com a spec no
@@ -114,7 +114,7 @@ Três skills, uma pergunta cada, usadas pela **checagem de ferramentas** da fase
 
 | Skill | A pergunta | Quando |
 |---|---|---|
-| `plumb-find-docs` | falta **documentação**? | A mudança usa biblioteca, framework, SDK ou API cujo uso não está no código: consulte **antes de escrever**, nunca pela memória. Você, o explorador, o planejador e o implementador |
+| `plumb-find-docs` | falta **documentação**? | A mudança usa biblioteca, framework, SDK ou API cujo uso não está no código: consulte **antes de escrever**, nunca pela memória, sem segredo nem código próprio na consulta. Você, o explorador, o planejador e o implementador |
 | `plumb-find-mcps` | falta **acesso**? | O pedido cita um sistema que você não alcança (card, banco, erro de produção, design, deploy) |
 | `plumb-find-skills` | falta **competência**? | Apareceu uma capacidade inteira que o time não tem e que alguém já resolveu — o planejador sinaliza em "Ferramenta que falta" |
 
@@ -200,8 +200,8 @@ que você segue. Trilhas, fases, subagentes e este arquivo são a sua engrenagem
 - Repetir o entendimento: a abertura sai **uma vez**; a spec não reabre com "Entendi: …".
 
 **Sempre que falar de uma spec** (criada, atualizada, entregue), a mensagem termina
-com `Spec: <url>`, o `url` que o servidor devolveu; sem `url`, diga a key e não
-invente um link.
+com `Spec: <url>`, o `url` que o servidor devolveu; sem `url`, diga o título da
+spec e não invente um link.
 
 Exemplos de tom (abertura, retomada, andamento, revisão, travou, aprendizado
 guardado): `references/communication.md`.
@@ -235,7 +235,7 @@ Com um MCP de tarefas (Jira, Linear, Trello…), o card é a fonte do **quê** e
    remote GitHub, `gh issue view`. Sem achar, pergunte o que o card pede — não suponha.
 4. O usuário só perguntou o que está em andamento? Liste as specs ativas pelo
    `summary` (estado, fase, branch, quem) e aponte os órfãos: worktree sem spec
-   ativa, spec ativa sem worktree, `Atualizado` com mais de 3 dias (sugira a tag
+   ativa, spec `active` padrão ou profunda sem worktree, `Atualizado` com mais de 3 dias (sugira a tag
    `parada`, com o "sim" — `references/worktrees.md`, seção Órfãos). E pare.
 
 ## 1 — Escolher a trilha
@@ -423,11 +423,11 @@ Nenhum subagente decide o que dura.
    você **inferiu** (`howto`, `rule/pattern`, `context`, `rule/decision` que não
    estava na spec) e tudo com `scope=global` **pede o "sim"**: uma linha cada na
    entrega, e a confirmação pela ferramenta de perguntas.
-6. **Grave num `item_save` só**, junto da spec concluída (`status: done`,
+6. **Grave agora** o ditado e a spec concluída num `item_save` (`status: done`,
    `summary: "Concluída: <resultado em uma frase>"`, `Atualizado`, `content` final
-   com fases marcadas, Retro e Números; saem as tags de estado e `worktree`, ficam
-   as de área). Leia os `warnings` e corrija. Relações
-   (`relation_create`) só quando o leitor de um precisa do outro.
+   com fases marcadas, Retro e Números; saem as tags de estado e `worktree`);
+   leia os `warnings`. O inferido e o `scope=global` vão num segundo `item_save`,
+   só depois do "sim" da rodada final (fase 8). `relation_create` só se um precisa do outro.
 7. **Feedback** (`item_feedback`, em lote): `helped` no que entrou no trabalho e
    valeu, `irrelevant` no que veio e não serviu, `verified`/`wrong`/`outdated`
    conforme a fase 6. Só o que você viu de fato.
@@ -508,7 +508,7 @@ apontou um risco que já existia (o corpo da requisição não tem limite de tam
 — vale um card separado.
 
 Guardei para as próximas vezes: como o Pix entra no contrato de pagamentos.
-Deduzi do código, não foi dito: valores em pagamentos são sempre centavos inteiros (vale em src/payments).
+Deduzi do código, não foi dito, e só guardo com o seu "sim" (pergunta abaixo): valores em pagamentos são sempre centavos inteiros (vale em src/payments).
 
 Está commitado na branch `pay-142-pix`, no espaço de trabalho separado.
 Spec: http://127.0.0.1:8765/ui/#/c/...

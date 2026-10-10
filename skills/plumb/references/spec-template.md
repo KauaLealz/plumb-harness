@@ -130,7 +130,7 @@ sabe que terminou**.
   `/plumb-dream` lê depois.
 - **Notas** — o handoff. Se o trabalho parar no meio, uma sessão nova precisa
   continuar só com o `summary`, as fases desmarcadas e as Notas.
-- **Card** — com um MCP de tarefas conectado, a spec **referencia** o card (em
+- **Card** — a sétima linha do cabeçalho, opcional (as outras seis são fixas); com um MCP de tarefas conectado, a spec **referencia** o card (em
   `links`) e não copia a descrição dele: lá vive o quê e o status; aqui, o como.
 - Sem cérebro (fora do ar): a spec fica no chat e na lista de tarefas, e o item
   vai para a fila `~/.knowledge-os/pending.jsonl`.

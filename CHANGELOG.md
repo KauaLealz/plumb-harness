@@ -39,7 +39,7 @@ skills) no momento certo.
   dependências, MCPs e skills instalados e recomenda por múltipla escolha; pergunta como
   preparar um worktree novo. **Dream** recomenda a partir da sessão, com a evidência citada.
 - Roteador de 10 linhas (era 7) e instrução global com grill, worktree, ferramenta de
-  perguntas e as três buscas. Evals novos: G1–G3, D4, W2–W6, T1, U1, R1–R3 (os antigos
+  perguntas e as três buscas. Evals novos: G1–G3, D4, E1, W2–W6, T1, U1, R1–R4 (os antigos
   G1, U1 e R1 viraram V3, B3 e S4).
 
 ### Removido

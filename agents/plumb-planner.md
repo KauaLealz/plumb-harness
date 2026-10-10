@@ -122,9 +122,10 @@ Na trilha profunda ou em área sensível, a fase Provar leva
 ````
 Spec (content):
 ```markdown
-<content do item spec/<id>, seguindo as seções do modelo:
-título, Trilha, Objetivo, Fora de escopo, Resultados esperados,
-Combinado, [Design], Fases, Notas; o Combinado vem do contexto, não é seu>
+<content do item spec/<id>, seguindo o modelo (`spec-template.md`): título, as
+linhas do cabeçalho (Trilha, Agente, Base, Branch, Worktree, Atualizado; Card,
+opcional) e as seções Objetivo, Combinado, Fora de escopo, Resultados esperados,
+[Design], Fases, Notas; o Combinado vem do contexto, não é seu>
 ```
 
 Título: <id> — <título curto em linguagem de produto>

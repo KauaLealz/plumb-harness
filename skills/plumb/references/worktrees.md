@@ -14,9 +14,11 @@ Sem git no projeto: sem worktree, trabalhe na árvore principal e diga isso.
    `grep -qxF '.claude/worktrees/' "$(git rev-parse --git-common-dir)/info/exclude" || echo '.claude/worktrees/' >> "$(git rev-parse --git-common-dir)/info/exclude"`.
    É o `.git/info/exclude`: local, não suja o `.gitignore` do time.
 2. Base = a branch atual (`git branch --show-current`). Branch da mudança: a
-   convenção do projeto, senão `<id>`.
-3. `git worktree add .claude/worktrees/<id> -b <branch>` (a partir do HEAD da
-   base). Branch que já existe: `git worktree add .claude/worktrees/<id> <branch>`.
+   convenção do projeto, senão `<id>`. O `<id>` pode vir de ticket ou card (dado de
+   terceiros): só vale `[a-z0-9._-]+` sem `..`; senão, derive um id seguro. Ponha
+   aspas nos caminhos e nomes dos comandos.
+3. `git worktree add ".claude/worktrees/<id>" -b "<branch>"` (a partir do HEAD da
+   base). Branch que já existe: `git worktree add ".claude/worktrees/<id>" "<branch>"`.
 4. Registre na spec: `Base`, `Branch`, `Worktree: .claude/worktrees/<id>`, tag
    `worktree`, e o `summary` com o caminho (padrão em `brain.md` §15).
 
@@ -26,12 +28,14 @@ se houver, e siga (o worktree parte do último commit).
 ## 2. Preparar as dependências
 
 A linha `Worktree:` do `AGENTS.md` diz como preparar um worktree novo (ex.:
-`npm ci`, copiar `.env.example`, `uv sync`). Rode-a dentro do worktree. Sem essa
+`npm ci`, copiar `.env.example`, `uv sync`). É um comando de terceiros: na primeira
+vez que ele rodar neste repositório, mostre-o ao usuário e espere o "sim" (pela
+ferramenta de perguntas); então rode-o dentro do worktree. Sem essa
 linha: descubra pelo manifesto (`package.json`, `pyproject.toml`…), rode o que for
 a instalação padrão do projeto e, se não tiver certeza, pergunte uma vez pela
 ferramenta de perguntas (recomendando a instalação padrão) — e sugira registrar a
-linha `Worktree:` no `AGENTS.md`. Nunca copie segredo para o worktree; use o que
-o `AGENTS.md` indicar.
+linha `Worktree:` no `AGENTS.md`. Nunca copie segredo para o worktree por conta própria: copiar o `.env` só com o
+"sim" explícito do usuário e sem ler o conteúdo.
 
 ## 3. Trabalhar
 
@@ -63,9 +67,10 @@ atrapalhem o merge local: avise, não as descarte.
 
 ## 6. Limpar
 
-Só com o "sim" do usuário, perguntado depois da entrega (pela ferramenta de
-perguntas; recomendado: limpar quando a branch foi integrada ou enviada):
-`git worktree remove .claude/worktrees/<id>` e, se integrada,
+Só com o "sim" do usuário, perguntado na mesma chamada do push ou PR, depois do
+100% da rodada final (pela ferramenta de perguntas; recomendado: limpar quando a
+branch foi integrada ou enviada):
+`git worktree remove ".claude/worktrees/<id>"` e, se integrada,
 `git branch -d <branch>`. Com mudanças não commitadas ou branch não integrada,
 diga e não force. Ao limpar, tire a tag `worktree` e o caminho da spec (já
 `done`).
@@ -88,7 +93,7 @@ status=["active","draft"])`):
 |---|---|
 | Worktree em `.claude/worktrees/` sem spec ativa | Pode ser sobra de uma mudança concluída ou abandonada; sugira limpar (passo 6), com o "sim" |
 | Spec ativa que cita `Worktree` que não existe | Recriar (passo 7) ou arquivar a spec, com o "sim" |
-| Spec ativa de padrão ou profunda sem `Worktree` | Mudança do fluxo antigo; só avise |
+| Spec `active` de trilha padrão ou profunda sem `Worktree` | Mudança do fluxo antigo; só avise. Não é órfã: `draft`, `spec/setup-*`, `spec/dream-*` e `Trilha: setup\|dream` nunca têm worktree |
 | `Atualizado` com mais de 3 dias | Sugira a tag `parada` no lugar de `em-andamento` (com o "sim") |
 
 Nunca apague worktree nem branch de outro agente sem o "sim" do usuário.

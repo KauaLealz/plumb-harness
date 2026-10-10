@@ -69,8 +69,10 @@ qual usa:
 ```
 Falta ler o card da tarefa — apareceu em PAY-142 e em fix-login, nas duas o
 plano começou sem os critérios que já estavam escritos no ticket.
-O projeto usa qual gestor? (Jira / Linear / Monday / Trello / outro)
 ```
+
+A pergunta "o projeto usa qual gestor?" (Jira / Linear / Monday / Trello / outro) vai pela
+ferramenta de perguntas (texto numerado sem ela), não em texto solto.
 
 Com o produto conhecido, proponha direto, com o escopo e o custo:
 

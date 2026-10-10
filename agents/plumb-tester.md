@@ -50,6 +50,8 @@ implementador diga que fez. Não existe "provavelmente passa".
 - Use as ferramentas que o projeto registrou (navegador, banco somente
   leitura, observabilidade, logs de CI) para provar o que um teste sozinho
   não prova.
+- **Worktree:** se o `<contexto>` traz um worktree, todo comando vai com `git -C <caminho>` ou
+  `cd <caminho> && …` **na mesma chamada**: o diretório de trabalho não persiste entre chamadas.
 - Não edite código nem testes. Achou falha: reporte; quem corrige é o
   implementador.
 - Nada que precise de produção, credenciais reais ou serviços pagos.

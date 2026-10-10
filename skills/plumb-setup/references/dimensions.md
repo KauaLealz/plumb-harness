@@ -56,7 +56,7 @@ ferramenta, se é isso mesmo (recomendação: pular). Nunca pule em silêncio.
 |---|---|
 | **Explora** | scripts do manifesto, `Makefile`, CI (a fonte mais confiável) |
 | **Pergunta** | Qual o comando que o time realmente roda antes de abrir PR? Algum comando que parece existir mas está quebrado? Rodo a suíte uma vez para confirmar? (recomendação: sim, só leitura) |
-| **Nasce** | **Não vai para o cérebro:** vai para o bloco do `AGENTS.md` (até 20 linhas): suíte, um único teste, lint, typecheck, build, subir local — com o comando exato |
+| **Nasce** | **Não vai para o cérebro:** vai para o bloco do `AGENTS.md` (até 24 linhas): suíte, um único teste, lint, typecheck, build, subir local — com o comando exato |
 
 ## 5. Convenções
 
@@ -129,8 +129,8 @@ fica de fora.
   dependência que a pede e a ausência no que ele já tem.
 
 **Priorize** o que fecha lacuna de **verificação** (navegador, banco, CI, teste de
-ponta a ponta), depois entender, revisar e conveniência. **Até 5 por rodada** numa
-pergunta `multiSelect`; outra rodada só se o usuário pedir. A recusa fica registrada
+ponta a ponta), depois entender, revisar e conveniência. **Até 5 por rodada**, em
+perguntas `multiSelect` de até 4 opções (5 vão em duas perguntas); outra rodada só se o usuário pedir. A recusa fica registrada
 em `context/stack` como `recusado: <nome> — <data>`: não se repete. Nada se instala
 sem o "sim" (e, para skill, a revisão de segurança de `plumb-find-skills`).
 
@@ -138,7 +138,7 @@ sem o "sim" (e, para skill, a revisão de segurança de `plumb-find-skills`).
 
 Pergunte, uma por vez e com a recomendação em primeiro: (1) instalar dependências
 num worktree novo? com que comando (o do manifesto ou da CI); (2) copiar o `.env`
-(ou gerar do `.env.example`)? (3) alguma porta, banco ou serviço que precise mudar
+(só com o "sim" explícito, sem ler o conteúdo; ou gerar do `.env.example`)? (3) alguma porta, banco ou serviço que precise mudar
 para não colidir com a árvore principal? Junte a resposta na linha
 `Worktree: <como preparar>` do bloco do `AGENTS.md` (`Worktree: sem preparo` se
 nada for preciso).

@@ -12,7 +12,10 @@ si, que vive em `.claude/worktrees/<id>`.
 
 1. Commite o estado atual no worktree da mudança — os filhos partem do HEAD.
 2. Despache os implementadores do grupo de uma vez, cada um num worktree filho
-   (`.claude/worktrees/<id>-<lote>`, branch `<branch>-<lote>`), com o caminho
+   (`<raiz do repositório>/.claude/worktrees/<id>-<lote>`, branch `<branch>-<lote>`;
+   a raiz é a da árvore principal, `dirname "$(git rev-parse --git-common-dir)"`, e
+   o caminho **não** fica aninhado dentro do worktree da mudança, senão o
+   `git worktree remove` do pai não o alcança), com o caminho
    absoluto dele no `<contexto>` e a instrução de trabalhar só ali e commitar na
    própria branch.
 3. Com todos de volta, integre um por vez **na branch da mudança**, dentro do

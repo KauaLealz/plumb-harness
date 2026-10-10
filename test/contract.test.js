@@ -101,3 +101,14 @@ test('a referência do cérebro cobre as 32 ferramentas, os tipos e o scope', ()
     assert.ok(text.includes(w), `brain.md não cobre ${w}`);
   }
 });
+
+test('perguntas ao usuário vão pela ferramenta de perguntas, não em texto', () => {
+  const all = [...markdownFiles(join(ROOT, 'skills')), ...markdownFiles(join(ROOT, 'agents'))]
+    .filter((f) => !f.endsWith('SOURCE.md'));
+  const bad = [];
+  for (const f of all) {
+    const m = readFileSync(f, 'utf8').match(/Posso seguir|ask whether to proceed|Would you like me to proceed/i);
+    if (m) bad.push(`${relative(ROOT, f)}: "${m[0]}"`);
+  }
+  assert.deepEqual(bad, [], `pergunta só em texto:\n${bad.join('\n')}`);
+});

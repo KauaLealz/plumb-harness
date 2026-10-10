@@ -136,7 +136,7 @@ as respostas, `repo(action="link", repo=".", workspace=<W>, project=<P>)` e crie
 pelo que segue):
 
 - `status: active`; `summary` na linha fixa `<estado> · <fase n/total> · <branch> ·
-  <worktree> · <agente>`, por exemplo `Construindo · dimensão 1/10 · main · — ·
+  <worktree> · <agente>`, por exemplo `Construindo · fase 1/10 · main · — ·
   Claude Code`;
 - no topo do `content`, o cabeçalho `Trilha: setup`, `Agente`, `Base`, `Branch`,
   `Worktree: —` (o setup não tem worktree), `Atualizado` (data e hora), depois a
@@ -264,8 +264,9 @@ Antes de sugerir qualquer coisa, leia em `context/stack` o que **já foi recusad
 
 ### Entregar as recomendações
 
-- **Uma pergunta `multiSelect` por rodada, no máximo 5 recomendações** (a rodada
-  seguinte só se o usuário pedir mais). Ordem: o que fecha lacuna de verificação
+- **No máximo 5 recomendações por rodada**, em perguntas `multiSelect` de até 4
+  opções ("agora não" e "todos" contam): 5 vão em duas perguntas da mesma
+  rodada (a rodada seguinte só se o usuário pedir mais). Ordem: o que fecha lacuna de verificação
   (navegador, banco, CI) > entender (docs, cards) > revisar (segurança) >
   conveniência. CLI antes de MCP.
 - **Cada opção** traz: o que dá ao agente, o **sinal citado** (arquivo e linha,

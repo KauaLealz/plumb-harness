@@ -183,7 +183,7 @@ Primeiro a pergunta **"vale para quem?"**, depois a moradia.
   escondido num repositório: assim é auditável, e preferência pessoal nunca
   acaba numa conexão compartilhada com o time. Sem workspace pessoal global
   ainda, proponha criá-lo (`workspace_create` com `scope="global"`, depois
-  `project_create` `preferencias`) e espere o "sim"; sem isso, salve no project
+  `project_create` `preferencias`) e pergunte pela ferramenta de perguntas (texto numerado sem ela); sem o "sim", salve no project
   do repositório com `scope="global"` e diga onde guardou.
 - Gravar num lugar que não é o do repositório ligado: informe `workspace` e
   `project` na entrada do `item_save` em vez de `repo`.
@@ -234,7 +234,7 @@ O usuário não precisa aprovar o que ele mesmo mandou; precisa aprovar o que vo
 **inferiu**. Na dúvida, confirme: um item errado envenena todas as sessões
 seguintes, e esperar cinco segundos não custa nada.
 
-| Grava na hora e confirma em uma linha | Mostra e espera o "sim" |
+| Grava na hora e confirma em uma linha | Pergunta pela ferramenta de perguntas (texto numerado sem ela) |
 |---|---|
 | o que o usuário **ditou** (`origin=user`) num lugar óbvio | qualquer item inferido (`origin=agent` ou `code`): howto, pattern, context, rule que você deduziu |
 | a `spec` que o usuário já aprovou | qualquer item com `scope=global` |
@@ -243,7 +243,10 @@ seguintes, e esperar cinco segundos não custa nada.
 | `status: review` ou `archived` de item que o trabalho contradisse, com a evidência | apagar (`item_delete`) |
 
 Se o usuário ditou e o lugar não é óbvio (repositório, empresa ou global?),
-proponha o lugar na confirmação, uma pergunta só.
+proponha o lugar na confirmação, uma pergunta só, pela ferramenta de perguntas.
+
+Na entrega, o inferido só se grava depois do "sim" da rodada final, num segundo
+`item_save`; o ditado e a spec concluída já foram gravados antes.
 
 ## 9b. Antes de criar: três passos contra duplicata
 
@@ -353,7 +356,7 @@ Estados: `Aguardando aprovação`, `Construindo`, `Provando`, `Parada`, `Conclu�
 Ex.: `Construindo · fase 2/4 · pay-142-pix · .claude/worktrees/pay-142-pix · Claude (sessão 4f2a)`.
 
 **Topo do `content`**, uma por linha: `Trilha`, `Agente` (agente + sessão), `Base`,
-`Branch`, `Worktree`, `Atualizado` (data e hora).
+`Branch`, `Worktree`, `Atualizado` (data e hora); `Card` é a sétima, opcional.
 
 **Tags de estado:** `aguardando-aprovacao` (status `draft`), `em-andamento`
 (`active`), `parada`; `worktree` enquanto houver worktree; mais 1 a 3 de área ou

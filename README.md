@@ -144,7 +144,7 @@ worktree novo (instalar dependências, copiar `.env`) e grava na linha
 **Coordenação no próprio item.** Vários agentes na mesma base se enxergam pela
 spec, sem campo nem ferramenta nova: o `summary` segue
 `<estado> · <fase n/total> · <branch> · <worktree> · <agente>`, o topo do conteúdo
-traz Trilha, Agente, Base, Branch, Worktree e Atualizado, e as tags dizem o
+traz Trilha, Agente, Base, Branch, Worktree e Atualizado (mais Card, opcional), e as tags dizem o
 estado (`aguardando-aprovacao`, `em-andamento`, `parada`; ao concluir saem) e a
 área (1 a 3, reaproveitadas de `tag_list`). Quem abre uma mudança numa área onde
 outra spec está ativa pergunta se sequencia ou paraleliza; "o que está em
@@ -302,7 +302,7 @@ somente leitura por padrão, nada sem o seu "sim". Entradas marcadas
 - Lembrete de entrada de 10 linhas por mensagem; a skill carrega uma vez por
   conversa. `AGENTS.md` com até 24 linhas (comandos, Worktree e Workflow); o conhecimento
   chega pelo pacote do cérebro, com orçamento.
-- `SKILL.md` do orquestrador com ~510 linhas; o que só vale às vezes (lotes em
+- `SKILL.md` do orquestrador com 520 linhas; o que só vale às vezes (lotes em
   paralelo, tabela de sinais, molde da spec, o contrato do cérebro) fica em
   `references/`, lido sob demanda.
 - Medido nos evals: cada sessão do Claude Code começa com 35–70 mil tokens
