@@ -20,7 +20,7 @@ export const ROUTER = [
   '5. Padrão e profunda começam com o grill (`/plumb-grill`): uma pergunta por vez, com a sua recomendação em primeiro; na direta, só se o pedido for ambíguo.',
   '6. Toda pergunta ao usuário vai pela ferramenta de perguntas (opções clicáveis), nunca só em texto; sem a ferramenta, lista numerada.',
   '7. Mudança padrão ou profunda trabalha num worktree próprio (`.claude/worktrees/<id>`); a direta fica na árvore principal.',
-  '8. Antes de escrever código com uma biblioteca, consulte a doc atual (`plumb-find-docs`); sem acesso a um sistema citado, `plumb-find-mcps`; sem a competência, `plumb-find-skills`. Recomende, e só instale com o "sim".',
+  '8. Antes de escrever código com uma biblioteca, ferramenta ou config (eslint, vite, ORM, SDK…), consulte a doc atual (`plumb-find-docs`), mesmo achando que sabe; sem acesso a um sistema citado, `plumb-find-mcps`; sem a competência, `plumb-find-skills`. Recomende, e só instale com o "sim".',
   '9. Cérebro fora do ar: avise em uma linha e siga.',
 ];
 

@@ -276,14 +276,15 @@ convenção: sem commit, diga onde ficou, nunca pergunte "quer o commit?") e rep
    Resultado de segurança na área (`rule/security`, ou item que o pacote marca
    como sensível) liga a lente de segurança na fase 6.
 3. **Checagem de ferramentas** — você faz, em todas as trilhas (inclusive a
-   direta), antes de escrever código: (a) **bibliotecas e APIs** que a mudança usa
-   e que o código não mostra → `plumb-find-docs`, nunca a memória; (b) **sistema
-   citado sem acesso** (card, banco, erro de produção, design, deploy) →
+   direta), antes de escrever código: (a) **bibliotecas, ferramentas e configs**
+   (ORM, SDK, eslint, vite, CI…) cuja API muda com a versão e que o código não
+   mostra → carregue `plumb-find-docs` e consulte, nunca a memória, mesmo achando
+   que sabe e mesmo em "setup padrão" (nada se aplica? diga em uma frase); (b)
+   **sistema citado sem acesso** (card, banco, erro de produção, design, deploy) →
    `plumb-find-mcps`; (c) **competência inteira que o time não tem** →
    `plumb-find-skills`. A recomendação vai **na própria pergunta do grill**, quando
    uma skill ou MCP serve àquela decisão (`Recomendo ler o card pelo MCP do Jira`);
-   sem pergunta em curso, por múltipla escolha com o sinal citado. Nada se instala
-   sem o "sim".
+   sem pergunta em curso, por múltipla escolha com o sinal citado; nada se instala sem o "sim".
 
 ## 3 — Alinhar (grill)
 
