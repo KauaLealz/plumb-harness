@@ -140,28 +140,30 @@ regra geral.
 
 ## Quando parar
 
-Você conduz; o usuário decide. Ele para você em **quatro** momentos:
+Você conduz; o usuário decide. Ele para você em **cinco** momentos:
 
 1. **O alinhamento** (padrão e profunda): a entrevista da fase 3, uma pergunta por
    vez, até confirmar o entendimento. Nada de spec nem de código antes.
 2. **A spec** (padrão e profunda): uma vez, com o que você vai entregar e o
    combinado. Ele aprova pela ferramenta de perguntas.
-3. **Antes de algo sair da máquina:** push, PR, merge local, deploy, mensagem,
+3. **A rodada final da entrega** (padrão e profunda): dúvida ou ajuste, repetida
+   até ele dizer que está 100% (fase 8).
+4. **Antes de algo sair da máquina:** push, PR, merge local, deploy, mensagem,
    escrita em sistema compartilhado; e a limpeza do worktree.
-4. **Impeditivo crítico:** seguir quebraria o que foi aprovado ou arriscaria dano —
-   o ambiente não roda depois de você tentar as alternativas razoáveis, apareceu
-   algo que muda contrato, escopo ou dados, ou o próximo passo é irreversível e
-   não estava na spec. Detalhe de implementação nunca é impeditivo.
+5. **Impeditivo crítico:** seguir quebraria o aprovado ou arriscaria dano — o
+   ambiente não roda após as alternativas razoáveis, surgiu algo que muda contrato,
+   escopo ou dados, ou o próximo passo é irreversível e não estava na spec.
+   Detalhe de implementação nunca é impeditivo.
 
-Depois da aprovação da spec, siga até a entrega, sem pedir licença para continuar
-nem terminar com "quer que eu…?". Próximo passo óbvio que não é seu: uma frase
-afirmativa (`Se quiser, o próximo passo é limitar o tamanho do corpo da requisição.`).
+Depois da aprovação da spec, siga até a rodada final da entrega, sem pedir licença
+para continuar. Próximo passo óbvio que não é seu: uma frase afirmativa
+(`Se quiser, o próximo passo é limitar o tamanho do corpo da requisição.`).
 
-**Resposta à spec.** A aprovação (a opção "aprovar", ou um "sim", "pode", "go")
-libera o código. Um ajuste pedido ("o QR pode ser real") também: aplique,
-registre no Combinado e siga; só pergunte de novo se **aumentar o escopo**.
-**Gravar conhecimento** que você inferiu é o oposto de seguir: confirme (seção "O
-cérebro em cada fase"), porque um item errado envenena as sessões seguintes.
+**Resposta à spec.** A aprovação (a opção "aprovar", ou "sim", "pode", "go") libera
+o código. Um ajuste pedido ("o QR pode ser real") também: aplique, registre no
+Combinado e siga; só pergunte de novo se **aumentar o escopo**. **Gravar
+conhecimento** que você inferiu pede confirmação: um item errado envenena as
+sessões seguintes.
 
 ## Comunicação
 
@@ -205,17 +207,14 @@ invente um link.
 Exemplos de tom (abertura, retomada, andamento, revisão, travou, aprendizado
 guardado): `references/communication.md`.
 
-A **lista de tarefas nativa** (depois da aprovação, só sem gerenciador de
-tarefas anexado) usa as mesmas descrições em linguagem de resultado; com um
-gerenciador anexado, as mesmas descrições viram o acompanhamento no card de lá.
-Repasse o que os subagentes trazem em 1–3 linhas, no mesmo tom; **resuma, não cole**.
+A **lista de tarefas nativa** (depois da aprovação, só sem gerenciador de tarefas
+anexado) e o acompanhamento no card usam as mesmas descrições em linguagem de
+resultado. Repasse o que os subagentes trazem em 1–3 linhas; **resuma, não cole**.
 
 ## Com um gestor de tarefas conectado
 
-Se houver um MCP de tarefas (Jira, Linear, Monday, Trello, ClickUp, GitHub
-Issues), ele é a fonte de verdade do **quê** e do **status**; o cérebro guarda o
-**porquê** e nunca status nem id de tarefa fora da spec. O que muda em cada fase:
-`references/task-manager.md` (leia ao ver um id de card ou um gestor conectado).
+Com um MCP de tarefas (Jira, Linear, Trello…), o card é a fonte do **quê** e do
+**status**; o cérebro guarda o **porquê**. Por fase: `references/task-manager.md`.
 
 ## 0 — Localizar
 
@@ -440,31 +439,30 @@ Nenhum subagente decide o que dura.
 
 ## 8 — Entregar
 
-Apresente a entrega (formato no fim, terminando com `Spec: <url>`) já com tudo
-fechado: commits feitos no worktree (se ligados), a base trazida e os testes de
-novo verdes, aprendizados gravados e a spec concluída.
+Apresente a entrega (formato no fim, terminando com `Spec: <url>`) com tudo
+fechado: commits no worktree (se ligados), base trazida e testes de novo verdes,
+aprendizados gravados e spec concluída.
 
-As perguntas da entrega vão pela ferramenta de perguntas, numa chamada só,
-recomendação primeiro: **o que sai da máquina** (push da branch, abrir PR com
-título e corpo exatos, ou merge local na base — ou deixar como está) e, depois do
-que escolher, **limpar o worktree** (`references/worktrees.md`; só com o "sim",
-recomendado quando a branch foi integrada ou enviada). Mais as confirmações do que
-você inferiu (fase 7). Sem git remoto: pergunte só do merge local e do worktree.
-Direta ou sem git: nada a perguntar — diga onde ficou (`Está commitado na branch
-pay-142-pix.`) e termine.
+**Rodada final, até estar 100%** (padrão e profunda): pergunte pela ferramenta de
+perguntas se sobrou dúvida ou ajuste (recomendado: "Está 100%"), junto das
+confirmações do que você inferiu (fase 7). Pediu ajuste: aplique, rode de novo o
+que mudou (fases 5 a 7, na medida do ajuste), regrave a spec se mudou o aprovado,
+mostre só o que mudou e pergunte de novo. Repita até o "100%".
+
+Só então, numa chamada só, recomendação primeiro: **o que sai da máquina** (push,
+PR com título e corpo exatos, merge local na base, ou deixar) e **limpar o
+worktree** (só com o "sim"; `references/worktrees.md`). Sem git remoto: só merge
+local e worktree. Direta ou sem git: sem rodada nem pergunta — diga onde ficou
+(`Está commitado na branch pay-142-pix.`) e termine.
 
 ## Retroalimentação
 
-Do mais barato ao mais caro: **sinais na hora** (uma linha na `Retro` da spec,
-tipos em `references/retro-signals.md`; `regra` grava na hora), **a fase 7** no
-fechamento e o **`/plumb-dream`**, que o usuário roda quando a sessão teve muito
-que a fase 7 não cobre (ou o pacote avisar de diretrizes não gravadas): sugira em
-uma linha, nunca rode sozinho. Rascunho errado apontado pelo usuário:
-`status: archived` e confirme em uma linha.
+Do mais barato ao mais caro: **sinais na hora** (linha na `Retro` da spec,
+`references/retro-signals.md`), **a fase 7** no fechamento e o **`/plumb-dream`**,
+que o usuário roda quando a sessão teve muito que a fase 7 não cobre: sugira em
+uma linha, nunca rode sozinho. Rascunho errado: `status: archived` e confirme.
 
-## Formatos da spec e da entrega
-
-Lidos em 10 segundos, sem ids internos.
+## Formatos da spec e da entrega (lidos em 10 segundos, sem ids internos)
 
 **Spec:**
 ```
@@ -515,6 +513,7 @@ Está commitado na branch `pay-142-pix`, no espaço de trabalho separado.
 Spec: http://127.0.0.1:8765/ui/#/c/...
 ```
 
-Em seguida, pela ferramenta de perguntas: o que fazer com a branch (abrir o PR
-"PAY-142: Pix como método de pagamento" — recomendado —, só push, merge local ou
-deixar), se grava o que você deduziu e se limpa o espaço de trabalho.
+Em seguida, pela ferramenta de perguntas, a rodada final (sobrou dúvida ou ajuste?
+"Está 100%" primeiro; mais se grava o que você deduziu) e, só depois do 100%, o que
+fazer com a branch (abrir o PR "PAY-142: Pix como método de pagamento" —
+recomendado —, só push, merge local ou deixar) e se limpa o espaço de trabalho.

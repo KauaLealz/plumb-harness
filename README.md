@@ -126,8 +126,10 @@ pergunta se o pedido for ambíguo. `/plumb-grill <tema>` roda só a entrevista,
 quando você quer alinhar sem construir. **Toda pergunta** — grill, setup, dream,
 aprovação, entrega — vai pela ferramenta de perguntas do Claude (opções
 clicáveis); no Cursor, que não a tem, vira lista numerada com a recomendação na
-opção 1. Depois da aprovação ele segue até a entrega e para de novo só antes de
-algo sair da máquina (push, PR, merge) ou num impeditivo crítico. **Ao gravar
+opção 1. Depois da aprovação ele segue até a entrega; ali faz uma rodada final de
+dúvidas ou ajustes, repetida (ajusta, prova de novo e pergunta outra vez) até você
+dizer que está 100%, e só então pergunta de push, PR ou merge. Fora isso, para só
+num impeditivo crítico. **Ao gravar
 conhecimento a regra é a oposta:** o que você ditou grava; o que o agente inferiu
 espera o seu "sim", porque um item errado envenena todas as sessões seguintes.
 
