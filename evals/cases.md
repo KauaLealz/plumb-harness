@@ -11,6 +11,7 @@ Preparação: copie `evals/fixture/` para uma pasta limpa, rode
 `npx plumb-harness install --claude --project` dentro dela (skills, agentes e hooks
 só do projeto) e, para os casos de cérebro, ligue o repositório a um workspace de
 teste de uma conexão descartável (`connection_create` numa pasta temporária).
+Para os casos de setup com sinais de ferramenta (S2/P1), copie também `evals/fixture-sinais/` por cima do fixture (instruções em `README-SINAIS.md`). Para rodar contra o Plumb e o servidor da árvore de trabalho sem tocar no que está instalado, use `PLUMB_SIM_ARGS` (veja o cabeçalho de `evals/sim/run.mjs`).
 Casos marcados **(servidor v2)** exigem o Knowledge OS v2 de pé; sem ele, valem só
 os critérios que não dependem do cérebro.
 

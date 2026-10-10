@@ -24,6 +24,29 @@ projeto, sem `/plumb-setup` (sem AGENTS.md). Modelo padrão da CLI.
 
 | 2026-10-05 | Cursor Auto (`cursor-agent`) | C1 + B2 + M6 (endpoint novo, trilha profunda, v3.1) | passou | — (Cursor não informa custo) | Gate 1 em 74 s (antes 116 s): **uma** consulta ao cérebro (`context_get` com paths e query), 1 lote de 4 tasks (antes 4 despachos). Construção: 1 implementador, 1 verificador, 1 revisor, 1 `plumb-security` (profunda), 0 curador, 2 `item_save`; suíte 10/10. Compatibilidade achada nos testes: `readonly` vira Ask mode e bloqueia shell/MCP (removido das variantes do Cursor); `.cursor/cli.json` de projeto não aceita `version`; hooks do Cursor precisam rodar fora do Git Bash (a variável `SHELL` faz o wrapper PowerShell dos hooks falhar num bash) e o stdin do hook vem com BOM. |
 
+## Plumb 6.0.0 — 2026-10-10
+
+Rodado com `claude -p` (modelo padrão da conta), Plumb 6 instalado só no projeto do sandbox (`--setting-sources project,local`),
+servidor da branch `feature/brain-v2-url` (`--strict-mcp-config --mcp-config`) e cérebro isolado (`KNOWLEDGE_OS_HOME`), pelo
+`evals/sim/run.mjs` com `PLUMB_SIM_ARGS`. O `claude -p` não tem a ferramenta de perguntas clicável: o que se prova aqui é o
+fallback em texto numerado (uma pergunta, recomendação em primeiro); a chamada da ferramenta só aparece numa sessão interativa.
+
+| Data | Caso | Resultado | Custo | Evidência |
+|---|---|---|---|---|
+| 2026-10-10 | G1, G2, G3 (`/plumb-grill`, PAY-142) | passou | US$ 1,5 | Explorou código, README e cérebro antes de perguntar; 3 perguntas, uma por vez, recomendação em primeiro; só perguntou o que o card não definia; terminou com o resumo do entendimento e "Em aberto: nada"; só com a confirmação escreveu a spec. |
+| 2026-10-10 | S1 + U1 + W6 (mesmo sandbox, aprovação e construção) | passou | US$ 2,6 | Spec `draft` com resumo `<estado> · <fase n/total> · <branch> · <worktree> · <agente>`, cabeçalho e tags `aguardando-aprovacao` + área; a mensagem terminou com `Spec: http://127.0.0.1:8765/ui/#/c/...` vindo do `url` do servidor; após o "sim": worktree `.claude/worktrees/pay-142-pix` (diretório no `exclude`), spec `active`, testes 2/2 antes, 6/6 depois, tester e reviewer em paralelo; ao fim `done` com só a tag de área. |
+| 2026-10-10 | E1 (rodada final) | passou, com uma falha corrigida | US$ 0,8 | Perguntou "está 100%?"; diante do ajuste aplicou, provou de novo, mostrou só o que mudou e perguntou de novo; só depois perguntou o destino da branch. Falha: regravou a decisão numa key nova (duas regras iguais no cérebro) → regra "pelas mesmas keys" na fase Entregar. |
+| 2026-10-10 | W2 (spec A ativa de outro agente em src/) | passou | US$ 0,75 | Leu o resumo da spec ativa, avisou da sobreposição e que o worktree dela não existia (órfã) e perguntou sequenciar/paralelizar/parar, com recomendação. Ressalva: mandou "Pergunta 1 de 2" e adiantou o contexto da 2ª. |
+| 2026-10-10 | D1 (typo) | passou com falha corrigida | US$ 0,37 | Corrigiu sem perguntar; terminou com "quer que eu faça o commit?" → trilha direta sem convenção de commit não pergunta. |
+| 2026-10-10 | D4 (direta ambígua) | passou | US$ 0,55 | Leu o código e fez uma pergunta com recomendação e 3 opções, sem alterar nada. |
+| 2026-10-10 | S2/P1 (`/plumb-setup`, projeto sem sinais) | passou com ressalvas | US$ 6,3 | Uma pergunta por vez no início; achou a divergência manifesto × código (fastify/prisma/vitest declarados e não usados) e perguntou; gravou 8 itens; `AGENTS.md` com `Worktree:` e o Workflow novo; sem sinais, não recomendou ferramenta e disse por quê. Ressalva: duas perguntas por mensagem nas dimensões 1 e 2. |
+| 2026-10-10 | S2/P1 (`/plumb-setup`, `evals/fixture-sinais`: CI, Postgres, Prisma, Sentry, Next/React/Fastify, remote GitHub) | passou | US$ 4,6 (até a dimensão 8) | Varredura de dependências, MCPs/skills/conectores e instruções globais; `gh` já instalado = sem lacuna; recomendações uma por vez com sinal e custo (gestor de tarefas pelo padrão `PAY-<n>` com Jira/Linear/GitHub Issues/"não usam"; documentação de fastify/prisma/next por `plumb-find-docs`); recusa vira registro; perguntou o preparo do worktree com a evidência. |
+| 2026-10-10 | R2 (eslint flat config, "pode ir direto") | falhou → passou | US$ 0,75 + 0,87 | 1ª: escreveu a config da memória, sem consultar doc. Depois de reforçar o passo (ferramentas e configs, "mesmo em setup padrão") e o roteador: carregou `plumb-find-docs`, rodou `npx ctx7@latest library/docs` antes de escrever e travou `eslint@9` pelo aviso de versão do Node. |
+| 2026-10-10 | R3 (`/plumb-dream` numa sessão limpa) | passou (limitado) | US$ 1,05 | Disse "nada durável" e listou por que cada candidato não vira item; "ferramentas que faltaram: nenhuma"; não inventou. Não provou a recomendação a partir de competência improvisada (faltou uma sessão com esse sinal). |
+| 2026-10-10 | Não rodados | — | — | W3 (lista de em andamento), W4 (retomar com worktree e Agente de outro), W5 (base avançada), R1 (card sem acesso), T1 isolado. |
+
+Achados de ambiente (não do Plumb): o servidor MCP aparece como "caiu" nos turnos retomados com `--resume` (volta no turno seguinte); uma mensagem que começa com `/` passada pelo Git Bash vira caminho (`C:/Program Files/Git/…`): use `@arquivo`.
+
 ## Custo fixo de uma execução `claude -p`
 
 Medido com o prompt "Responda apenas: ok", modelo `sonnet`:

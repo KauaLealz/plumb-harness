@@ -1,0 +1,10 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Payment {
+  id     String @id
+  amount Int
+  method String
+}
