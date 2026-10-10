@@ -1,6 +1,6 @@
 ---
 name: plumb-setup
-description: Grill pesado sobre um repositório que monta a base do segundo cérebro (Knowledge OS) com o usuário — liga o projeto, percorre dez dimensões (produto, stack, mapa, comandos, convenções, áreas sensíveis, procedimentos, ferramentas, time, preferências) uma pergunta por vez, sempre com a recomendação primeiro e pela ferramenta de perguntas; na dimensão de ferramentas varre dependências, MCPs, skills e plugins e recomenda documentação, acessos e competências que faltam (plumb-find-docs, plumb-find-mcps, plumb-find-skills). Leva regras e skills de projeto existentes para o cérebro, pergunta como preparar um worktree novo e grava o bloco de comandos no AGENTS.md. Retomável; grava cada dimensão depois da confirmação. Rode uma vez por repositório, ou de novo para auditar.
+description: Grill pesado sobre um repositório que monta a base do segundo cérebro (Knowledge OS) com o usuário — liga o projeto, percorre dez dimensões (produto, stack, mapa, comandos, convenções, áreas sensíveis, procedimentos, ferramentas, time, preferências) perguntando em lote (até 4 perguntas por chamada, nunca uma de cada vez), sempre com a recomendação primeiro e pela ferramenta de perguntas; na dimensão de ferramentas varre dependências, MCPs, skills e plugins e recomenda documentação, acessos e competências que faltam (plumb-find-docs, plumb-find-mcps, plumb-find-skills). Leva regras e skills de projeto existentes para o cérebro, pergunta como preparar um worktree novo e grava o bloco de comandos no AGENTS.md. Retomável; grava cada dimensão depois da confirmação. Rode uma vez por repositório, ou de novo para auditar.
 disable-model-invocation: true
 ---
 
@@ -18,9 +18,10 @@ Plumb.
 Este é o **grill pesado** do Plumb: uma entrevista longa, mas conduzida como o
 `plumb-grill` (leia `../plumb-grill/SKILL.md` uma vez antes de começar). As regras:
 
-- **Uma pergunta por vez**, na ordem das dependências (o que destrava as outras
-  vem antes), e **sempre com a sua recomendação em primeiro**. Só avance quando o
-  usuário responder.
+- **Perguntas juntas, não uma por vez**: reúna as perguntas que a dimensão (ou as
+  dimensões já exploradas) deixou em aberto e mande-as numa só chamada da
+  ferramenta, **até 4 por chamada**, **sempre com a sua recomendação em primeiro**.
+  Só avance quando o usuário responder.
 - **Explore antes de perguntar.** Se o repositório, o `git log`, o cérebro ou a
   conversa respondem, não pergunte: mostre o achado, com a evidência, para ele
   confirmar. Pergunte só o que (a) o repositório não responde **e** (b) melhoraria o
@@ -40,12 +41,13 @@ Este é o **grill pesado** do Plumb: uma entrevista longa, mas conduzida como o
   resposta livre.
 - `multiSelect` quando as opções não são excludentes (confirmar vários achados,
   aceitar várias recomendações de ferramenta).
-- Uma pergunta por chamada. Achados a confirmar vão numa pergunta `multiSelect`
-  ("Quais destes estão certos?"), com no máximo 4 por vez; mais que isso, divida em
-  rodadas.
-- **Sem a ferramenta** (Cursor): texto numerado, uma pergunta, a recomendação
-  marcada como a primeira opção. Nunca uma confirmação genérica sem opções: a
-  pergunta é concreta, com opções.
+- Várias perguntas por chamada (até 4, o limite da ferramenta): mande juntas as
+  perguntas já prontas, em vez de uma de cada vez. Achados a confirmar vão numa
+  pergunta `multiSelect` ("Quais destes estão certos?"), com no máximo 4 por vez;
+  mais que isso, divida em rodadas.
+- **Sem a ferramenta** (Cursor): texto numerado, as perguntas juntas, cada uma com
+  a recomendação marcada como a primeira opção. Nunca uma confirmação genérica sem
+  opções: a pergunta é concreta, com opções.
 
 **Como falar.** Cada mensagem diz **o que você descobriu no repositório** ou o que
 precisa dele — nunca o que vai fazer a seguir dentro deste fluxo (ler um arquivo,
@@ -199,9 +201,10 @@ Opções da pergunta: os achados (confirmar cada um), com "todos" como
 recomendação quando a evidência for forte. O que o usuário não marcar, ele corrige
 no "Outro" ou fica de fora.
 
-**2. Pergunte o resto, uma por vez.** O que o repositório não responde, na ordem das
-dependências, cada pergunta pela ferramenta, com a recomendação em primeiro e meia
-frase de por que importa quando não for óbvio. Exemplo: `Branch por ticket
+**2. Pergunte o resto, de uma vez.** O que o repositório não responde, reunido numa
+só chamada da ferramenta (até 4 perguntas; mais que isso, no menor número de
+chamadas), cada uma com a recomendação em primeiro e meia frase de por que importa
+quando não for óbvio. Exemplo: `Branch por ticket
 (pay-142-pix) é regra ou costume?` — opções: `Regra (Recommended)` (9 das 10
 últimas seguem), `Costume`, `Depende do tipo de mudança`. Resposta que revela outra
 dúvida: uma pergunta a mais, curta.
@@ -309,8 +312,8 @@ Com as dez dimensões feitas (ou adiadas):
    ## Workflow
    Todo pedido segue o Plumb (skill `plumb`): pergunta responde direto depois de
    consultar o segundo cérebro; correção pequena vai pela trilha direta; mudança
-   padrão ou profunda começa com o grill (uma pergunta por vez, com a recomendação
-   primeiro, sempre pela ferramenta de perguntas), vira uma spec (objetivo,
+   padrão ou profunda começa com o grill (todas as perguntas de uma vez, com a
+   recomendação primeiro, sempre pela ferramenta de perguntas), vira uma spec (objetivo,
    resultados esperados observáveis, fases com critério de saída) aprovada antes
    de codar — com o segundo cérebro, guarde-a como item `spec/<id>` — e roda em um
    worktree próprio, um por mudança. Escreva os testes primeiro; peça confirmação

@@ -139,8 +139,8 @@ regra geral.
 
 Você conduz; o usuário decide. Ele para você em **cinco** momentos:
 
-1. **O alinhamento** (padrão e profunda): a entrevista da fase 3, uma pergunta por
-   vez, até confirmar o entendimento. Nada de spec nem de código antes.
+1. **O alinhamento** (padrão e profunda): a entrevista da fase 3, com as perguntas
+   juntas numa só chamada, até confirmar o entendimento. Nada de spec nem de código antes.
 2. **A spec** (padrão e profunda): uma vez, com o que você vai entregar e o
    combinado. Ele aprova pela ferramenta de perguntas.
 3. **A rodada final da entrega** (padrão e profunda): dúvida ou ajuste, repetida
@@ -290,9 +290,10 @@ convenção: sem commit, diga onde ficou, nunca pergunte "quer o commit?") e rep
 
 Padrão e profunda: **obrigatório**. Direta: só se o pedido for ambíguo, e então uma
 pergunta. Leia `../plumb-grill/SKILL.md` (uma vez) e entreviste o usuário **antes**
-de especificar: uma pergunta por vez, pela ferramenta de perguntas, cada uma com a
-sua recomendação em primeiro, percorrendo a árvore de decisões na ordem das
-dependências, até haver entendimento compartilhado.
+de especificar: todas as perguntas de uma vez (numa só chamada da ferramenta de
+perguntas, até 4 por chamada), cada uma com a sua recomendação em primeiro,
+cobrindo a árvore de decisões que sobrou da exploração, até haver entendimento
+compartilhado.
 
 - **Explore antes de perguntar:** o que o código, o cérebro, o card ou a conversa
   já respondem não vira pergunta.

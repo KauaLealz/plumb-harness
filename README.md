@@ -117,9 +117,9 @@ sessão, e "continua o PAY-142" retoma pelo andamento e pelas fases que faltam �
 sem pasta nenhuma no repositório.
 
 **Grill: o agente pergunta, você decide.** Em mudança padrão ou profunda o Plumb
-não adivinha: antes da spec ele entrevista você no modelo *grill-me* — **uma
-pergunta por vez**, sempre com a recomendação dele em primeiro, na ordem em que
-uma decisão depende da outra. Antes de perguntar ele explora o código, o cérebro
+não adivinha: antes da spec ele entrevista você no modelo *grill-me* — **todas as
+perguntas de uma vez**, numa só chamada da ferramenta de perguntas, sempre com a
+recomendação dele em primeiro. Antes de perguntar ele explora o código, o cérebro
 e o card: o que eles já respondem não vira pergunta. A entrevista termina num
 resumo do entendimento, e só com o seu "sim" vira spec; na trilha direta só há
 pergunta se o pedido for ambíguo. `/plumb-grill <tema>` roda só a entrevista,
@@ -372,7 +372,7 @@ parágrafo de Workflow que o `/plumb-setup` grava nele.
 
 ```
 skills/plumb/              orquestrador + hooks/entry.mjs + references/ (contrato do cérebro, contrato de prompt, modelo da spec, worktrees, sinais, testes)
-skills/plumb-grill/        entrevista grill-me: uma pergunta por vez, com recomendação (/plumb-grill)
+skills/plumb-grill/        entrevista grill-me: todas as perguntas de uma vez, com recomendação (/plumb-grill)
 skills/plumb-setup/        entrevista por dimensão, estruturação e migração + references/ (dimensões, catálogo)
 skills/plumb-dream/        analisa a sessão inteira, varre sessões antigas, audita o cérebro + scripts/extract.mjs
 skills/plumb-find-docs/    falta documentação? (Context7) — cópia fixada

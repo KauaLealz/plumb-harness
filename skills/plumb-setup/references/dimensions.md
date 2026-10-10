@@ -1,9 +1,10 @@
 # As dimensões do setup
 
-O setup percorre estas dez dimensões, **uma por vez**, na ordem, no modelo grill: o
+O setup percorre estas dez dimensões, na ordem, no modelo grill: o
 que o repositório responde é **mostrado com a evidência e confirmado**; o que ele não
-responde é **perguntado, uma pergunta por vez, com a recomendação em primeiro**, sempre
-pela ferramenta de perguntas (`../SKILL.md`, "Como perguntar"). Cada dimensão tem o que
+responde é **perguntado em lote — as perguntas juntas numa só chamada, até 4 por vez,
+com a recomendação em primeiro**, sempre pela ferramenta de perguntas (`../SKILL.md`,
+"Como perguntar"). Cada dimensão tem o que
 explorar (e de onde), o que **perguntar**, e os itens que nascem. Moldes de tipo, key,
 scope, origin e tags: `../../plumb/references/brain.md` (a seção Tags: reaproveite
 `tag_list`, 1 a 3 tags de área por item).
@@ -136,8 +137,8 @@ sem o "sim" (e, para skill, a revisão de segurança de `plumb-find-skills`).
 
 ### Worktree
 
-Pergunte, uma por vez e com a recomendação em primeiro: (1) instalar dependências
-num worktree novo? com que comando (o do manifesto ou da CI); (2) copiar o `.env`
+Pergunte as três juntas, numa só chamada da ferramenta e com a recomendação em
+primeiro: (1) instalar dependências num worktree novo? com que comando (o do manifesto ou da CI); (2) copiar o `.env`
 (só com o "sim" explícito, sem ler o conteúdo; ou gerar do `.env.example`)? (3) alguma porta, banco ou serviço que precise mudar
 para não colidir com a árvore principal? Junte a resposta na linha
 `Worktree: <como preparar>` do bloco do `AGENTS.md` (`Worktree: sem preparo` se
@@ -156,7 +157,7 @@ nada for preciso).
 | | |
 |---|---|
 | **Explora** | o que já existe como `scope=global` (`item_search(scope=["global"])`), o `~/.claude/CLAUDE.md`, o idioma da conversa |
-| **Pergunta** | Só o que **falta** depois de ler o que já existe (cada uma pela ferramenta, uma por vez): idioma das respostas, tom e nível de detalhe, como quer ser avisado, o que nunca fazer sem perguntar, ferramentas pessoais, particularidades da máquina |
+| **Pergunta** | Só o que **falta** depois de ler o que já existe (juntas pela ferramenta, até 4 por chamada; mais que isso, em duas): idioma das respostas, tom e nível de detalhe, como quer ser avisado, o que nunca fazer sem perguntar, ferramentas pessoais, particularidades da máquina |
 | **Nasce** | `rule/process` e `context/environment` no project `preferencias` do workspace pessoal global, com `scope=global`. **Tudo aqui pede o "sim"** (vale em todo projeto dele). Não duplique o que já está lá |
 
 ## Projeto novo (fundação)
@@ -176,7 +177,7 @@ aqui: ele é a primeira mudança, pelo fluxo normal.
 ## Projeto já ligado (auditoria)
 
 Cada dimensão começa pelo que o cérebro **já tem** (`item_search(repo=".",
-tags=...)` ou pelo tipo), confronta com o código e pergunta só a diferença (uma pergunta por vez, pela ferramenta):
+tags=...)` ou pelo tipo), confronta com o código e pergunta só a diferença (as perguntas juntas, até 4 por chamada, pela ferramenta):
 `context/mapa` diz X, o código tem Y — qual vale?; este `howto` cita um comando que
 não existe mais. Propostas: atualizar pela mesma key, `outdated`/`archived` com a
 evidência, juntar duplicatas (`supersedes`). Pergunte o que mudou desde o último

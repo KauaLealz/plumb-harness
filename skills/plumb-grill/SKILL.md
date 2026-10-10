@@ -1,6 +1,6 @@
 ---
 name: plumb-grill
-description: Entrevista o usuário, uma pergunta por vez e sempre com a recomendação do agente, até os dois terem o mesmo entendimento do que será feito — sem escrever spec nem código. Use quando o usuário disser "me entrevista", "me faz perguntas", "grill me", "quero alinhar antes de começar", "/plumb-grill <tema>", ou quando o orquestrador entrar na fase de alinhar. Interviews the user one question at a time, each with a recommended answer, until you share an understanding; writes no spec and no code.
+description: Entrevista o usuário com todas as perguntas de uma vez (numa só chamada da ferramenta de perguntas) e sempre com a recomendação do agente, até os dois terem o mesmo entendimento do que será feito — sem escrever spec nem código. Use quando o usuário disser "me entrevista", "me faz perguntas", "grill me", "quero alinhar antes de começar", "/plumb-grill <tema>", ou quando o orquestrador entrar na fase de alinhar. Interviews the user with all questions at once (batched in a single tool call), each with a recommended answer, until you share an understanding; writes no spec and no code.
 argument-hint: "<tema a alinhar>"
 ---
 
@@ -20,12 +20,15 @@ No idioma do usuário, inclusive as frases de andamento.
    (`item_search(repo=".", query=<tema>, paths=<arquivos>)`), o card (se houver) e
    a conversa. Se algo disso responde a dúvida, não a transforme em pergunta: use
    a resposta e siga. Se elas se contradizem, a contradição é a pergunta.
-2. **Monte a árvore de decisões** do tema e percorra na **ordem das
-   dependências**: a decisão de que as outras dependem vem primeiro. Uma resposta
-   que fecha ramos inteiros tira esses ramos da fila.
-3. **Uma pergunta por vez.** Toda pergunta vai pela ferramenta de perguntas do
-   Claude (`AskUserQuestion`), nunca só no texto. Espere a resposta antes da
-   seguinte; a resposta muda quais perguntas ainda valem.
+2. **Monte a árvore de decisões** do tema e pode os ramos que a exploração já
+   fechou: só sobra o que a resposta muda e cujo erro custaria refazer. O que
+   sobrou é o conjunto de perguntas que você vai mandar.
+3. **Todas as perguntas de uma vez.** Reúna as perguntas que sobraram e mande-as
+   **juntas**, numa só chamada da ferramenta de perguntas do Claude
+   (`AskUserQuestion`), nunca só no texto. A ferramenta aceita até 4 perguntas por
+   chamada; se sobraram mais, use o menor número de chamadas possível. Nunca pingue
+   uma pergunta de cada vez. Se a própria existência de uma pergunta depende da
+   resposta de outra, deixe essa para uma segunda chamada curta.
 4. **Sempre com a recomendação.** De 2 a 4 opções; a recomendada é a **primeira**
    e leva "(Recommended)" no rótulo (no idioma do usuário, se a ferramenta
    mostrar outro texto, mantenha o marcador). A descrição de cada opção diz a
@@ -36,8 +39,9 @@ No idioma do usuário, inclusive as frases de andamento.
    pela ferramenta de perguntas. Nada além disso acontece (spec, código, worktree)
    enquanto o usuário não confirmar. Se corrigir, ajuste o resumo e confirme de novo.
 
-Sem a ferramenta de perguntas (Cursor, ou uma ferramenta que não a tenha), a
-mesma pergunta em texto numerado, com a recomendação na opção 1.
+Sem a ferramenta de perguntas (Cursor, ou uma ferramenta que não a tenha), as
+mesmas perguntas em texto numerado, todas na mesma mensagem, cada uma com a
+recomendação na opção 1.
 
 ## Formato de cada pergunta
 

@@ -17,7 +17,7 @@ export const ROUTER = [
   '2. Classifique o pedido: pergunta · diretriz do usuário · investigação · hotfix · mudança de código (direta, padrão ou profunda) · setup · dream · conversa.',
   '3. Consulte o segundo cérebro antes de agir e grave o que for durável, pelo contrato de fases da skill.',
   '4. Cerimônia proporcional: pergunta responde direto; correção pequena vai pela trilha direta; só mudança maior pede spec e aprovação.',
-  '5. Padrão e profunda começam com o grill (`/plumb-grill`): uma pergunta por vez, com a sua recomendação em primeiro; na direta, só se o pedido for ambíguo.',
+  '5. Padrão e profunda começam com o grill (`/plumb-grill`): todas as perguntas de uma vez (numa só chamada da ferramenta), com a sua recomendação em primeiro; na direta, só se o pedido for ambíguo.',
   '6. Toda pergunta ao usuário vai pela ferramenta de perguntas (opções clicáveis), nunca só em texto; sem a ferramenta, lista numerada.',
   '7. Mudança padrão ou profunda trabalha num worktree próprio (`.claude/worktrees/<id>`); a direta fica na árvore principal.',
   '8. Antes de escrever código com uma biblioteca, ferramenta ou config (eslint, vite, ORM, SDK…), consulte a doc atual (`plumb-find-docs`), mesmo achando que sabe; sem acesso a um sistema citado, `plumb-find-mcps`; sem a competência, `plumb-find-skills`. Recomende, e só instale com o "sim".',
