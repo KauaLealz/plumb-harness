@@ -29,7 +29,9 @@ No idioma do usuário, inclusive as frases de andamento.
 4. **Sempre com a recomendação.** De 2 a 4 opções; a recomendada é a **primeira**
    e leva "(Recommended)" no rótulo (no idioma do usuário, se a ferramenta
    mostrar outro texto, mantenha o marcador). A descrição de cada opção diz a
-   consequência em uma frase.
+   consequência em uma frase. Quando uma skill ou MCP que já existe (ou que as
+   buscas `plumb-find-*` achariam) serve àquela decisão, a recomendação já diz
+   isso: "recomendo X, usando a skill Y" ou "o MCP Z lê o card, sem você colar".
 5. **Termine com o resumo do entendimento compartilhado** e peça a confirmação
    pela ferramenta de perguntas. Nada além disso acontece (spec, código, worktree)
    enquanto o usuário não confirmar. Se corrigir, ajuste o resumo e confirme de novo.

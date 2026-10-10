@@ -118,10 +118,9 @@ Três skills, uma pergunta cada, usadas pela **checagem de ferramentas** da fase
 | `plumb-find-mcps` | falta **acesso**? | O pedido cita um sistema que você não alcança (card, banco, erro de produção, design, deploy) |
 | `plumb-find-skills` | falta **competência**? | Apareceu uma capacidade inteira que o time não tem e que alguém já resolveu — o planejador sinaliza em "Ferramenta que falta" |
 
-A recomendação de MCP ou skill vai ao usuário pela ferramenta de perguntas
-(múltipla escolha, com o sinal citado e "agora não" como opção); **nada se instala
-sem o "sim"**. Falta de acesso que apareceu duas vezes não é azar, é ferramenta
-faltando (`references/retro-signals.md`): detecte no fechamento e no `/plumb-dream`.
+A recomendação vai ao usuário pela ferramenta de perguntas (com o sinal citado e
+"agora não" como opção); **nada se instala sem o "sim"**. Falta repetida é
+ferramenta faltando (`references/retro-signals.md`): detecte no fechamento e no `/plumb-dream`.
 
 ## Perguntas ao usuário
 
@@ -282,8 +281,10 @@ evidência. Depois, o fechamento da fase 7 em silêncio. Fim — sem pergunta no
    e que o código não mostra → `plumb-find-docs`, nunca a memória; (b) **sistema
    citado sem acesso** (card, banco, erro de produção, design, deploy) →
    `plumb-find-mcps`; (c) **competência inteira que o time não tem** →
-   `plumb-find-skills`. A recomendação de (b) e (c) vai pela ferramenta de
-   perguntas (múltipla escolha, com o sinal citado); nada se instala sem o "sim".
+   `plumb-find-skills`. A recomendação vai **na própria pergunta do grill**, quando
+   uma skill ou MCP serve àquela decisão (`Recomendo ler o card pelo MCP do Jira`);
+   sem pergunta em curso, por múltipla escolha com o sinal citado. Nada se instala
+   sem o "sim".
 
 ## 3 — Alinhar (grill)
 
@@ -430,10 +431,10 @@ Nenhum subagente decide o que dura.
 7. **Feedback** (`item_feedback`, em lote): `helped` no que entrou no trabalho e
    valeu, `irrelevant` no que veio e não serviu, `verified`/`wrong`/`outdated`
    conforme a fase 6. Só o que você viu de fato.
-8. **Ferramenta que faltou:** o que a sessão mostrou faltar (tabela em
-   `references/retro-signals.md`, com o sinal citado) vai ao usuário junto da
-   entrega, pela ferramenta de perguntas — `plumb-find-mcps` para acesso,
-   `plumb-find-skills` para competência.
+8. **Ferramentas para o próximo trabalho:** o que este trabalho mostrou que
+   facilitaria os próximos (acesso, competência, documentação; sinais em
+   `references/retro-signals.md`, cada um com o fato citado) vai na rodada final da
+   entrega, pela ferramenta de perguntas: `plumb-find-mcps`, `-skills`, `-docs`.
 9. **Sobrou sinal que você não tratou** (sessão longa, vários assuntos)? Diga, no
    fim da entrega: `Para guardar o resto desta sessão: /plumb-dream`.
 
