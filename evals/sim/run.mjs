@@ -10,7 +10,9 @@
 //
 // Isolamento: por padrão o cérebro (Knowledge OS) do agente aponta para <sandbox>/.brain-home (KNOWLEDGE_OS_HOME), então
 // nada toca em ~/.knowledge-os. `--real-brain` desliga isso. Variáveis: PLUMB_SIM_DIR (onde ficam os sandboxes),
-// PLUMB_SIM_CLAUDE (comando do claude, para testes), PLUMB_SIM_TIMEOUT_MIN (padrão 15), PLUMB_SIM_MODEL (opcional).
+// PLUMB_SIM_CLAUDE (comando do claude, para testes), PLUMB_SIM_TIMEOUT_MIN (padrão 15), PLUMB_SIM_MODEL (opcional),
+// PLUMB_SIM_ARGS (JSON com flags extras do claude, p.ex. ["--setting-sources","project","--strict-mcp-config","--mcp-config","<arquivo>"]
+// para testar uma versão do Plumb e do servidor sem tocar no que está instalado em ~/.claude).
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join, resolve } from 'node:path';
@@ -60,6 +62,7 @@ function turn(name, message) {
   const st = load(name);
   const args = ['-p', '--permission-mode', 'bypassPermissions', '--output-format', 'json'];
   if (process.env.PLUMB_SIM_MODEL) args.push('--model', process.env.PLUMB_SIM_MODEL);
+  if (process.env.PLUMB_SIM_ARGS) args.push(...JSON.parse(process.env.PLUMB_SIM_ARGS));
   if (st.session) args.push('--resume', st.session);
   const env = { ...process.env };
   if (st.brainHome) env.KNOWLEDGE_OS_HOME = st.brainHome;

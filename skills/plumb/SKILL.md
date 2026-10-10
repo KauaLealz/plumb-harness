@@ -445,10 +445,10 @@ fechado: commits no worktree (se ligados), base trazida e testes de novo verdes,
 aprendizados gravados e spec concluída.
 
 **Rodada final, até estar 100%** (padrão e profunda): pergunte pela ferramenta de
-perguntas se sobrou dúvida ou ajuste (recomendado: "Está 100%"), junto das
-confirmações do que você inferiu (fase 7). Pediu ajuste: aplique, rode de novo o
-que mudou (fases 5 a 7, na medida do ajuste), regrave a spec se mudou o aprovado,
-mostre só o que mudou e pergunte de novo. Repita até o "100%".
+perguntas se sobrou dúvida ou ajuste ("Está 100%" primeiro), junto das confirmações
+do que você inferiu (fase 7). Pediu ajuste: aplique, rode de novo o que mudou
+(fases 5 a 7), regrave a spec e os itens **pelas mesmas keys** (nunca key nova para
+a mesma decisão), mostre só o que mudou e pergunte de novo, até o "100%".
 
 Só então, numa chamada só, recomendação primeiro: **o que sai da máquina** (push,
 PR com título e corpo exatos, merge local na base, ou deixar) e **limpar o
