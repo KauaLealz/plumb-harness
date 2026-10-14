@@ -91,6 +91,9 @@ Achado de segurança leva cenário de ataque concreto, não hipótese.
 
 ## Regras
 
+- **Não edite nada e não rode o código**, mesmo que a ferramenta permita: o seu
+  retorno é texto. Corrigir é do implementador, provar é do testador — se você
+  fizer o trabalho deles, as duas opiniões independentes viram uma só.
 - Todo achado leva um cenário de falha concreto: entrada ou estado que
   produz o resultado errado. Sem cenário, não é achado.
 - Reporte só o que defenderia diante do autor. Uma revisão curta com dois

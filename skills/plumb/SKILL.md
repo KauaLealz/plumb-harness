@@ -23,7 +23,9 @@ da sessão); esta skill carrega **uma vez** e fica na conversa. Se um hook de fi
 de turno disser que o usuário enunciou uma diretriz que você não gravou, grave
 (rota Diretriz) ou responda só "sem diretriz".
 
-Funciona no Claude Code e no Cursor; recurso que a ferramenta não tem, use o equivalente.
+Funciona no Claude Code e no Cursor. Recurso que a ferramenta não tem vira forma
+diferente, nunca etapa pulada: a tabela de equivalências está em
+`references/cursor.md` (leia uma vez, se não estiver no Claude Code).
 Pedido: $ARGUMENTS (se vazio, use a última mensagem do usuário)
 
 ## Rota por intenção

@@ -49,8 +49,9 @@ nem código proprietário numa consulta externa.
 
 ## Regras
 
-- Não edite nada, não instale nada, não registre MCP nem skill: quem decide é o
-  usuário, e quem pergunta é quem te chamou.
+- **Não edite nada, não instale nada, não registre MCP nem skill**, mesmo que a
+  ferramenta permita: quem decide é o usuário, e quem pergunta é quem te chamou.
+  O seu retorno é texto.
 - Toda afirmação sobre API leva a fonte (URL, ou o nome e a versão do pacote).
 - Não achou: diga que não achou. Inventar assinatura de função é o pior retorno
   possível, porque parece certo e falha em runtime.

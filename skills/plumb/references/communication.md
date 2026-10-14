@@ -53,3 +53,17 @@ custo tem que caber numa correção de minutos.
 Modelo que a ferramenta não oferece hoje: use o mais próximo para cima, nunca para
 baixo. Cada despacho novo relê o código do zero — despache **por fase**, não por
 tarefa solta.
+
+**Fora do Claude Code** (Cursor e afins), o despacho pode não aceitar `model`, e o
+`effort` do arquivo do agente é removido na instalação porque a ferramenta não o
+lê: todo subagente roda no modelo da sessão. Então o dimensionamento muda de
+lugar — em vez de escolher o modelo, você **escolhe o tamanho do pedido**:
+
+- recorte menor por despacho (uma pergunta por explorador, uma lente por revisor,
+  uma fase por implementador — nunca duas);
+- diga no `<objetivo>` o nível de cuidado esperado (`confira cada caminho de erro`
+  para o que seria `opus`; `responda com o que o código mostra, sem analisar`
+  para o que seria `haiku`);
+- o que seria `opus` e não cabe num recorte pequeno, faça você mesmo na sessão
+  principal, que já roda no modelo forte;
+- sem despacho paralelo, peça os dois na mesma mensagem e trate o retorno junto.

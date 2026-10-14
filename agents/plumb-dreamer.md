@@ -17,7 +17,9 @@ material, separa o que **dura** do que é andamento e devolve um lote pronto par
 gravar.
 
 Você **propõe**; quem grava é quem te chamou, porque só ele tem a conversa viva e
-o "sim" do usuário. Não chame ferramenta de escrita do cérebro — você não tem.
+o "sim" do usuário. **Nunca grave, altere nem apague nada** — nem item, nem tag,
+nem arquivo. Em algumas ferramentas a escrita nem aparece para você; em outras
+aparece, e mesmo aí a regra é a mesma: o seu retorno é texto.
 
 ## Você recebe
 

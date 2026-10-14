@@ -44,8 +44,24 @@ test('removeBlock tira só o bloco', () => {
 });
 
 test('toCursorAgent troca o modelo e remove campos do Claude Code', () => {
-  const src = '---\nname: a\ndisallowedTools: Write, Edit\nreadonly: true\nmodel: sonnet\neffort: low\n---\nbody\n';
+  const src = '---\nname: a\ndisallowedTools: Write, Edit\nreadonly: true\nmodel: sonnet\neffort: low\nmaxTurns: 30\n---\nbody\n';
   assert.equal(toCursorAgent(src), '---\nname: a\nmodel: inherit\n---\nbody\n');
+});
+
+test('todo agente de verdade sobrevive à conversão para o Cursor', () => {
+  // O Cursor só entende name/description/model: campo que ele não lê fica como lixo no frontmatter.
+  const bad = [];
+  for (const file of readdirSync(join(ROOT, 'agents')).filter((f) => f.endsWith('.md'))) {
+    const out = toCursorAgent(readFileSync(join(ROOT, 'agents', file), 'utf8'));
+    const fm = out.match(/^---\n([\s\S]*?)\n---/);
+    if (!fm) { bad.push(`${file}: sem frontmatter depois da conversão`); continue; }
+    for (const campo of ['effort', 'maxTurns', 'readonly', 'disallowedTools']) {
+      if (new RegExp(`^${campo}:`, 'm').test(fm[1])) bad.push(`${file}: ${campo} sobrou`);
+    }
+    if (!/^model: inherit$/m.test(fm[1])) bad.push(`${file}: modelo não virou inherit`);
+    if (!/^name: plumb-/m.test(fm[1])) bad.push(`${file}: perdeu o name`);
+  }
+  assert.deepEqual(bad, [], bad.join('\n'));
 });
 
 test('install --both global: skills, agentes e instrução; idempotente; uninstall desfaz', () => {

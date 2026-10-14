@@ -191,6 +191,33 @@ test('o fluxo aponta para o modelo de organização', () => {
   assert.ok(skill.includes('brain-model.md'), 'SKILL.md não aponta para o modelo de organização');
 });
 
+test('todo recurso só do Claude Code tem equivalente declarado para o Cursor', () => {
+  // Capacidade nova que o Cursor não tem precisa entrar na tabela, senão o fluxo simplesmente para lá.
+  const text = readFileSync(join(ROOT, 'skills', 'plumb', 'references', 'cursor.md'), 'utf8');
+  const bad = [];
+  for (const recurso of ['ferramenta de perguntas', '`model`', '`effort`', 'paralelo', 'lista de tarefas',
+    'Plan mode', 'Hook', 'disallowedTools', 'readonly', 'mcp.json', 'skills', 'ranscript', 'orktree']) {
+    if (!new RegExp(recurso, 'i').test(text)) bad.push(recurso);
+  }
+  assert.deepEqual(bad, [], `cursor.md não diz o equivalente de: ${bad.join(', ')}`);
+  assert.ok(readFileSync(join(ROOT, 'skills', 'plumb', 'SKILL.md'), 'utf8').includes('cursor.md'),
+    'SKILL.md não aponta para a tabela de equivalências');
+});
+
+test('as regras de não escrever estão no texto dos agentes, não só no frontmatter', () => {
+  // A instalação do Cursor remove disallowedTools e readonly: o que segura o agente é o texto dele.
+  const bad = [];
+  for (const f of agentFiles) {
+    const fm = frontmatter(f);
+    if (!/readonly/.test(readFileSync(f, 'utf8').split('---')[1] ?? '')) continue;
+    const corpo = readFileSync(f, 'utf8').split(/^---$/m).slice(2).join('---');
+    if (!/[Nn]ão (edite|grave|escreva|rode|chame)|nunca (grave|edite|escreva)|[Nn]unca [Gg]rave/.test(corpo)) {
+      bad.push(fm.name);
+    }
+  }
+  assert.deepEqual(bad, [], `agentes só-leitura sem a regra no corpo: ${bad.join(', ')}`);
+});
+
 test('perguntas ao usuário vão pela ferramenta de perguntas, não em texto', () => {
   const all = [...markdownFiles(join(ROOT, 'skills')), ...markdownFiles(join(ROOT, 'agents'))]
     .filter((f) => !f.endsWith('SOURCE.md'));

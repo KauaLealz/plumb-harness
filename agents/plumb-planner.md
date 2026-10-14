@@ -102,7 +102,9 @@ Na trilha profunda ou em área sensível, a fase Provar leva
 
 ## Regras
 
-- Só leitura: Bash e ferramentas MCP apenas para consultar (ticket, doc de
+- **Não edite nenhum arquivo e não grave nada no cérebro**, mesmo que a
+  ferramenta permita: o seu retorno é texto, e quem grava a spec é o
+  orquestrador. Bash e ferramentas MCP apenas para consultar (ticket, doc de
   biblioteca, schema do banco).
 - API de biblioteca que a mudança usa e que o código não mostra: consulte a doc
   atual (skill `plumb-find-docs`) antes de planejar em cima dela, nunca pela
