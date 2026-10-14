@@ -143,6 +143,32 @@ test('a tabela de tiers cobre todo agente instalado, com modelo e esforço', () 
   assert.ok(/des[çc]a|descer/i.test(text), 'communication.md não diz quando descer de modelo');
 });
 
+test('todo agente que recebe regra do cérebro devolve o que ajudou', () => {
+  // Sem isso, o conhecimento mais usado (o que o orquestrador cola nos prompts) nunca recebe feedback.
+  const bad = [];
+  for (const f of agentFiles) {
+    const name = frontmatter(f).name;
+    if (name === 'plumb-scout') continue; // o batedor consulta fonte externa, não o cérebro
+    const text = readFileSync(f, 'utf8');
+    if (!/Do cérebro:|Feedback do que o cérebro trouxe:/.test(text)) bad.push(name);
+  }
+  assert.deepEqual(bad, [], `agentes sem retorno de feedback do cérebro: ${bad.join(', ')}`);
+});
+
+test('as lentes do revisor são as mesmas no fluxo, no contrato de prompt e no agente', () => {
+  const lentes = ['correcao', 'seguranca', 'dados', 'concorrencia'];
+  const files = {
+    'plumb-reviewer.md': readFileSync(join(ROOT, 'agents', 'plumb-reviewer.md'), 'utf8'),
+    'prompt-contract.md': readFileSync(join(ROOT, 'skills', 'plumb', 'references', 'prompt-contract.md'), 'utf8'),
+    'SKILL.md': readFileSync(join(ROOT, 'skills', 'plumb', 'SKILL.md'), 'utf8'),
+  };
+  const bad = [];
+  for (const [name, text] of Object.entries(files)) {
+    for (const l of lentes) if (!text.includes(l)) bad.push(`${name} não cita a lente ${l}`);
+  }
+  assert.deepEqual(bad, [], bad.join('\n'));
+});
+
 test('perguntas ao usuário vão pela ferramenta de perguntas, não em texto', () => {
   const all = [...markdownFiles(join(ROOT, 'skills')), ...markdownFiles(join(ROOT, 'agents'))]
     .filter((f) => !f.endsWith('SOURCE.md'));

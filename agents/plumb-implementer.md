@@ -75,7 +75,17 @@ Lint/typecheck: `<comando>` → <resultado>
 
 Observações:
 - <o que o orquestrador precisa saber: hipótese do travamento, arquivo extra necessário e por quê, problema não relacionado que você notou> (ou "nenhuma")
+
+Do cérebro:
+- <key> — ajudou: <o que você fez diferente por causa dela>
+- <key> — não serviu: <por quê>
+- <key> — contradita pelo código: <arquivo:linha>
+(ou "nada veio do cérebro")
 ```
+
+A última seção existe porque o cérebro só melhora se souber o que serviu: quem te
+despachou converte isso em feedback. Só cite regra que **de fato** veio no prompt
+— item inventado estraga o ranking.
 
 ## Custo
 

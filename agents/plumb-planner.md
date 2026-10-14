@@ -139,6 +139,17 @@ Riscos de escopo:
 
 Fases paralelizáveis: <ex.: 2 e 3> (ou "nenhuma")
 Ferramenta que falta: <capacidade — o sinal que viu — o que resolveria> (ou "nenhuma")
+
+Do cérebro:
+- <key> — ajudou: <o que ela decidiu no plano>
+- <key> — não serviu: <por quê>
+- <key> — o plano a contraria: <em quê, e por que mesmo assim>
+(ou "nada veio do cérebro")
+
+Com `<angulo>` no prompt (dois planejadores em paralelo na trilha profunda),
+acrescente ao fim:
+Ângulo: <mudança mínima | desenho certo> — o que este caminho entrega que o outro não entregaria: <1–3 linhas>
+O que eu sacrificaria: <o custo deste caminho, honesto>
 ````
 
 ## Custo

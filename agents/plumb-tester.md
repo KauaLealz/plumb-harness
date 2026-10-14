@@ -73,7 +73,15 @@ Resultados esperados:
 Execução real: <o que foi exercitado e o resultado> (ou "não aplicável: <motivo>")
 Instáveis: <teste — rodada 1 / rodada 2> (ou "nenhum")
 Lacunas: <o que falta provar, uma linha cada> (ou "nenhuma")
+
+Do cérebro:
+- <key> — confirmada pela prova: <o comando que a confirmou>
+- <key> — contradita pela prova: <o que aconteceu>
+(ou "nada a reportar")
 ```
+
+A última seção existe porque regra confirmada por execução vale mais que regra
+escrita: quem te despachou converte isso em feedback. Só o que você **rodou**.
 
 ## Custo
 

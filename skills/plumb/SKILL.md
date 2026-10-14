@@ -112,14 +112,21 @@ sessão segue no modelo que o usuário escolheu. Quando subir e quando descer:
 
 ## As três buscas de ferramenta
 
-Três skills, uma pergunta cada, usadas pela **checagem de ferramentas** da fase 2
-(também na trilha direta) e de novo quando algo faltar no meio do trabalho:
+Três perguntas, usadas pela **checagem de ferramentas** da fase 2 (também na
+trilha direta) e de novo quando algo faltar no meio do trabalho:
 
-| Skill | A pergunta | Quando |
+| A pergunta | Quando | Skill que o batedor segue |
 |---|---|---|
-| `plumb-find-docs` | falta **documentação**? | A mudança usa biblioteca, framework, SDK ou API cujo uso não está no código: consulte **antes de escrever**, nunca pela memória, sem segredo nem código próprio na consulta. Você, o explorador, o planejador e o implementador |
-| `plumb-find-mcps` | falta **acesso**? | O pedido cita um sistema que você não alcança (card, banco, erro de produção, design, deploy) |
-| `plumb-find-skills` | falta **competência**? | Apareceu uma capacidade inteira que o time não tem e que alguém já resolveu — o planejador sinaliza em "Ferramenta que falta" |
+| falta **documentação**? | A mudança usa biblioteca, framework, SDK ou API cujo uso não está no código: consulte **antes de escrever**, nunca pela memória, sem segredo nem código próprio na consulta | `plumb-find-docs` |
+| falta **acesso**? | O pedido cita um sistema que você não alcança (card, banco, erro de produção, design, deploy) | `plumb-find-mcps` |
+| falta **competência**? | Apareceu uma capacidade inteira que o time não tem e que alguém já resolveu — o planejador sinaliza em "Ferramenta que falta" | `plumb-find-skills` |
+
+**Quem vai buscar é o `plumb-scout`**, um despacho por falta (em paralelo, se
+forem duas), com a versão em uso e o trecho de código que vai usar a API no
+contexto. Ele volta com a conclusão aplicável e a fonte; a documentação inteira e
+o catálogo ficam no contexto dele, não no seu. O implementador consulta direto
+pela skill quando a dúvida nasce dentro da fase dele. Sem o batedor instalado,
+carregue a skill você mesmo.
 
 A recomendação vai ao usuário pela ferramenta de perguntas (com o sinal citado e
 "agora não" como opção); **nada se instala sem o "sim"**. Falta repetida é
@@ -248,7 +255,7 @@ Olhe rápido o código envolvido antes ("causa óbvia" só se sabe olhando).
 
 | Trilha | Quando | Fases que roda |
 |---|---|---|
-| **direta** | Óbvia e local: typo, config, bug de causa clara, ~1–2 arquivos, sem comportamento ou contrato novo | 0, 1, **5**, **6** (os checks) e **7** — sem spec, sem despacho de prova, sem worktree (árvore principal). Só uma pergunta se o pedido for ambíguo. Você corrige, roda os checks e reporta. O pedido já é a aprovação |
+| **direta** | Óbvia e local: typo, config, bug de causa clara, ~1–2 arquivos, sem comportamento ou contrato novo | 0, 1, **5**, **6** (os checks e **um revisor em `sonnet`**) e **7** — sem spec, sem testador, sem worktree (árvore principal). Só uma pergunta se o pedido for ambíguo. Você corrige, roda os checks e reporta. O pedido já é a aprovação |
 | **padrão** | Todo o resto | **Todas.** Alinhar (grill), spec `spec/<id>`, aprovação antes do código, worktree próprio, entrega antes de push/PR |
 | **profunda** | Capacidade nova entre módulos, migração de dados, API pública ou contrato, auth/pagamento/dados pessoais, ou 2+ soluções plausíveis | Todas, com Design na spec e `<lente>seguranca</lente>` no revisor |
 
@@ -272,9 +279,12 @@ bem, mas olhe).
 
 **Direta:** a checagem de ferramentas da fase 2 vale aqui também. Se o pacote não cobre
 a área, uma consulta com os arquivos; implemente (vermelho → verde se for bug), rode
-testes e lint dos arquivos tocados, commite se a convenção do projeto é commitar (sem
-convenção: sem commit, diga onde ficou, nunca pergunte "quer o commit?") e reporte em
-2–3 linhas com a evidência. Depois, a fase 7 em silêncio. Fim — sem pergunta no final.
+testes e lint dos arquivos tocados e **despache um `plumb-reviewer` em `sonnet`** com o
+diff (sem lente, a não ser que a área seja sensível): a correção "óbvia" é onde mais
+entra bug, e o custo é de minutos. Bloqueador ou major: corrija antes de reportar.
+Commite se a convenção do projeto é commitar (sem convenção: sem commit, diga onde
+ficou, nunca pergunte "quer o commit?") e reporte em 2–3 linhas com a evidência e o
+resultado da revisão. Depois, a fase 7 em silêncio. Fim — sem pergunta no final.
 
 ## 2 — Entender
 
@@ -326,6 +336,16 @@ compartilhado.
    de `references/testing.md`. Devolve a spec e, se algo ficou sem resposta,
    "Perguntas em aberto". Área pequena que você já leu: especifique você, pelo
    formato do planejador; na profunda, sempre despache.
+   **Na trilha profunda, despache dois em paralelo**, com o mesmo contexto e
+   ângulos declarados diferentes — um pela **mudança mínima** (o menor caminho
+   que entrega o resultado, reaproveitando o que existe), outro pelo **desenho
+   certo** (a estrutura que você escolheria sem a pressa de hoje). O gatilho da
+   profunda é "2+ soluções plausíveis": uma única cabeça escolhendo sozinha é o
+   ponto cego. **Você sintetiza:** fique com o que entrega o resultado com menos
+   risco, enxerte do outro o que ele viu e o vencedor não, e leve ao Design da
+   spec a opção descartada com o porquê — é isso que vira `rule/decision` na
+   fase 7. Os dois concordaram: siga, e diga em uma linha que o desenho é o
+   mesmo pelos dois caminhos.
 2. **Conferir.** Cada resultado esperado tem o "observa-se"? Cada fase tem papel,
    dependência e critério de saída? As fases Provar e Aprender estão lá? Fora de
    escopo explícito? Sobrou pergunta em aberto? Volte à fase 3 e pergunte: não
@@ -401,13 +421,19 @@ que não rodou nesta sessão.
    - `plumb-tester`: os resultados esperados da spec + os comandos do projeto e como
      subir a aplicação. Prova que funciona; é a única execução da suíte. **Não mande o
      diff nem a base dele** — ele testa caixa-preta de propósito.
-   - `plumb-reviewer`: a key da spec (`spec/<id>`) + base do diff. Com
-     `rule/security` na área (ou auth, pagamento, dados pessoais, entrada externa,
-     segredos no diff) ou na trilha profunda, acrescente `<lente>seguranca</lente>`.
-2. Repasse o veredito em poucas linhas.
+   - `plumb-reviewer`: a key da spec (`spec/<id>`) + base do diff. **Uma lente por
+     despacho**, porque um revisor com três preocupações encontra menos que três com
+     uma cada: a lente `correcao` sempre; `seguranca` com `rule/security` na área (ou
+     auth, pagamento, dados pessoais, entrada externa, segredos no diff) ou na trilha
+     profunda; `dados` quando há migração, escrita em lote ou mudança de contrato de
+     persistência; `concorrencia` quando há fila, job, cache ou estado compartilhado.
+     Na trilha padrão sem nenhum desses sinais, uma lente basta.
+2. Repasse o veredito em poucas linhas — junte as lentes, sem repetir o mesmo achado.
 3. Bloqueadores e majors: corrija já (implementador, nova verificação só do que
    mudou), sem perguntar; só decisão de produto vai ao usuário. Menores ficam
-   listados na entrega.
+   listados na entrega. **A correção volta ao revisor**: um despacho só, com o
+   diff **da correção** e o achado original, para dizer se resolveu e se abriu
+   outra coisa. Correção de bloqueador que ninguém reviu é o bug seguinte.
 4. Mudança visível na interface e ferramenta de navegador: exercite o fluxo você mesmo uma vez.
 5. **Feedback** (fase 7): o que a prova confirmou vira `verified`; o que o
    trabalho contradisse, `wrong` ou `outdated`.
