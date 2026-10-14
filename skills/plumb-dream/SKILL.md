@@ -148,8 +148,8 @@ Os transcripts de um projeto ficam todos na mesma pasta
 desta sessão). Liste os `*.jsonl` com data de modificação desde `<data>`
 (`spec/dream-last` diz até onde já foi lido).
 
-Despache `plumb-explorer`, **um por transcript**, até 3 em paralelo (o resto, na
-fila). Cada um recebe o prompt pelo contrato de `../plumb/references/prompt-contract.md`:
+Despache `plumb-dreamer` (`sonnet`), **um por transcript**, até 3 em paralelo (o
+resto, na fila). Cada um recebe o prompt pelo contrato de `../plumb/references/prompt-contract.md`:
 
 ```
 <objetivo>
