@@ -294,7 +294,8 @@ bem, mas olhe).
 a área, uma consulta com os arquivos; implemente (vermelho → verde se for bug), rode
 testes e lint dos arquivos tocados e **despache um `plumb-reviewer` em `sonnet`** com o
 diff (sem lente, a não ser que a área seja sensível): a correção "óbvia" é onde mais
-entra bug, e o custo é de minutos. Bloqueador ou major: corrija antes de reportar.
+entra bug, e o custo é de minutos. **Exceção:** mudança sem efeito em runtime
+(texto, comentário, documentação, versão de changelog) não vai ao revisor. Bloqueador ou major: corrija antes de reportar.
 Commite se a convenção do projeto é commitar (sem convenção: sem commit, diga onde
 ficou, nunca pergunte "quer o commit?") e reporte em 2–3 linhas com a evidência e o
 resultado da revisão. Depois, a fase 7 em silêncio. Fim — sem pergunta no final.
