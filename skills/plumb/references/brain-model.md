@@ -126,6 +126,38 @@ grava sem os três.**
 E `links` quando existe algo fora: o card, a página da documentação que o batedor
 leu, o dashboard. Link é mais barato que transcrever, e não envelhece junto.
 
+### 5b. A forma canônica da tag
+
+Tag sem forma definida nasce torta na primeira vez e nunca mais se conserta:
+`pagamento`, `pagamentos` e `payments` viram três recortes do mesmo assunto, e
+nenhum deles traz tudo. A forma é fixa:
+
+| Regra | Sim | Não |
+|---|---|---|
+| substantivo no **plural** (coisas contáveis) | `pagamentos`, `webhooks` | `pagamento`, `webhook` |
+| **idioma do usuário**, salvo termo que o time só fala em inglês | `assinaturas`, `auth` | `subscriptions` |
+| minúscula, uma palavra; composta com hífen | `dados-pessoais` | `Dados Pessoais`, `dadosPessoais` |
+| o **assunto**, nunca o tipo nem a tecnologia | `checkout` | `regras`, `decisoes`, `react`, `postgres` |
+| sem sigla que só uma pessoa entende | `lgpd` (o time usa) | `fp`, `v2x` |
+| tema transversal entra como tema | `performance`, `lgpd` | `performance-pagamentos` (duas tags, não uma) |
+
+**Fusão, sempre que você vir a variação** — não é tarefa de faxina, é na hora:
+
+1. `tag_list` **antes** de dar tag a qualquer item. A lista é curta de propósito:
+   leia inteira.
+2. Achou a variação (singular/plural, inglês/português, com e sem hífen)? Funda
+   na canônica com `tag_update` (renomear leva os itens junto) e use a canônica
+   no item que você ia gravar.
+3. `item_save` com tag nova cria e devolve aviso com a parecida: **o aviso é a
+   fusão pedindo para acontecer** — regrave com a existente em vez de deixar as
+   duas.
+4. Criar tag nova de propósito (`tag_create`) só quando o assunto não existe no
+   vocabulário **e** vai aparecer de novo. Na dúvida entre criar e reusar a
+   parecida, reuse: tag estreita demais não é achada por ninguém.
+5. Vocabulário inteiro vazio (projeto recém-ligado): não invente na hora — o
+   `/plumb-setup` semeia de 5 a 10 tags de área a partir do que o repositório
+   realmente tem. Sem setup feito, crie a primeira pela forma acima e avise.
+
 ## 6. Agrupar: quando nasce um `subject`
 
 `subject` é onde o item **mora**; tag é do que ele **fala**. Subject nasce tarde e
@@ -143,8 +175,27 @@ por volume:
 ## 7. Ligar: as relações que o próprio trabalho produz
 
 Grafo vazio é cérebro sem profundidade: cada item vira uma ilha e a busca é a
-única porta. Mas relação decorativa é pior que nenhuma. O critério é um só: **o
-leitor de A precisa abrir B para agir certo?**
+única porta. Relação decorativa é pior que nenhuma — mas, na prática, o erro que
+acontece é o outro: ninguém cria nada, porque "na dúvida, não relacione" é fácil
+de obedecer e não custa nada no momento.
+
+**Duas perguntas, toda vez que você grava.** Não são opcionais, e a resposta
+costuma ser sim:
+
+1. **"Que item que já existe o leitor deste aqui precisaria abrir para agir
+   certo?"** — achou um, a relação é esse. Achou nenhum **depois de procurar**
+   (`item_search` pelo tema, `item_graph` em volta do item mais próximo), tudo
+   bem: siga.
+2. **"Esta é a terceira vez que falamos disso?"** — se é, o problema não é falta
+   de relação, é item faltando ou errado: ou existe um item mais geral que os
+   três deveriam apontar (`implements`), ou os anteriores estão superados
+   (`supersedes`).
+
+**Fechar uma mudança padrão ou profunda sem nenhuma ligação nova é suspeito**, não
+é normal: uma mudança que não toca nada do que já estava guardado ou está
+isolada de verdade (raro), ou o cérebro não foi consultado como devia. Não invente
+uma ligação para cumprir tabela — volte e confira se a consulta da fase 2
+realmente aconteceu.
 
 Estas quatro nascem do trabalho normal — crie-as sem cerimônia, porque a
 evidência está na própria mudança:
@@ -156,9 +207,11 @@ evidência está na própria mudança:
 | a decisão nova substitui uma anterior | `rule/<novo>` **supersedes** `rule/<velho>` (o antigo vira `archived`) |
 | o troubleshoot só faz sentido depois de um procedimento | `howto/<a>` **depends_on** `howto/<b>` |
 
-`related_to` é o default fraco: na dúvida, não relacione — `keywords` e tags já
-cobrem "tem a ver". Antes de mudar um item que já tem vizinhos, `item_graph` para
-ver quem quebra junto.
+`related_to` é o default fraco e quase sempre o errado: se a única coisa que você
+consegue dizer é "tem a ver", `keywords` e tags já cobrem. Mas repare que isso
+vale para o **tipo** da relação, não para criar ou não: antes de desistir, veja
+se o caso não é um dos quatro acima — costuma ser. Antes de mudar um item que já
+tem vizinhos, `item_graph` para ver quem quebra junto.
 
 ## 8. Antes de gravar: o mínimo que não se pula
 
@@ -171,7 +224,10 @@ Um `item_save` só sai com:
       troubleshoot: sintoma/causa/solução; pattern: arquivo-modelo)
 - [ ] `keywords` (4–8, o que outra pessoa digitaria)
 - [ ] `scope_paths` estreito
-- [ ] 1 a 3 `tags` do vocabulário existente
+- [ ] 1 a 3 `tags` do vocabulário existente, na forma canônica (§5b), com
+      `tag_list` consultado antes e a variação fundida se houver
+- [ ] as **duas perguntas** da §7 respondidas: que item o leitor precisaria abrir,
+      e se esta é a terceira vez que o assunto aparece
 - [ ] `origin` certo: `user` (ditado), `code` (inferido com `arquivo:linha`),
       `agent` (o resto)
 - [ ] `source`: commit, `spec/<id>` ou "pedido do usuário AAAA-MM-DD"

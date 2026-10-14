@@ -40,10 +40,12 @@ padrões comuns, mas confira o que vai para um `howto` com comando: tire o valor
 
 Fale como na seção Comunicação de `../plumb/SKILL.md`: idioma do usuário, uma
 linha por etapa sobre o que você encontrou, sem ids internos nem keys do cérebro
-no chat (diga o conteúdo do item). Tipos, keys, scope, origin, tags e o que grava
-direto ou confirma: `../plumb/references/brain.md` (leia uma vez antes de propor;
-as tags estão na seção Tags: `tag_list` antes de criar, vocabulário curto e
-reaproveitado, 1 a 3 por item).
+no chat (diga o conteúdo do item). Ferramentas, campos e tipos:
+`../plumb/references/brain.md`. **O que vira item, de que tipo, com que nome,
+tags na forma canônica, sinônimos, ligações e o mínimo de cada gravação:**
+`../plumb/references/brain-model.md` — leia uma vez antes de propor; é ele que
+diz como o cérebro deve ficar. Fora do Claude Code, as equivalências estão em
+`../plumb/references/cursor.md`.
 
 ## Qual modo
 
@@ -199,7 +201,26 @@ A saúde do cérebro, sem olhar sessões:
 2. `health_check`: arquivos que não parseiam.
 3. Cruze com o código quando ajudar (`plumb-explorer`): um item que o código
    contradiz → pergunte qual vale.
-4. Prefira sempre o ajuste mais barato que ataca a causa:
+4. **Olhe a forma, não só a saúde.** O relatório mostra o que não é usado; estas
+   quatro varreduras mostram o que nasceu torto, que é o que faz não ser usado.
+   Rode todas, mesmo que o relatório esteja limpo:
+   - **tag fora da forma canônica** (`tag_list` contra
+     `../plumb/references/brain-model.md` §5b): singular onde devia ser plural,
+     inglês no meio do português, nome de tipo (`regras`), de camada (`services`)
+     ou de tecnologia (`react`), composta sem hífen. Proponha `tag_update` para a
+     forma certa — renomear leva os itens junto.
+   - **variações da mesma palavra** (`pagamento`/`pagamentos`/`payments`,
+     `dado-pessoal`/`dados-pessoais`): funda na canônica, uma pergunta só com
+     todas as fusões juntas.
+   - **item sem sinônimos de busca ou com tags demais**
+     (`item_search` por tipo, olhando `keywords` e `tags`): item sem `keywords` é
+     item que só quem já sabe a key encontra; item com 4+ tags costuma ser dois
+     itens.
+   - **item isolado** (`item_graph` nos mais abertos, `depth=1`): `rule` ou `howto`
+     sem nenhuma ligação, quando existe no mesmo assunto algo que ele concretiza
+     ou pressupõe. Proponha a ligação (`implements`, `depends_on`), não uma
+     `related_to` decorativa.
+5. Prefira sempre o ajuste mais barato que ataca a causa:
    - **nunca aberto / `irrelevant`:** `keywords` ruins ou `scope_paths` largo →
      reforce (o porquê no `summary`, sinônimos, escopo estreito); só depois, arquive.
    - **em `review`:** confirme no código; vira `active` (regrave) ou `archived`.
@@ -207,11 +228,12 @@ A saúde do cérebro, sem olhar sessões:
    - **busca vazia:** o termo que o usuário digitou entra em `keywords` do item certo,
      ou falta o item.
    - **tag sem item:** `tag_delete` (prévia primeiro).
-   - **tags duplicadas ou parecidas** (`pagamento` e `pagamentos`, estado esquecido
-     em spec `done`): `tag_list`, `tag_update` para mesclar no termo curto e
-     reaproveitado; pergunte antes (`brain.md`, seção Tags).
    - **subject com 1–2 itens, ou project sem uso:** proponha `subject_merge`/`delete`.
-5. Nunca apague `origin=user` sem perguntar; prefira `archived` a apagar.
+   - **área com 3+ itens e nome próprio, sem subject:** proponha o subject e a
+     mudança dos itens (`brain-model.md` §6).
+   - **vocabulário vazio num projeto já em uso:** o setup não semeou; proponha a
+     semente de 5 a 10 tags de área (`plumb-setup`, "Semear o vocabulário de tags").
+6. Nunca apague `origin=user` sem perguntar; prefira `archived` a apagar.
 
 ## 4 — Propor
 
@@ -270,16 +292,22 @@ O que faltou durante o trabalho
 
 ## 5 — Aplicar e registrar
 
-Grave só o aprovado, e leia os `warnings`. Tags: `tag_list` antes de criar; reaproveite
-o vocabulário (`brain.md`, seção Tags) e **consolide duplicatas e variações**
-(`tag_update` mescla; `tag_delete` mostra a prévia primeiro), com a confirmação do
-usuário:
+Grave só o aprovado, e leia os `warnings`. Tags: `tag_list` antes de criar;
+reaproveite o vocabulário e **consolide variações na forma canônica**
+(`../plumb/references/brain-model.md` §5b; `tag_update` renomeia levando os itens,
+`tag_delete` mostra a prévia primeiro), com a confirmação do usuário:
 
 1. **`item_save`** de todos os itens aprovados numa chamada (novos e reforços, pela
    mesma key; `origin` conforme a fonte: `user` o que ele disse, `agent` o que você
-   inferiu). Estrutura nova (workspace, project, subject, tag) só com o "sim" dela.
+   inferiu), cada um pelo **mínimo** de `brain-model.md` §8 — inclusive os
+   sinônimos de busca, que são o que faz o item ser achado depois. Estrutura nova
+   (workspace, project, subject, tag) só com o "sim" dela.
 2. **`item_feedback`**: `wrong`/`outdated` nos itens que o trabalho contradisse, `helped`
-   nos que valeram. **`relation_create`** para `supersedes` e dependências.
+   nos que valeram. **`relation_create`**, em lote, com as ligações aprovadas —
+   `supersedes` do que foi substituído, `implements` do que concretiza uma regra
+   mais ampla, `depends_on` do que pressupõe outro. O sonho é quando o grafo mais
+   cresce: você está vendo muitos itens juntos, que é justamente o que não
+   acontece no meio de uma mudança.
 3. Comandos do `AGENTS.md` que mudaram: edite o bloco e diga.
 4. **Ferramentas aprovadas** (a pergunta da seção 4):
    - Acesso (`plumb-find-mcps`): configure pelo catálogo, somente leitura por

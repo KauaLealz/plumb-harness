@@ -169,6 +169,28 @@ test('as lentes do revisor são as mesmas no fluxo, no contrato de prompt e no a
   assert.deepEqual(bad, [], bad.join('\n'));
 });
 
+test('o vocabulário de tags tem forma canônica e regra de fusão', () => {
+  // Sem forma definida, a primeira tag de cada área é inventada na hora: pagamento, pagamentos, payments.
+  const text = readFileSync(join(ROOT, 'skills', 'plumb', 'references', 'brain-model.md'), 'utf8');
+  const bad = [];
+  for (const [re, oque] of [
+    [/forma can[ôo]nica/i, 'a forma canônica da tag'],
+    [/plural/i, 'o número (plural)'],
+    [/fus[ãa]o|fundir|funda/i, 'a regra de fusão de variação'],
+    [/tag_update/, 'como fundir (tag_update)'],
+    [/tag_list/, 'consultar o vocabulário antes (tag_list)'],
+  ]) if (!re.test(text)) bad.push(oque);
+  assert.deepEqual(bad, [], `brain-model.md não define: ${bad.join(', ')}`);
+});
+
+test('as relações têm gatilho positivo, não só a recomendação de não criar', () => {
+  // "Na dúvida, não relacione" somado a "só se um precisa do outro" dava zero relação criada.
+  const text = readFileSync(join(ROOT, 'skills', 'plumb', 'references', 'brain-model.md'), 'utf8');
+  assert.ok(/precisaria abrir/i.test(text), 'falta a pergunta que dispara a relação');
+  assert.ok(/terceira vez|3[ªa] vez/i.test(text), 'falta o gatilho de repetição');
+  assert.ok(/suspeit/i.test(text), 'fechar sem nenhuma ligação precisa ser tratado como suspeito');
+});
+
 test('o modelo de organização cobre os seis subtipos de regra e os cinco de contexto', () => {
   // O fluxo colapsava tudo em decision e troubleshoot porque os outros subtipos só existiam no setup.
   const text = readFileSync(join(ROOT, 'skills', 'plumb', 'references', 'brain-model.md'), 'utf8');
@@ -186,9 +208,44 @@ test('o modelo de organização cobre os seis subtipos de regra e os cinco de co
   assert.deepEqual(bad, [], `brain-model.md não cobre: ${bad.join(', ')}`);
 });
 
-test('o fluxo aponta para o modelo de organização', () => {
-  const skill = readFileSync(join(ROOT, 'skills', 'plumb', 'SKILL.md'), 'utf8');
-  assert.ok(skill.includes('brain-model.md'), 'SKILL.md não aponta para o modelo de organização');
+test('as três skills que gravam no cérebro seguem o mesmo modelo', () => {
+  // plumb, plumb-setup e plumb-dream gravam itens. Se uma delas não apontar para o modelo,
+  // ela inventa o próprio padrão e o cérebro fica com três formatos.
+  const bad = [];
+  for (const skill of ['plumb', 'plumb-setup', 'plumb-dream']) {
+    const text = readFileSync(join(ROOT, 'skills', skill, 'SKILL.md'), 'utf8');
+    if (!text.includes('brain-model.md')) bad.push(`${skill} não aponta para o modelo de organização`);
+    if (!/tag_list/.test(text)) bad.push(`${skill} não consulta o vocabulário antes de dar tags`);
+  }
+  assert.deepEqual(bad, [], bad.join('\n'));
+});
+
+test('setup e dream dimensionam o despacho e conhecem o Cursor', () => {
+  for (const skill of ['plumb-setup', 'plumb-dream']) {
+    const text = readFileSync(join(ROOT, 'skills', skill, 'SKILL.md'), 'utf8');
+    assert.ok(/`haiku`|`sonnet`|`opus`/.test(text), `${skill} não dimensiona o modelo dos despachos`);
+    assert.ok(text.includes('cursor.md'), `${skill} não aponta a tabela de equivalências do Cursor`);
+  }
+});
+
+test('o setup semeia o vocabulário de tags a partir do repositório', () => {
+  // Vocabulário vazio é o que faz cada item inventar a própria tag.
+  const text = readFileSync(join(ROOT, 'skills', 'plumb-setup', 'SKILL.md'), 'utf8');
+  assert.ok(/Semear o vocabul[áa]rio/i.test(text), 'o setup não tem a etapa de semear tags');
+  assert.ok(/tag_create/.test(text), 'o setup não cria as tags aprovadas');
+  assert.ok(/5 a 10|5–10/.test(text), 'o setup não diz quantas tags semear');
+});
+
+test('o dream audita a forma, não só a saúde do cérebro', () => {
+  const text = readFileSync(join(ROOT, 'skills', 'plumb-dream', 'SKILL.md'), 'utf8');
+  const bad = [];
+  for (const [re, oque] of [
+    [/forma can[ôo]nica/i, 'tag fora da forma canônica'],
+    [/varia[çc][õo]es/i, 'variações da mesma palavra'],
+    [/item_graph/, 'item isolado (item_graph)'],
+    [/keywords/, 'item sem sinônimos de busca'],
+  ]) if (!re.test(text)) bad.push(oque);
+  assert.deepEqual(bad, [], `a auditoria do dream não cobre: ${bad.join(', ')}`);
 });
 
 test('todo recurso só do Claude Code tem equivalente declarado para o Cursor', () => {

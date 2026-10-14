@@ -55,7 +55,13 @@ despachar alguém). Nunca no chat: o nome dos modos ("estruturação", "migraç�
 "auditoria", "fundação"), nomes de subagente e das seções desta skill, keys do
 cérebro. Diga o conteúdo: `Guardei: pagamentos sempre em centavos inteiros (vale em src/payments).`
 
-Monte os prompts de delegação pelo contrato em `../plumb/references/prompt-contract.md`.
+Monte os prompts de delegação pelo contrato em `../plumb/references/prompt-contract.md`,
+e **dimensione cada despacho**: o explorador vai em `haiku` (é leitura e Grep), o
+batedor `plumb-scout` em `haiku` quando faltar documentação de uma ferramenta ou
+acesso a um sistema, e o que for decisão fica com você, na sessão principal
+(tabela e regras de escalada em `../plumb/references/communication.md`). Fora do
+Claude Code, o despacho não escolhe modelo: recorte menor por despacho, pela
+tabela de equivalências de `../plumb/references/cursor.md`.
 Tipos, keys, scope, origin, tags e onde guardar: `../plumb/references/brain.md`
 (leia uma vez, antes da primeira gravação; as tags estão na seção Tags). **A
 forma que o projeto deve ter no fim do setup** — os quatro contextos que todo
@@ -121,9 +127,34 @@ dono do remote é indício, não prova. Uma pergunta por decisão, cada uma com 
   Reaproveite. Não existem? Pergunte se cria, só quando a dimensão de fato gerar
   itens para eles.
 - **subjects**: nenhum agora. Só áreas com nome próprio que já tenham 3 itens ou
-  mais, e só depois da dimensão em que apareceram.
-- **tags**: reaproveite o vocabulário que existe (`tag_list` antes de qualquer
-  criação, `brain.md` seção Tags); crie só o que o usuário aprovar.
+  mais, e só depois da dimensão em que apareceram (`brain-model.md` §6).
+- **tags**: o setup é onde o vocabulário nasce — e é a única chance de ele nascer
+  certo. Veja **Semear o vocabulário**, logo abaixo.
+
+### Semear o vocabulário de tags
+
+Vocabulário vazio é o que faz cada item inventar a própria tag: no primeiro
+`item_save` sai `pagamento`, no segundo `pagamentos`, no terceiro `payments`, e
+nenhum recorte traz tudo. Semeie **depois do mapeamento** (fase 2) e **antes da
+primeira dimensão que grava**:
+
+1. `tag_list`: o que já existe manda. Vocabulário com itens: só complete o que
+   faltar, sem renomear nada sem o "sim".
+2. Tire de **5 a 10 tags de área** do que o repositório de fato mostra — as pastas
+   de primeiro nível com nome de domínio, os módulos que o mapa achou, os
+   contextos que o produto tem. Não invente área que o código não tem, e não use
+   nome de tecnologia (`react`, `postgres`), de camada (`services`, `utils`) nem
+   de tipo (`regras`): isso não é assunto.
+3. Acrescente **até 3 temas transversais** só se o repositório der sinal: `lgpd` ou
+   `dados-pessoais` (tratamento de dado pessoal), `performance` (trabalho de
+   otimização no histórico), `acessibilidade`, `multi-tenant`.
+4. Tudo na forma canônica de `../plumb/references/brain-model.md` §5b: plural,
+   idioma do usuário, minúscula, hífen no composto.
+5. Mostre a lista ao usuário pela ferramenta de perguntas (marcar quais entram,
+   `multiSelect`), com a origem de cada uma em meia frase (`pagamentos — src/payments
+   e 2 fluxos no checkout`). Só as aprovadas vão para `tag_create`.
+6. Daí em diante, toda gravação do setup usa **essas** tags; variação que
+   aparecer é fundida na hora (`tag_update`), nunca criada ao lado.
 
 ### Ferramenta do time
 
@@ -154,7 +185,7 @@ e o `summary` novos.
 ## 2 — Pesquisa em paralelo
 
 Antes da primeira dimensão, mapeie o repositório. Despache até 4 `plumb-explorer`
-de uma vez, um por recorte (pule o que o repositório claramente não tem).
+em `haiku`, de uma vez, um por recorte (pule o que o repositório claramente não tem).
 Repositório pequeno, que você cobre em poucas leituras: explore você mesmo —
 despachar custaria mais que ler. Cada explorador devolve **achados com
 `arquivo:linha`** e separa o que viu do que deduziu.
@@ -214,9 +245,18 @@ dúvida: uma pergunta a mais, curta.
 
 **3. Grave a dimensão** quando as respostas estiverem fechadas: os itens dela num
 `item_save` só (`origin` conforme `references/dimensions.md`: `user` o que ele
-respondeu, `code` o que ele confirmou do código, `agent` nunca sem confirmação;
-tags de `tag_list`, 1 a 3 por item), leia os `warnings`, corrija. Regrave a spec
-do setup. Diga em uma linha o que guardou.
+respondeu, `code` o que ele confirmou do código, `agent` nunca sem confirmação),
+cada item pelo **mínimo** de `../plumb/references/brain-model.md` §8 — resumo com
+o porquê, 4 a 8 sinônimos de busca, `scope_paths` estreito e 1 a 3 tags da semente,
+na forma canônica. Leia os `warnings` e corrija: aviso de tag parecida é fusão
+pedindo para acontecer (`tag_update`), não tag nova.
+
+**Ligue o que acabou de gravar** (`brain-model.md` §7), antes de passar adiante: a
+regra que concretiza uma decisão aponta para ela (`implements`); o procedimento
+que pressupõe outro, `depends_on`; o item que substitui algo migrado de
+`.claude/rules/` ou do `AGENTS.md`, `supersedes`. No setup essas ligações são
+baratas e óbvias — é a única vez em que todo o material está junto na sua frente.
+Regrave a spec do setup. Diga em uma linha o que guardou.
 
 **4. Próxima dimensão.**
 
