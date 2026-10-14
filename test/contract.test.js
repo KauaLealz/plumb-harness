@@ -102,6 +102,122 @@ test('a referência do cérebro cobre as 32 ferramentas, os tipos e o scope', ()
   }
 });
 
+// Dimensionamento: o modelo é escolhido pelo orquestrador a cada despacho (parâmetro `model`), e o esforço
+// vive no frontmatter porque a ferramenta de subagente não aceita `effort` por chamada.
+const EFFORT = new Set(['low', 'medium', 'high', 'xhigh', 'max']);
+
+function frontmatter(file) {
+  const text = readFileSync(file, 'utf8');
+  const m = text.match(/^---\n([\s\S]*?)\n---/);
+  assert.ok(m, `${relative(ROOT, file)} sem frontmatter`);
+  const fields = {};
+  for (const line of m[1].split('\n')) {
+    const kv = line.match(/^([a-zA-Z-]+):\s*(.*)$/);
+    if (kv) fields[kv[1]] = kv[2].trim();
+  }
+  return fields;
+}
+
+const agentFiles = readdirSync(join(ROOT, 'agents')).filter((f) => f.endsWith('.md')).map((f) => join(ROOT, 'agents', f));
+
+test('todo agente herda o modelo da sessão e declara esforço e teto de turnos', () => {
+  const bad = [];
+  for (const f of agentFiles) {
+    const fm = frontmatter(f);
+    const name = relative(ROOT, f);
+    if (fm.model !== 'inherit') bad.push(`${name}: model=${fm.model} — deve ser inherit (o tier vem do despacho)`);
+    if (!EFFORT.has(fm.effort)) bad.push(`${name}: effort=${fm.effort ?? '(ausente)'}`);
+    if (!/^\d+$/.test(fm.maxTurns ?? '')) bad.push(`${name}: maxTurns=${fm.maxTurns ?? '(ausente)'}`);
+  }
+  assert.deepEqual(bad, [], `frontmatter fora do contrato:\n${bad.join('\n')}`);
+});
+
+test('a tabela de tiers cobre todo agente instalado, com modelo e esforço', () => {
+  const text = readFileSync(join(ROOT, 'skills', 'plumb', 'references', 'communication.md'), 'utf8');
+  for (const f of agentFiles) {
+    const name = frontmatter(f).name;
+    assert.ok(text.includes(name), `communication.md não dimensiona ${name}`);
+  }
+  for (const t of ['haiku', 'sonnet', 'opus']) assert.ok(text.includes(t), `communication.md não cita ${t}`);
+  assert.ok(/sub[ai]|escalad/i.test(text), 'communication.md não diz quando subir de modelo');
+  assert.ok(/des[çc]a|descer/i.test(text), 'communication.md não diz quando descer de modelo');
+});
+
+test('todo agente que recebe regra do cérebro devolve o que ajudou', () => {
+  // Sem isso, o conhecimento mais usado (o que o orquestrador cola nos prompts) nunca recebe feedback.
+  const bad = [];
+  for (const f of agentFiles) {
+    const name = frontmatter(f).name;
+    if (name === 'plumb-scout') continue; // o batedor consulta fonte externa, não o cérebro
+    const text = readFileSync(f, 'utf8');
+    if (!/Do cérebro:|Feedback do que o cérebro trouxe:/.test(text)) bad.push(name);
+  }
+  assert.deepEqual(bad, [], `agentes sem retorno de feedback do cérebro: ${bad.join(', ')}`);
+});
+
+test('as lentes do revisor são as mesmas no fluxo, no contrato de prompt e no agente', () => {
+  const lentes = ['correcao', 'seguranca', 'dados', 'concorrencia'];
+  const files = {
+    'plumb-reviewer.md': readFileSync(join(ROOT, 'agents', 'plumb-reviewer.md'), 'utf8'),
+    'prompt-contract.md': readFileSync(join(ROOT, 'skills', 'plumb', 'references', 'prompt-contract.md'), 'utf8'),
+    'SKILL.md': readFileSync(join(ROOT, 'skills', 'plumb', 'SKILL.md'), 'utf8'),
+  };
+  const bad = [];
+  for (const [name, text] of Object.entries(files)) {
+    for (const l of lentes) if (!text.includes(l)) bad.push(`${name} não cita a lente ${l}`);
+  }
+  assert.deepEqual(bad, [], bad.join('\n'));
+});
+
+test('o modelo de organização cobre os seis subtipos de regra e os cinco de contexto', () => {
+  // O fluxo colapsava tudo em decision e troubleshoot porque os outros subtipos só existiam no setup.
+  const text = readFileSync(join(ROOT, 'skills', 'plumb', 'references', 'brain-model.md'), 'utf8');
+  const bad = [];
+  for (const s of ['rule/code', 'rule/pattern', 'rule/security', 'rule/business', 'rule/process', 'rule/decision',
+    'howto/procedure', 'howto/troubleshoot',
+    'context/product', 'context/map', 'context/stack', 'context/glossary', 'context/environment']) {
+    if (!text.includes(s)) bad.push(s);
+  }
+  for (const campo of ['keywords', 'scope_paths', 'summary', 'tags', 'links', 'origin', 'source']) {
+    if (!text.includes(campo)) bad.push(`campo ${campo}`);
+  }
+  for (const r of ['implements', 'depends_on', 'supersedes']) if (!text.includes(r)) bad.push(`relação ${r}`);
+  if (!text.includes('subject')) bad.push('agrupamento por subject');
+  assert.deepEqual(bad, [], `brain-model.md não cobre: ${bad.join(', ')}`);
+});
+
+test('o fluxo aponta para o modelo de organização', () => {
+  const skill = readFileSync(join(ROOT, 'skills', 'plumb', 'SKILL.md'), 'utf8');
+  assert.ok(skill.includes('brain-model.md'), 'SKILL.md não aponta para o modelo de organização');
+});
+
+test('todo recurso só do Claude Code tem equivalente declarado para o Cursor', () => {
+  // Capacidade nova que o Cursor não tem precisa entrar na tabela, senão o fluxo simplesmente para lá.
+  const text = readFileSync(join(ROOT, 'skills', 'plumb', 'references', 'cursor.md'), 'utf8');
+  const bad = [];
+  for (const recurso of ['ferramenta de perguntas', '`model`', '`effort`', 'paralelo', 'lista de tarefas',
+    'Plan mode', 'Hook', 'disallowedTools', 'readonly', 'mcp.json', 'skills', 'ranscript', 'orktree']) {
+    if (!new RegExp(recurso, 'i').test(text)) bad.push(recurso);
+  }
+  assert.deepEqual(bad, [], `cursor.md não diz o equivalente de: ${bad.join(', ')}`);
+  assert.ok(readFileSync(join(ROOT, 'skills', 'plumb', 'SKILL.md'), 'utf8').includes('cursor.md'),
+    'SKILL.md não aponta para a tabela de equivalências');
+});
+
+test('as regras de não escrever estão no texto dos agentes, não só no frontmatter', () => {
+  // A instalação do Cursor remove disallowedTools e readonly: o que segura o agente é o texto dele.
+  const bad = [];
+  for (const f of agentFiles) {
+    const fm = frontmatter(f);
+    if (!/readonly/.test(readFileSync(f, 'utf8').split('---')[1] ?? '')) continue;
+    const corpo = readFileSync(f, 'utf8').split(/^---$/m).slice(2).join('---');
+    if (!/[Nn]ão (edite|grave|escreva|rode|chame)|nunca (grave|edite|escreva)|[Nn]unca [Gg]rave/.test(corpo)) {
+      bad.push(fm.name);
+    }
+  }
+  assert.deepEqual(bad, [], `agentes só-leitura sem a regra no corpo: ${bad.join(', ')}`);
+});
+
 test('perguntas ao usuário vão pela ferramenta de perguntas, não em texto', () => {
   const all = [...markdownFiles(join(ROOT, 'skills')), ...markdownFiles(join(ROOT, 'agents'))]
     .filter((f) => !f.endsWith('SOURCE.md'));

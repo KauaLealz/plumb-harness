@@ -5,6 +5,7 @@ disallowedTools: Write, Edit, NotebookEdit, mcp__knowledge-os__item_save, mcp__k
 readonly: true
 model: inherit
 effort: high
+maxTurns: 40
 ---
 
 # Papel
@@ -101,7 +102,9 @@ Na trilha profunda ou em área sensível, a fase Provar leva
 
 ## Regras
 
-- Só leitura: Bash e ferramentas MCP apenas para consultar (ticket, doc de
+- **Não edite nenhum arquivo e não grave nada no cérebro**, mesmo que a
+  ferramenta permita: o seu retorno é texto, e quem grava a spec é o
+  orquestrador. Bash e ferramentas MCP apenas para consultar (ticket, doc de
   biblioteca, schema do banco).
 - API de biblioteca que a mudança usa e que o código não mostra: consulte a doc
   atual (skill `plumb-find-docs`) antes de planejar em cima dela, nunca pela
@@ -138,6 +141,17 @@ Riscos de escopo:
 
 Fases paralelizáveis: <ex.: 2 e 3> (ou "nenhuma")
 Ferramenta que falta: <capacidade — o sinal que viu — o que resolveria> (ou "nenhuma")
+
+Do cérebro:
+- <key> — ajudou: <o que ela decidiu no plano>
+- <key> — não serviu: <por quê>
+- <key> — o plano a contraria: <em quê, e por que mesmo assim>
+(ou "nada veio do cérebro")
+
+Com `<angulo>` no prompt (dois planejadores em paralelo na trilha profunda),
+acrescente ao fim:
+Ângulo: <mudança mínima | desenho certo> — o que este caminho entrega que o outro não entregaria: <1–3 linhas>
+O que eu sacrificaria: <o custo deste caminho, honesto>
 ````
 
 ## Custo

@@ -13,8 +13,11 @@ hora para descobrir.
 
 Melhore o cérebro a partir da **evidência do próprio trabalho**, nunca de
 opinião: cada proposta cita o turno da conversa (ou o arquivo) que a sustenta. Quem
-faz é **você**, o orquestrador, porque só você tem a sessão; o `plumb-explorer`
-ajuda a varrer sessões antigas. Nada é gravado antes da confirmação do usuário, a
+decide é **você**, o orquestrador, porque só você tem a sessão e o "sim" do
+usuário; a varredura em si vai para o `plumb-dreamer` (modelo `sonnet`), que lê o
+transcript fora do seu contexto e devolve o lote com a evidência de cada item —
+nos três modos. Passe a ele o caminho do transcript, o do extrator e o caminho
+absoluto de `../plumb/references/brain-model.md`. Nada é gravado antes da confirmação do usuário, a
 não ser o que ele mesmo ditou. Sem inferir em silêncio: o que você deduziu é
 mostrado, com a evidência, e confirmado.
 
@@ -145,8 +148,8 @@ Os transcripts de um projeto ficam todos na mesma pasta
 desta sessão). Liste os `*.jsonl` com data de modificação desde `<data>`
 (`spec/dream-last` diz até onde já foi lido).
 
-Despache `plumb-explorer`, **um por transcript**, até 3 em paralelo (o resto, na
-fila). Cada um recebe o prompt pelo contrato de `../plumb/references/prompt-contract.md`:
+Despache `plumb-dreamer` (`sonnet`), **um por transcript**, até 3 em paralelo (o
+resto, na fila). Cada um recebe o prompt pelo contrato de `../plumb/references/prompt-contract.md`:
 
 ```
 <objetivo>

@@ -23,7 +23,9 @@ da sessão); esta skill carrega **uma vez** e fica na conversa. Se um hook de fi
 de turno disser que o usuário enunciou uma diretriz que você não gravou, grave
 (rota Diretriz) ou responda só "sem diretriz".
 
-Funciona no Claude Code e no Cursor; recurso que a ferramenta não tem, use o equivalente.
+Funciona no Claude Code e no Cursor. Recurso que a ferramenta não tem vira forma
+diferente, nunca etapa pulada: a tabela de equivalências está em
+`references/cursor.md` (leia uma vez, se não estiver no Claude Code).
 Pedido: $ARGUMENTS (se vazio, use a última mensagem do usuário)
 
 ## Rota por intenção
@@ -51,8 +53,11 @@ hora; a mudança segue a trilha dela, sem herdar a cerimônia da diretriz.
 
 O segundo cérebro (MCP `knowledge-os`) entra **em todo pedido**, não só ao
 fechar. Esta tabela é o contrato: o que ler, o que gravar e que feedback dar.
-Moldes, tipos, scope e o que grava direto ou confirma: `references/brain.md` —
-**leia uma vez por sessão, antes da primeira gravação**.
+Duas referências, **lidas uma vez por sessão, antes da primeira gravação**:
+`references/brain.md` (ferramentas, campos, tipos — o contrato do servidor) e
+`references/brain-model.md` (**o modelo padrão**: dado o que aconteceu no
+trabalho, o que vira item, de que tipo, com que nome, onde mora, para quem vale,
+que sinônimos e que relação). Na dúvida sobre **o que fazer**, é o segundo.
 
 | Momento | Lê | Grava | Feedback |
 |---|---|---|---|
@@ -61,24 +66,32 @@ Moldes, tipos, scope e o que grava direto ou confirma: `references/brain.md` —
 | **Diretriz** | `item_get` pela key e `item_search` pelo tema (duplicata) | **Na hora**, `origin=user`, no lugar que a tabela "Vale para…" indica; confirme em uma linha | — |
 | **Investigação** | `item_search` pelo sintoma e pela área | O achado durável: `howto/troubleshoot` ou `rule/decision`, com confirmação | — |
 | **0 Localizar** | `item_search(repo=".", types=["spec"], status=["active","draft"])` (o `summary` mostra o que cada agente faz), depois `item_get` da spec | — | — |
-| **2 Entender** | **Uma** consulta: `item_search(repo=".", paths=<arquivos que a mudança toca>, query=<tema>)`; `howto` que casa vira o roteiro das fases; `rule/security` na área liga a lente de segurança | — | — |
-| **3 Alinhar** | Rules e decisions da área e as specs ativas dos outros (áreas que se sobrepõem), para não perguntar o que já está resolvido | O que o usuário responder e for regra: direto, `origin=user` | — |
+| **2 Entender** | **Uma chamada, várias consultas**: `item_search(repo=".", queries=[<tema>, <sinônimo>, <termo em inglês>], paths=<arquivos que a mudança toca>)` — busca vazia não prova ausência. Na profunda, mais uma com `workspace=` (como já resolvemos isto em outro repositório). `howto` que casa vira o roteiro das fases; `rule/security` na área liga a lente de segurança | Convenção que o explorador provou com repetição em 3+ arquivos: `rule/code`, `origin=code`, com `arquivo:linha` | — |
+| **3 Alinhar** | Rules e decisions da área e as specs ativas dos outros (áreas que se sobrepõem), para não perguntar o que já está resolvido | **Na hora**, `origin=user`: regra de negócio que o usuário responder (`rule/business`), convenção de código (`rule/code`), jeito do time trabalhar (`rule/process`) — o Combinado da spec não substitui o item, porque a spec vira `done` e sai do caminho | — |
 | **4 Especificar** | `item_graph` do item que a mudança altera, se existir; `tag_list` para as tags de área | `spec/<id>` com `status: draft`, `summary` e cabeçalho no padrão (`brain.md` §15), tag `aguardando-aprovacao` + área; `active` depois do "sim" | — |
 | **5 Construir** | `item_search` pelo sintoma, ao travar | `howto/troubleshoot` ao destravar algo não óbvio (confirma); `summary`, tag de estado e `Atualizado` da spec a cada fase | — |
 | **6 Provar** | O revisor lê a spec e o cérebro por conta própria | — | `verified` nas regras da área que a prova confirmou; `wrong` ou `outdated` no que o trabalho contradisse |
-| **7 Aprender** | A Retro, as decisões, o que travou; os três passos anti-duplicata | **Um** `item_save`: `rule/decision`, `howto`, `rule/pattern`, `context`, a spec `done`; `relation_create` e `supersedes` quando o leitor de um precisa do outro | `helped` no que valeu, `irrelevant` no que o pacote trouxe e não serviu |
+| **7 Aprender** | A Retro, as decisões, o que travou; os três passos anti-duplicata; a tabela "situação → o que vira item" (`brain-model.md` §3) | `item_save` em lote, cada item pelo mínimo da §8 do `brain-model.md` (resumo com porquê, sinônimos, `scope_paths`, tags, `origin`); a spec `done`; `relation_create` das quatro relações que o trabalho produziu (§7) | `helped`, `irrelevant`, `verified`, `wrong`/`outdated` — juntando o "Do cérebro" de **todos** os subagentes despachados |
 | **8 Entregar** | — | — | — |
 
 Regras de uso:
 - **Antes de explorar código numa área nova, busque**: o cérebro pode já saber.
   **Ao travar, busque pelo sintoma** antes de qualquer hipótese. **Antes de
   gravar, busque** (duplicata).
-- **Busca vazia não prova ausência:** tente um sinônimo, o termo em inglês.
-- **Tags:** 1 a 3 de área ou tema por item, de `tag_list` antes de criar (`brain.md` §8).
-- **Gravou, avise** em uma linha, em linguagem humana (`Guardei para as próximas
-  vezes: valores em pagamentos são sempre centavos inteiros.`). O que o usuário
-  ditou grava e confirma; o que **você inferiu** pede o "sim" pela ferramenta de perguntas (`brain.md` §9).
-- **Os subagentes só leem o cérebro.** Quem grava é você, numa chamada por mudança.
+- **Busca vazia não prova ausência:** mande os sinônimos juntos (`queries=`), não
+  um por vez; achou pelo sinônimo, grave-o em `keywords`.
+- **Nenhuma gravação sai sem o mínimo** do `brain-model.md` §8: resumo com o
+  porquê, 4–8 `keywords` (o que **outra pessoa** digitaria), `scope_paths`
+  estreito, 1 a 3 tags de `tag_list`, `origin` e `source`. É o que separa um
+  cérebro pesquisável de um depósito.
+- **Fato observável grava; interpretação pergunta** (`brain-model.md` §9): o que o
+  usuário ditou e a convenção provada por repetição (3+ arquivos, com
+  `arquivo:linha`) gravam direto, com um aviso de uma linha em linguagem humana
+  (`Guardei para as próximas vezes: valores em pagamentos são sempre centavos
+  inteiros.`); o que você interpretou e tudo com `scope=global` pede o "sim" pela
+  ferramenta de perguntas.
+- **Os subagentes só leem o cérebro** — e devolvem, no retorno, o que ajudou e o
+  que não serviu. Quem grava é você.
 - **Projeto não ligado** (o pacote avisa): sugira `/plumb-setup` uma vez e siga.
 - **Cérebro fora do ar ou sem conexão:** uma linha de aviso, siga com a spec no
   chat e na lista de tarefas; o que gravaria vai para
@@ -88,33 +101,45 @@ Regras de uso:
 
 ## Equipe
 
-| Papel | Subagente | Chame quando | Tier |
+| Papel | Subagente | Chame quando | Modelo |
 |---|---|---|---|
-| Explorador | `plumb-explorer` | Área do código que você ainda não leu | rápido |
-| Planejador | `plumb-planner` | Trilha padrão ou profunda, depois da exploração | capaz |
-| Implementador | `plumb-implementer` | Cada fase (ou grupo de fases que toca os mesmos arquivos) da spec aprovada | equilibrado |
-| Testador | `plumb-tester` | Fases de código prontas. Prova que funciona — **não vê o diff** | rápido |
-| Revisor | `plumb-reviewer` | Em paralelo com o testador. Lê o diff — **não roda nada**; com `<lente>seguranca</lente>` na trilha profunda e em área sensível | capaz |
+| Explorador | `plumb-explorer` | Área do código que você ainda não leu | `haiku` |
+| Batedor | `plumb-scout` | Falta documentação, acesso ou competência (as três buscas, abaixo) | `haiku` |
+| Planejador | `plumb-planner` | Trilha padrão ou profunda, depois da exploração; na profunda, **dois em paralelo** com ângulos diferentes | `opus` |
+| Implementador | `plumb-implementer` | Cada fase (ou grupo de fases que toca os mesmos arquivos) da spec aprovada | `sonnet` |
+| Testador | `plumb-tester` | Fases de código prontas. Prova que funciona — **não vê o diff** | `sonnet` |
+| Revisor | `plumb-reviewer` | Em paralelo com o testador, uma lente por despacho; também na trilha direta, e de novo no diff da correção | `opus` (direta: `sonnet`) |
+| Coletor | `plumb-dreamer` | Fase 7: varre a sessão e **propõe** o lote. Não grava | `sonnet` |
 
-Quem decide o que durar é **você**, que tem a conversa. Subagentes **não veem a
-conversa**: monte todo prompt por `references/prompt-contract.md` (leia uma vez,
-no primeiro despacho) e não leia os `plumb-*.md` para despachar. Subagente não
-instalado: faça o papel você mesmo e avise uma vez.
+Quem decide o que durar é **você**, que tem a conversa: o coletor propõe, você
+escolhe e grava. Subagentes **não veem a conversa**: monte todo prompt por
+`references/prompt-contract.md` (leia uma vez, no primeiro despacho) e não leia
+os `plumb-*.md` para despachar. Subagente não instalado: faça o papel você mesmo
+e avise uma vez.
 
-**Custo.** Todos herdam o modelo da sessão; **você aplica o tier** da coluna
-acima no despacho (`model`; detalhes em `references/communication.md`). Despache
-**por fase**, não por tarefa solta.
+**Custo.** O esforço (`effort`) já vem calibrado no arquivo de cada agente e não
+muda por chamada; o que **você** dimensiona a cada despacho é o `model` da coluna
+acima — mais barato quando é leitura ou execução, mais forte quando é decisão. A
+sessão segue no modelo que o usuário escolheu. Quando subir e quando descer:
+`references/communication.md`. Despache **por fase**, não por tarefa solta.
 
 ## As três buscas de ferramenta
 
-Três skills, uma pergunta cada, usadas pela **checagem de ferramentas** da fase 2
-(também na trilha direta) e de novo quando algo faltar no meio do trabalho:
+Três perguntas, usadas pela **checagem de ferramentas** da fase 2 (também na
+trilha direta) e de novo quando algo faltar no meio do trabalho:
 
-| Skill | A pergunta | Quando |
+| A pergunta | Quando | Skill que o batedor segue |
 |---|---|---|
-| `plumb-find-docs` | falta **documentação**? | A mudança usa biblioteca, framework, SDK ou API cujo uso não está no código: consulte **antes de escrever**, nunca pela memória, sem segredo nem código próprio na consulta. Você, o explorador, o planejador e o implementador |
-| `plumb-find-mcps` | falta **acesso**? | O pedido cita um sistema que você não alcança (card, banco, erro de produção, design, deploy) |
-| `plumb-find-skills` | falta **competência**? | Apareceu uma capacidade inteira que o time não tem e que alguém já resolveu — o planejador sinaliza em "Ferramenta que falta" |
+| falta **documentação**? | A mudança usa biblioteca, framework, SDK ou API cujo uso não está no código: consulte **antes de escrever**, nunca pela memória, sem segredo nem código próprio na consulta | `plumb-find-docs` |
+| falta **acesso**? | O pedido cita um sistema que você não alcança (card, banco, erro de produção, design, deploy) | `plumb-find-mcps` |
+| falta **competência**? | Apareceu uma capacidade inteira que o time não tem e que alguém já resolveu — o planejador sinaliza em "Ferramenta que falta" | `plumb-find-skills` |
+
+**Quem vai buscar é o `plumb-scout`**, um despacho por falta (em paralelo, se
+forem duas), com a versão em uso e o trecho de código que vai usar a API no
+contexto. Ele volta com a conclusão aplicável e a fonte; a documentação inteira e
+o catálogo ficam no contexto dele, não no seu. O implementador consulta direto
+pela skill quando a dúvida nasce dentro da fase dele. Sem o batedor instalado,
+carregue a skill você mesmo.
 
 A recomendação vai ao usuário pela ferramenta de perguntas (com o sinal citado e
 "agora não" como opção); **nada se instala sem o "sim"**. Falta repetida é
@@ -243,7 +268,7 @@ Olhe rápido o código envolvido antes ("causa óbvia" só se sabe olhando).
 
 | Trilha | Quando | Fases que roda |
 |---|---|---|
-| **direta** | Óbvia e local: typo, config, bug de causa clara, ~1–2 arquivos, sem comportamento ou contrato novo | 0, 1, **5**, **6** (os checks) e **7** — sem spec, sem despacho de prova, sem worktree (árvore principal). Só uma pergunta se o pedido for ambíguo. Você corrige, roda os checks e reporta. O pedido já é a aprovação |
+| **direta** | Óbvia e local: typo, config, bug de causa clara, ~1–2 arquivos, sem comportamento ou contrato novo | 0, 1, **5**, **6** (os checks e **um revisor em `sonnet`**) e **7** — sem spec, sem testador, sem worktree (árvore principal). Só uma pergunta se o pedido for ambíguo. Você corrige, roda os checks e reporta. O pedido já é a aprovação |
 | **padrão** | Todo o resto | **Todas.** Alinhar (grill), spec `spec/<id>`, aprovação antes do código, worktree próprio, entrega antes de push/PR |
 | **profunda** | Capacidade nova entre módulos, migração de dados, API pública ou contrato, auth/pagamento/dados pessoais, ou 2+ soluções plausíveis | Todas, com Design na spec e `<lente>seguranca</lente>` no revisor |
 
@@ -267,18 +292,28 @@ bem, mas olhe).
 
 **Direta:** a checagem de ferramentas da fase 2 vale aqui também. Se o pacote não cobre
 a área, uma consulta com os arquivos; implemente (vermelho → verde se for bug), rode
-testes e lint dos arquivos tocados, commite se a convenção do projeto é commitar (sem
-convenção: sem commit, diga onde ficou, nunca pergunte "quer o commit?") e reporte em
-2–3 linhas com a evidência. Depois, a fase 7 em silêncio. Fim — sem pergunta no final.
+testes e lint dos arquivos tocados e **despache um `plumb-reviewer` em `sonnet`** com o
+diff (sem lente, a não ser que a área seja sensível): a correção "óbvia" é onde mais
+entra bug, e o custo é de minutos. **Exceção:** mudança sem efeito em runtime
+(texto, comentário, documentação, versão de changelog) não vai ao revisor. Bloqueador ou major: corrija antes de reportar.
+Commite se a convenção do projeto é commitar (sem convenção: sem commit, diga onde
+ficou, nunca pergunte "quer o commit?") e reporte em 2–3 linhas com a evidência e o
+resultado da revisão. Depois, a fase 7 em silêncio. Fim — sem pergunta no final.
 
 ## 2 — Entender
 
-1. **Explorar (só leitura).** Área desconhecida: `plumb-explorer` com perguntas
-   concretas (uma por explorador, até 3 em paralelo). Ele devolve a convenção que
-   o código **de fato** segue — e as contradições com o que está escrito. Área
-   pequena: leia você.
-2. **Consultar o cérebro** uma vez (contrato da tabela). `howto` que casa vira o
-   roteiro das fases; decisão anterior que a mudança contraria vira pergunta.
+1. **Explorar (só leitura).** Área desconhecida: `plumb-explorer` (`haiku`) com
+   perguntas concretas (uma por explorador, até 3 em paralelo). Ele devolve a
+   convenção que o código **de fato** segue — e as contradições com o que está
+   escrito. Área pequena: leia você.
+   **A convenção não morre no retorno:** o que ele provou com repetição em 3+
+   arquivos vira `rule/code` com `origin=code` e os `arquivo:linha` no `content`
+   (grava direto — é fato observável, `brain-model.md` §9), a não ser que já
+   exista um item dizendo o mesmo. Contradição entre o código e um item do
+   cérebro: `wrong` ou `outdated` no item, com a evidência.
+2. **Consultar o cérebro** numa chamada com os sinônimos juntos (contrato da
+   tabela). `howto` que casa vira o roteiro das fases; decisão anterior que a
+   mudança contraria vira pergunta.
    Resultado de segurança na área (`rule/security`, ou item que o pacote marca
    como sensível) liga a lente de segurança na fase 6.
 3. **Checagem de ferramentas** — você faz, em todas as trilhas (inclusive a
@@ -309,6 +344,12 @@ compartilhado.
   juntando depois), recomendando o que conflita menos.
 - **Não aja** (spec, worktree, código) até o usuário confirmar o resumo do
   entendimento. O resumo confirmado vira o "Combinado" da spec.
+- **A resposta dele que vale além desta mudança vira item na hora**, `origin=user`
+  (`brain-model.md` §3): prazo, limite, quem pode fazer o quê, o que acontece no
+  caso de borda → `rule/business`; convenção de código → `rule/code`; jeito do
+  time trabalhar → `rule/process`. O Combinado **não** substitui o item: a spec
+  vira `done` e sai do caminho da busca, a regra fica. Um aviso de uma linha,
+  junto do resumo do entendimento.
 - O planejador não decide: o que ele devolver em "Perguntas em aberto" é a
   próxima pergunta do grill, não uma decisão sua.
 
@@ -321,6 +362,16 @@ compartilhado.
    de `references/testing.md`. Devolve a spec e, se algo ficou sem resposta,
    "Perguntas em aberto". Área pequena que você já leu: especifique você, pelo
    formato do planejador; na profunda, sempre despache.
+   **Na trilha profunda, despache dois em paralelo**, com o mesmo contexto e
+   ângulos declarados diferentes — um pela **mudança mínima** (o menor caminho
+   que entrega o resultado, reaproveitando o que existe), outro pelo **desenho
+   certo** (a estrutura que você escolheria sem a pressa de hoje). O gatilho da
+   profunda é "2+ soluções plausíveis": uma única cabeça escolhendo sozinha é o
+   ponto cego. **Você sintetiza:** fique com o que entrega o resultado com menos
+   risco, enxerte do outro o que ele viu e o vencedor não, e leve ao Design da
+   spec a opção descartada com o porquê — é isso que vira `rule/decision` na
+   fase 7. Os dois concordaram: siga, e diga em uma linha que o desenho é o
+   mesmo pelos dois caminhos.
 2. **Conferir.** Cada resultado esperado tem o "observa-se"? Cada fase tem papel,
    dependência e critério de saída? As fases Provar e Aprender estão lá? Fora de
    escopo explícito? Sobrou pergunta em aberto? Volte à fase 3 e pergunte: não
@@ -331,7 +382,10 @@ compartilhado.
    `Aguardando aprovação · fase 0/<n> · <branch> · sem worktree · <agente>`, o
    cabeçalho no topo do `content`, tags `aguardando-aprovacao` + 1 a 3 de área
    (de `tag_list`) e `scope_paths` das áreas (modelo em `references/spec-template.md`,
-   padrão em `brain.md` §15).
+   padrão em `brain.md` §15). Já aqui, `relation_create` ligando a spec às regras
+   e decisões que ela concretiza (`implements`) e ao procedimento que ela segue
+   (`depends_on`): é a relação mais barata de criar e a que mais serve depois,
+   porque o próximo a mexer na área chega nela pelo grafo.
 5. **Apresentar** (formato no fim, terminando com `Spec: <url>`) e pedir a
    aprovação pela ferramenta de perguntas. Em plan mode, apresente como o plano
    da ferramenta e grave depois da aprovação.
@@ -396,13 +450,19 @@ que não rodou nesta sessão.
    - `plumb-tester`: os resultados esperados da spec + os comandos do projeto e como
      subir a aplicação. Prova que funciona; é a única execução da suíte. **Não mande o
      diff nem a base dele** — ele testa caixa-preta de propósito.
-   - `plumb-reviewer`: a key da spec (`spec/<id>`) + base do diff. Com
-     `rule/security` na área (ou auth, pagamento, dados pessoais, entrada externa,
-     segredos no diff) ou na trilha profunda, acrescente `<lente>seguranca</lente>`.
-2. Repasse o veredito em poucas linhas.
+   - `plumb-reviewer`: a key da spec (`spec/<id>`) + base do diff. **Uma lente por
+     despacho**, porque um revisor com três preocupações encontra menos que três com
+     uma cada: a lente `correcao` sempre; `seguranca` com `rule/security` na área (ou
+     auth, pagamento, dados pessoais, entrada externa, segredos no diff) ou na trilha
+     profunda; `dados` quando há migração, escrita em lote ou mudança de contrato de
+     persistência; `concorrencia` quando há fila, job, cache ou estado compartilhado.
+     Na trilha padrão sem nenhum desses sinais, uma lente basta.
+2. Repasse o veredito em poucas linhas — junte as lentes, sem repetir o mesmo achado.
 3. Bloqueadores e majors: corrija já (implementador, nova verificação só do que
    mudou), sem perguntar; só decisão de produto vai ao usuário. Menores ficam
-   listados na entrega.
+   listados na entrega. **A correção volta ao revisor**: um despacho só, com o
+   diff **da correção** e o achado original, para dizer se resolveu e se abriu
+   outra coisa. Correção de bloqueador que ninguém reviu é o bug seguinte.
 4. Mudança visível na interface e ferramenta de navegador: exercite o fluxo você mesmo uma vez.
 5. **Feedback** (fase 7): o que a prova confirmou vira `verified`; o que o
    trabalho contradisse, `wrong` ou `outdated`.
@@ -410,39 +470,46 @@ que não rodou nesta sessão.
 ## 7 — Aprender
 
 **Esta fase não se pula, em nenhuma trilha** — até uma correção de uma linha pode
-ensinar algo. É **você** quem faz, inline, porque só você viu a conversa inteira.
-Nenhum subagente decide o que dura.
+ensinar algo. **Quem decide o que dura é você**, porque só você viu a conversa e
+tem o "sim" do usuário; o que o `plumb-dreamer` faz é a **coleta**: varrer a
+sessão fora do seu contexto e devolver o lote com a evidência de cada item.
 
-1. **Junte os candidatos:** os sinais da Retro (`references/retro-signals.md`), as
-   Combinado da spec, o que travou e como destravou, o que o usuário corrigiu ou
-   repetiu, o que faltou alcançar.
-2. **Teste cada um** pelo tipo (`brain.md` §3): tem o porquê e a alternativa
-   descartada? Um agente novo executaria só com o `content`? Dá para conferir num
-   diff? **Descarte** o que se redescobre em segundos lendo o código e o que é
-   andamento, bug ou medição (`brain.md` §10).
+1. **Colete.** Na trilha padrão ou profunda, e sempre que a sessão foi longa,
+   despache `plumb-dreamer` (`sonnet`) com o caminho do transcript e do extrator
+   (`../plumb-dream/scripts/extract.mjs`), os sinais da Retro
+   (`references/retro-signals.md`), o Combinado e as decisões da spec, o que
+   travou, as keys já gravadas e o caminho absoluto de `references/brain-model.md`.
+   Na trilha direta, ou sem o agente instalado, junte você mesmo os candidatos.
+2. **Classifique** pela tabela "situação → o que vira item" (`brain-model.md` §3):
+   o tipo e o subtipo saem de lá, não do seu instinto — é o que impede tudo de
+   virar `rule/decision`. **Descarte** o que se redescobre em segundos lendo o
+   código, e o que é andamento, bug ou medição.
 3. **Anti-duplicata** (`brain.md` §9b): `item_get` pela key que usaria e
    `item_search` pelo tema. Existe → atualize pela mesma key; contradiz → `supersedes`.
-4. **Decida o destino** pela tabela "Vale para…" (`brain.md` §7): repositório,
-   workspace ou global; `scope_paths` o mais estreito possível; `origin` certo
-   (`user` para o que ele ditou, `code` para o inferido do código com evidência,
-   `agent` para o resto).
-5. **Separe:** o que o usuário **ditou** ou a spec já aprovada **grava**; o que
-   você **inferiu** (`howto`, `rule/pattern`, `context`, `rule/decision` que não
-   estava na spec) e tudo com `scope=global` **pede o "sim"**: uma linha cada na
-   entrega, e a confirmação pela ferramenta de perguntas.
-6. **Grave agora** o ditado e a spec concluída num `item_save` (`status: done`,
+4. **Decida o alcance** (`brain-model.md` §4): na dúvida, o mais estreito; a mesma
+   regra pela terceira vez no mesmo contexto vira `workspace` (proponha a promoção).
+5. **Separe:** grava direto o que o usuário ditou, a spec aprovada, a convenção
+   provada por repetição e as quatro relações do trabalho; **pede o "sim"** o que
+   você interpretou e tudo com `scope=global` — uma linha cada na entrega
+   (`brain-model.md` §9).
+6. **Grave agora**, em lote, o que grava direto e a spec concluída (`status: done`,
    `summary: "Concluída: <resultado em uma frase>"`, `Atualizado`, `content` final
-   com fases marcadas, Retro e Números; saem as tags de estado e `worktree`);
-   leia os `warnings`. O inferido e o `scope=global` vão num segundo `item_save`,
-   só depois do "sim" da rodada final (fase 8). `relation_create` só se um precisa do outro.
-7. **Feedback** (`item_feedback`, em lote): `helped` no que entrou no trabalho e
-   valeu, `irrelevant` no que veio e não serviu, `verified`/`wrong`/`outdated`
-   conforme a fase 6. Só o que você viu de fato.
-8. **Ferramentas para o próximo trabalho:** o que este trabalho mostrou que
+   com fases marcadas, Retro e Números; saem as tags de estado e `worktree`), cada
+   item pelo mínimo da §8; **leia os `warnings` e corrija agora**. O interpretado e
+   o `scope=global` vão num segundo `item_save`, depois do "sim" da rodada final.
+   `relation_create` em lote, com as relações da §7.
+7. **Feedback** (`item_feedback`, em lote): junte o bloco "Do cérebro" de **cada
+   subagente despachado** com o que você mesmo usou — `helped`, `irrelevant`,
+   `verified`, `wrong`/`outdated`. Só o que de fato entrou no trabalho.
+8. **Arrume a casa** (`brain-model.md` §10), uma coisa só: área que passou de 3
+   itens pede `subject` (proponha), ou um candidato de limpeza (item nunca usado,
+   `review` antigo, duas tags que são a mesma palavra). Não havendo, siga — isto
+   nunca vira uma rodada de perguntas.
+9. **Ferramentas para o próximo trabalho:** o que este trabalho mostrou que
    facilitaria os próximos (acesso, competência, documentação; sinais em
    `references/retro-signals.md`, cada um com o fato citado) vai na rodada final da
    entrega, pela ferramenta de perguntas: `plumb-find-mcps`, `-skills`, `-docs`.
-9. **Sobrou sinal que você não tratou** (sessão longa, vários assuntos)? Diga, no
+10. **Sobrou sinal que você não tratou** (sessão longa, vários assuntos)? Diga, no
    fim da entrega: `Para guardar o resto desta sessão: /plumb-dream`.
 
 ## 8 — Entregar

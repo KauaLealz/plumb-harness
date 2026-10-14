@@ -171,18 +171,29 @@ próprios arquivos.
 | Papel | Onde | Faz |
 |---|---|---|
 | Orquestrador | skill `plumb` (sessão principal) | Atende o pedido, escolhe a rota, conduz os gates e o estado; consulta e grava o cérebro em cada fase, **inclusive o fechamento** (decide o que dura, com a conversa na mão) |
-| Explorador | `agents/plumb-explorer.md` | Responde perguntas sobre o código com `arquivo:linha` (só leitura); no `/plumb-dream desde…`, varre as sessões antigas |
-| Planejador | `agents/plumb-planner.md` | A spec: resultados esperados observáveis, fases com papel, dependência e critério de saída (só leitura) |
+| Explorador | `agents/plumb-explorer.md` | Responde perguntas sobre o código com `arquivo:linha` (só leitura); a convenção que ele prova com repetição vira `rule/code` |
+| Batedor | `agents/plumb-scout.md` | Resolve uma falta — documentação, acesso ou competência — fora do contexto principal, e volta só com a conclusão e a fonte |
+| Planejador | `agents/plumb-planner.md` | A spec: resultados esperados observáveis, fases com papel, dependência e critério de saída (só leitura). Na trilha profunda, dois em paralelo com ângulos diferentes |
 | Implementador | `agents/plumb-implementer.md` | Uma fase em TDD, só nos arquivos declarados, com commit atômico |
 | Testador | `agents/plumb-tester.md` | Prova que funciona — **sem ver o diff**: cada resultado esperado com evidência executada |
-| Revisor | `agents/plumb-reviewer.md` | Lê o diff contra a spec — **não roda nada**: bugs com cenário de falha, escopo, convenções, e segurança quando a lente está ligada |
+| Revisor | `agents/plumb-reviewer.md` | Lê o diff contra a spec — **não roda nada**: uma lente por despacho (correção, segurança, dados, concorrência) e a conferência da correção |
+| Coletor | `agents/plumb-dreamer.md` | Varre a sessão e **propõe** o lote do que dura, com a evidência de cada item; nunca grava |
 
-Não há um agente "curador" nem "dreamer": quem decide o que guardar é o orquestrador,
-porque é o único que viu a conversa inteira. Os agentes usam `disallowedTools`
-(edição de arquivos e **toda escrita no cérebro**) em vez de uma lista fixa, para
-herdarem as ferramentas MCP que o projeto instalar (navegador, Sentry, banco
-somente leitura) e lerem o cérebro. Só o orquestrador grava, numa chamada por
-mudança.
+**Quem decide o que guardar é o orquestrador**, porque é o único que viu a
+conversa e tem o "sim" do usuário: o coletor levanta e propõe, o orquestrador
+escolhe e grava. Os agentes usam `disallowedTools` (edição de arquivos e **toda
+escrita no cérebro**) em vez de uma lista fixa, para herdarem as ferramentas MCP
+que o projeto instalar (navegador, Sentry, banco somente leitura) e lerem o
+cérebro — e a mesma regra está no **texto** de cada um, porque a instalação do
+Cursor remove o campo.
+
+**Dimensionamento.** Nenhum agente crava modelo (`model: inherit`): a sessão
+roda no modelo que o usuário escolheu e **cada despacho escolhe o seu**
+(`haiku` para ler e buscar, `sonnet` para executar e escrever, `opus` para
+decidir e revisar), subindo na trilha profunda, em área sensível e depois de uma
+falha. O `effort` fica no arquivo do agente, calibrado por papel, porque a
+ferramenta de subagente não o aceita por chamada. Fora do Claude Code, o tier
+vira recorte menor por despacho (`skills/plumb/references/cursor.md`).
 
 Subagentes não veem a conversa. Por isso todo despacho segue o contrato de
 prompt (`skills/plumb/references/prompt-contract.md`): objetivo, contexto
@@ -284,7 +295,7 @@ somente leitura por padrão, nada sem o seu "sim". Entradas marcadas
 3. **`/plumb-dream`** — a skill que olha a **sessão inteira**: lê o transcript
    (os dois lados, os erros de ferramenta, as correções) e propõe o lote por
    destino, cada item com o turno que o sustenta, grava ou confirma. Com
-   `desde <data>` varre as sessões antigas (um explorador por transcript); com
+   `desde <data>` varre as sessões antigas (um coletor por transcript); com
    `auditoria` revisa a saúde do cérebro (nunca abertos, em revisão, duplicados,
    tags vazias). Registra o que aplicou em `spec/dream-last` com o sinal-alvo, e o
    sonho seguinte confere se diminuiu. O início da sessão avisa quando a anterior

@@ -57,7 +57,10 @@ cérebro. Diga o conteúdo: `Guardei: pagamentos sempre em centavos inteiros (va
 
 Monte os prompts de delegação pelo contrato em `../plumb/references/prompt-contract.md`.
 Tipos, keys, scope, origin, tags e onde guardar: `../plumb/references/brain.md`
-(leia uma vez, antes da primeira gravação; as tags estão na seção Tags). As dez
+(leia uma vez, antes da primeira gravação; as tags estão na seção Tags). **A
+forma que o projeto deve ter no fim do setup** — os quatro contextos que todo
+projeto tem, como nomear cada key, o mínimo de cada gravação e quando um assunto
+vira `subject`: `../plumb/references/brain-model.md` §1, §2, §6 e §8. As dez
 dimensões, com o que explorar, o que perguntar e o que nasce:
 `references/dimensions.md` (leia antes de começar).
 

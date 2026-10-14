@@ -1,5 +1,66 @@
 # Changelog
 
+## 6.1.0
+
+Dois gargalos: os subagentes só alcançavam metade do fluxo e rodavam todos no
+mesmo modelo, e o cérebro crescia sem forma — tudo virava decisão ou
+troubleshoot, sem sinônimo, sem agrupamento e sem relação.
+
+### Adicionado
+
+- **Dimensionamento por despacho.** Cada agente declara o `effort` do papel e um
+  teto de turnos; o orquestrador escolhe o `model` a cada chamada — `haiku` para
+  ler e buscar, `sonnet` para executar e escrever, `opus` para decidir e revisar —
+  com regras de quando subir (trilha profunda, área sensível, segunda falha na
+  mesma fase) e de quando descer. A sessão fica no modelo forte; o despacho paga
+  o que o trabalho vale. Tabela em `skills/plumb/references/communication.md`.
+- **`agents/plumb-scout.md`** — o batedor: resolve uma falta (documentação,
+  acesso, competência) fora do contexto principal e volta com a conclusão
+  aplicável e a fonte. A documentação inteira e o catálogo não entram mais na
+  conversa.
+- **`agents/plumb-dreamer.md`** — o coletor volta, agora só de leitura: varre o
+  transcript, propõe o lote com a evidência por turno, e **nunca grava**. Quem
+  decide continua sendo o orquestrador.
+- **`skills/plumb/references/brain-model.md`** — o modelo padrão de organização do
+  cérebro: a forma que um projeto bem organizado tem, como nomear a key, a tabela
+  "situação → o que vira item" cobrindo os seis subtipos de `rule` e os cinco de
+  `context`, o alcance, o mínimo de gravação (resumo com porquê, 4–8 `keywords`,
+  `scope_paths`, tags), quando nasce um `subject`, as quatro relações que o próprio
+  trabalho produz e a manutenção contínua.
+- **`skills/plumb/references/cursor.md`** — tabela de equivalências: cada recurso
+  do Claude Code com o que fazer fora dele. Recurso ausente vira forma diferente,
+  nunca etapa pulada.
+- **Revisão independente na trilha direta** (`sonnet`): a correção "óbvia" é onde
+  mais entra bug.
+- **Dois planejadores na trilha profunda**, com ângulos declarados (mudança
+  mínima e desenho certo) e síntese pelo orquestrador — o gatilho da profunda é
+  "2+ soluções plausíveis".
+- **Lentes do revisor:** uma por despacho — `correcao`, `seguranca`, `dados`,
+  `concorrencia` —, e um despacho de conferência da correção (`<correcao-de>`).
+- **Retorno "Do cérebro"** em todo agente: o que ajudou, o que não serviu, o que
+  o trabalho contradisse. O orquestrador converte em `item_feedback` — antes, o
+  conhecimento mais usado era o único que nunca recebia sinal.
+
+### Mudado
+
+- Fase 2 busca com os sinônimos juntos (`queries=`), e na profunda olha também os
+  outros repositórios do contexto (`workspace=`).
+- Regra de negócio respondida no grill vira `rule/business` **na hora**, em vez de
+  morrer no Combinado de uma spec que depois vira `done`.
+- Convenção que o explorador prova com repetição em 3+ arquivos vira `rule/code`
+  com `origin=code` e `arquivo:linha` — grava direto, por ser fato observável.
+- A spec já nasce ligada ao que concretiza (`implements`) e ao procedimento que
+  segue (`depends_on`).
+- Fase 7 passa a classificar pela tabela do modelo, gravar pelo mínimo e arrumar
+  uma coisa por fechamento (um `subject` proposto ou um candidato de limpeza).
+- `plumb-tester` sobe de `effort: low` para `medium`: ligar cada resultado
+  esperado à evidência certa não é mecânico.
+- A instalação do Cursor remove também `maxTurns`, e as regras de só-leitura dos
+  agentes passam a estar no **texto** deles, não só no frontmatter que o Cursor
+  descarta.
+- O instalador não apaga mais um agente cujo nome voltou a existir (`plumb-dreamer`):
+  a lista de removidos filtra o que a própria instalação escreve.
+
 ## 6.0.0
 
 O Plumb deixa de decidir por conta própria: **entrevista** o usuário no modelo

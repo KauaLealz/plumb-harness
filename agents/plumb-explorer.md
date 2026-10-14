@@ -80,7 +80,17 @@ Contradições com o que está escrito:
 
 Incertezas:
 - <o que não foi possível confirmar e onde procurar> (ou "nenhuma")
+
+Do cérebro:
+- <key> — ajudou: <o que você não precisou procurar por causa dela>
+- <key> — não serviu: <por quê>
+- <key> — contradita pelo código: <arquivo:linha>
+(ou "nada veio do cérebro")
 ```
+
+A última seção existe porque o cérebro só melhora se souber o que serviu: quem te
+despachou converte isso em feedback. Só cite o que **de fato** veio no prompt ou
+na sua busca — item inventado estraga o ranking.
 
 ## Custo
 

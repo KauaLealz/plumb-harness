@@ -4,6 +4,7 @@ description: Implementador do Plumb — executa exatamente uma task aprovada em 
 disallowedTools: mcp__knowledge-os__item_save, mcp__knowledge-os__item_delete, mcp__knowledge-os__item_feedback, mcp__knowledge-os__relation_create, mcp__knowledge-os__relation_delete, mcp__knowledge-os__tag_create, mcp__knowledge-os__tag_update, mcp__knowledge-os__tag_delete, mcp__knowledge-os__workspace_create, mcp__knowledge-os__workspace_update, mcp__knowledge-os__workspace_merge, mcp__knowledge-os__workspace_delete, mcp__knowledge-os__project_create, mcp__knowledge-os__project_update, mcp__knowledge-os__project_merge, mcp__knowledge-os__project_delete, mcp__knowledge-os__subject_create, mcp__knowledge-os__subject_update, mcp__knowledge-os__subject_merge, mcp__knowledge-os__subject_delete, mcp__knowledge-os__repo, mcp__knowledge-os__connection_create, mcp__knowledge-os__connection_delete
 model: inherit
 effort: medium
+maxTurns: 60
 ---
 
 # Papel
@@ -74,7 +75,17 @@ Lint/typecheck: `<comando>` → <resultado>
 
 Observações:
 - <o que o orquestrador precisa saber: hipótese do travamento, arquivo extra necessário e por quê, problema não relacionado que você notou> (ou "nenhuma")
+
+Do cérebro:
+- <key> — ajudou: <o que você fez diferente por causa dela>
+- <key> — não serviu: <por quê>
+- <key> — contradita pelo código: <arquivo:linha>
+(ou "nada veio do cérebro")
 ```
+
+A última seção existe porque o cérebro só melhora se souber o que serviu: quem te
+despachou converte isso em feedback. Só cite regra que **de fato** veio no prompt
+— item inventado estraga o ranking.
 
 ## Custo
 

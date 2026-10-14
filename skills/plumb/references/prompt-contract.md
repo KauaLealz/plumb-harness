@@ -48,6 +48,23 @@ Quando parar e o que devolver em vez de insistir.
 </se_travar>
 ```
 
+## Tags que só alguns despachos levam
+
+| Tag | Para quem | O que diz |
+|---|---|---|
+| `<lente>` | revisor | onde ele gasta a atenção: `correcao` (padrão), `seguranca`, `dados`, `concorrencia`. **Uma por despacho** — para cobrir dois eixos, dois despachos em paralelo |
+| `<correcao-de>` | revisor | o achado original e o diff só da correção: ele diz se resolveu e se abriu outra coisa, sem revisar a mudança inteira |
+| `<angulo>` | planejador | `mudança mínima` ou `desenho certo`, na trilha profunda, quando dois planejam em paralelo o mesmo problema |
+
+## Do cérebro: o que mandar e o que esperar de volta
+
+No `<contexto>`, só as regras que valem para **aquela** área, com resumo e key —
+nunca o pacote inteiro. Em troca, todo agente devolve a seção **"Do cérebro"**
+dizendo o que ajudou, o que não serviu e o que o trabalho contradisse. Junte as
+seções dos despachos e converta em `item_feedback` no fechamento (`helped`,
+`irrelevant`, `verified`, `wrong`/`outdated`): sem isso, justamente o
+conhecimento mais usado — o que você cola nos prompts — nunca recebe sinal.
+
 ## Checklist antes de despachar
 
 - [ ] Alguém sem acesso à conversa entenderia o pedido só com este texto?

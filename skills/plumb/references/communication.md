@@ -12,18 +12,58 @@
 | Travou | `Travei: o teste de integração precisa de um banco que não sobe aqui. Tentei X e Y. Opções: …` |
 | Aprendizado guardado | `Guardei para as próximas vezes: valores em pagamentos são sempre centavos inteiros (vale em src/payments).` |
 
-## Custo: o tier de cada agente
+## Custo: dimensionar cada despacho
 
-Nenhum agente crava um modelo: todos herdam o da sessão, e o orquestrador aplica
-o tier no despacho (parâmetro `model`), escolhendo entre os modelos que a
-ferramenta oferece hoje.
+Dois botões, e eles ficam em lugares diferentes:
 
-| Tier | Para que serve | Quem |
+| Botão | Onde vive | Quem muda |
 |---|---|---|
-| **rápido** | ler, buscar, rodar comando e reportar — capacidade extra não ajuda | explorador, testador |
-| **equilibrado** | escrever código dentro de uma fase já definida | implementador |
-| **capaz** | escolher o que construir, achar bug sutil | planejador, revisor |
+| **modelo** | o parâmetro `model` do despacho | **você**, a cada chamada |
+| **esforço** | o campo `effort` do arquivo do agente | fixo por papel — a ferramenta de subagente não aceita `effort` por chamada |
 
-Suba o implementador para **capaz** na trilha profunda ou depois de uma falha na
-mesma fase. Cada despacho novo relê o código do zero: despache **por fase**, não
-por tarefa solta.
+Por isso nenhum agente crava modelo (`model: inherit`): a sessão pode rodar num
+modelo forte como orquestrador enquanto cada despacho desce para o mais barato
+que dá conta. O esforço já vem calibrado para o papel; o que você dimensiona a
+cada chamada é o modelo.
+
+| Agente | Modelo padrão | `effort` | Por quê |
+|---|---|---|---|
+| `plumb-explorer` | `haiku` | low | ler, buscar e citar `arquivo:linha` — capacidade extra não acha mais coisa |
+| `plumb-scout` | `haiku` | low | consultar documentação ou catálogo e resumir |
+| `plumb-tester` | `sonnet` | medium | rodar a suíte é mecânico, mas ligar cada resultado esperado à evidência certa não é |
+| `plumb-implementer` | `sonnet` | medium | escrever código dentro de uma fase já decidida |
+| `plumb-planner` | `opus` | high | escolher o que construir; erro aqui custa a mudança inteira |
+| `plumb-reviewer` | `opus` | high | achar o bug sutil que passou por todo mundo |
+| `plumb-dreamer` | `sonnet` | medium | separar o que dura do que é andamento, com a evidência do turno |
+
+**Suba um nível** (`haiku`→`sonnet`→`opus`) quando:
+
+- a trilha é **profunda** — implementador e testador sobem;
+- a área é **sensível** (`rule/security`, auth, pagamento, dado pessoal, tenant,
+  segredo) — revisor e implementador sobem;
+- a **mesma fase falhou uma vez** — o implementador sobe no reenvio;
+- o retorno veio **fora do formato** ou ignorou uma restrição — suba e redespache,
+  em vez de repetir no mesmo nível.
+
+**Desça um nível** quando o trabalho é mecânico e verificável por comando: reenvio
+só para aplicar uma correção já descrita, releitura de um arquivo, conferência de
+um comando. Na **trilha direta**, o revisor roda em `sonnet`: o diff é pequeno e o
+custo tem que caber numa correção de minutos.
+
+Modelo que a ferramenta não oferece hoje: use o mais próximo para cima, nunca para
+baixo. Cada despacho novo relê o código do zero — despache **por fase**, não por
+tarefa solta.
+
+**Fora do Claude Code** (Cursor e afins), o despacho pode não aceitar `model`, e o
+`effort` do arquivo do agente é removido na instalação porque a ferramenta não o
+lê: todo subagente roda no modelo da sessão. Então o dimensionamento muda de
+lugar — em vez de escolher o modelo, você **escolhe o tamanho do pedido**:
+
+- recorte menor por despacho (uma pergunta por explorador, uma lente por revisor,
+  uma fase por implementador — nunca duas);
+- diga no `<objetivo>` o nível de cuidado esperado (`confira cada caminho de erro`
+  para o que seria `opus`; `responda com o que o código mostra, sem analisar`
+  para o que seria `haiku`);
+- o que seria `opus` e não cabe num recorte pequeno, faça você mesmo na sessão
+  principal, que já roda no modelo forte;
+- sem despacho paralelo, peça os dois na mesma mensagem e trate o retorno junto.

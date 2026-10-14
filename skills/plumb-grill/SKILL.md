@@ -38,6 +38,12 @@ No idioma do usuário, inclusive as frases de andamento.
 5. **Termine com o resumo do entendimento compartilhado** e peça a confirmação
    pela ferramenta de perguntas. Nada além disso acontece (spec, código, worktree)
    enquanto o usuário não confirmar. Se corrigir, ajuste o resumo e confirme de novo.
+6. **Guarde o que vale além desta mudança.** Resposta que é regra do negócio
+   (prazo, limite, quem pode, o caso de borda) vira `rule/business`; convenção de
+   código, `rule/code`; jeito do time trabalhar, `rule/process` — na hora,
+   `origin=user`, pelo mínimo de `../plumb/references/brain-model.md` §8, com um
+   aviso de uma linha junto do resumo. O Combinado da spec não substitui o item:
+   a spec termina `done` e sai do caminho da busca; a regra fica.
 
 Sem a ferramenta de perguntas (Cursor, ou uma ferramenta que não a tenha), as
 mesmas perguntas em texto numerado, todas na mesma mensagem, cada uma com a

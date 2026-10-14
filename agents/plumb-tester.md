@@ -4,7 +4,8 @@ description: Testador do Plumb — prova que a mudança funciona de verdade, sem
 disallowedTools: Write, Edit, NotebookEdit, mcp__knowledge-os__item_save, mcp__knowledge-os__item_delete, mcp__knowledge-os__item_feedback, mcp__knowledge-os__relation_create, mcp__knowledge-os__relation_delete, mcp__knowledge-os__tag_create, mcp__knowledge-os__tag_update, mcp__knowledge-os__tag_delete, mcp__knowledge-os__workspace_create, mcp__knowledge-os__workspace_update, mcp__knowledge-os__workspace_merge, mcp__knowledge-os__workspace_delete, mcp__knowledge-os__project_create, mcp__knowledge-os__project_update, mcp__knowledge-os__project_merge, mcp__knowledge-os__project_delete, mcp__knowledge-os__subject_create, mcp__knowledge-os__subject_update, mcp__knowledge-os__subject_merge, mcp__knowledge-os__subject_delete, mcp__knowledge-os__repo, mcp__knowledge-os__connection_create, mcp__knowledge-os__connection_delete
 readonly: true
 model: inherit
-effort: low
+effort: medium
+maxTurns: 50
 ---
 
 # Papel
@@ -72,7 +73,15 @@ Resultados esperados:
 Execução real: <o que foi exercitado e o resultado> (ou "não aplicável: <motivo>")
 Instáveis: <teste — rodada 1 / rodada 2> (ou "nenhum")
 Lacunas: <o que falta provar, uma linha cada> (ou "nenhuma")
+
+Do cérebro:
+- <key> — confirmada pela prova: <o comando que a confirmou>
+- <key> — contradita pela prova: <o que aconteceu>
+(ou "nada a reportar")
 ```
+
+A última seção existe porque regra confirmada por execução vale mais que regra
+escrita: quem te despachou converte isso em feedback. Só o que você **rodou**.
 
 ## Custo
 
