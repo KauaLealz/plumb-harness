@@ -169,6 +169,28 @@ test('as lentes do revisor são as mesmas no fluxo, no contrato de prompt e no a
   assert.deepEqual(bad, [], bad.join('\n'));
 });
 
+test('o modelo de organização cobre os seis subtipos de regra e os cinco de contexto', () => {
+  // O fluxo colapsava tudo em decision e troubleshoot porque os outros subtipos só existiam no setup.
+  const text = readFileSync(join(ROOT, 'skills', 'plumb', 'references', 'brain-model.md'), 'utf8');
+  const bad = [];
+  for (const s of ['rule/code', 'rule/pattern', 'rule/security', 'rule/business', 'rule/process', 'rule/decision',
+    'howto/procedure', 'howto/troubleshoot',
+    'context/product', 'context/map', 'context/stack', 'context/glossary', 'context/environment']) {
+    if (!text.includes(s)) bad.push(s);
+  }
+  for (const campo of ['keywords', 'scope_paths', 'summary', 'tags', 'links', 'origin', 'source']) {
+    if (!text.includes(campo)) bad.push(`campo ${campo}`);
+  }
+  for (const r of ['implements', 'depends_on', 'supersedes']) if (!text.includes(r)) bad.push(`relação ${r}`);
+  if (!text.includes('subject')) bad.push('agrupamento por subject');
+  assert.deepEqual(bad, [], `brain-model.md não cobre: ${bad.join(', ')}`);
+});
+
+test('o fluxo aponta para o modelo de organização', () => {
+  const skill = readFileSync(join(ROOT, 'skills', 'plumb', 'SKILL.md'), 'utf8');
+  assert.ok(skill.includes('brain-model.md'), 'SKILL.md não aponta para o modelo de organização');
+});
+
 test('perguntas ao usuário vão pela ferramenta de perguntas, não em texto', () => {
   const all = [...markdownFiles(join(ROOT, 'skills')), ...markdownFiles(join(ROOT, 'agents'))]
     .filter((f) => !f.endsWith('SOURCE.md'));
