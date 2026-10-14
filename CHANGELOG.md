@@ -1,5 +1,41 @@
 # Changelog
 
+## 6.2.0
+
+Relações e tags existiam no contrato e não aconteciam na prática: as regras eram
+todas negativas ("na dúvida, não relacione", "tag só com 3 itens ou mais"), e um
+agente com pressa obedece a todas somando zero. O setup e o dream, que são onde o
+cérebro nasce e onde ele é revisado, ainda seguiam o padrão anterior.
+
+### Adicionado
+
+- **Forma canônica da tag** (`brain-model.md` §5b): plural, idioma do usuário,
+  minúscula, assunto — nunca tipo, camada ou tecnologia —, com a regra de fusão
+  aplicada **na hora** em que a variação aparece. Aviso de tag parecida na resposta
+  do `item_save` passa a ser lido como fusão pedindo para acontecer.
+- **Gatilho positivo das relações** (`brain-model.md` §7): duas perguntas em toda
+  gravação — que item já existente o leitor precisaria abrir, e se esta é a
+  terceira vez que o assunto aparece. Fechar uma mudança padrão ou profunda sem
+  nenhuma ligação nova passa a ser tratado como suspeito.
+- **Semente de vocabulário no setup:** de 5 a 10 tags de área tiradas do que o
+  repositório realmente tem (pastas de domínio, módulos do mapa), mais até 3 temas
+  transversais quando houver sinal, aprovadas pelo usuário antes de existirem.
+- **Auditoria de forma no dream**, além da de saúde: tag fora da forma canônica,
+  variações da mesma palavra, item sem sinônimos de busca ou com tags demais, item
+  isolado que deveria apontar para o que concretiza, área que já virou assunto
+  próprio e vocabulário vazio em projeto já em uso.
+
+### Mudado
+
+- `plumb-setup` e `plumb-dream` passam a seguir o mesmo modelo do fluxo principal:
+  referência ao modelo de organização, mínimo de gravação com sinônimos,
+  dimensionamento do despacho por modelo e a tabela de equivalências do Cursor.
+- O setup liga os itens de cada dimensão assim que os grava — é a única etapa em
+  que todo o material está junto.
+- O dream cria as ligações em lote ao aplicar, não só `supersedes`.
+- `related_to` continua sendo o default fraco, mas a recomendação passou a ser
+  sobre o **tipo** da relação, não sobre criar ou não.
+
 ## 6.1.0
 
 Dois gargalos: os subagentes só alcançavam metade do fluxo e rodavam todos no

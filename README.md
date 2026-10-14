@@ -212,6 +212,16 @@ workspace   o contexto: a empresa, o cliente, o seu pessoal
          └─ item   rule · howto · context · spec · secret, com subtipo
 ```
 
+**A forma do cérebro é escrita, não improvisada.**
+`skills/plumb/references/brain-model.md` é o modelo padrão: o que vira item e de
+que tipo em cada situação do trabalho, como nomear a key, o mínimo de toda
+gravação (resumo com o porquê, 4 a 8 sinônimos de busca, escopo estreito, 1 a 3
+tags), a forma canônica das tags com fusão de variação, quando um assunto vira
+`subject` e as ligações que o próprio trabalho produz. O `/plumb-setup` semeia o
+vocabulário de tags a partir do repositório real, e o `/plumb-dream` audita o que
+saiu da forma. As três skills que gravam seguem o mesmo arquivo — isso é travado
+por teste.
+
 **Onde o item mora e onde ele vale são coisas diferentes.** Mora no project em que
 foi salvo; vale conforme o `scope` — `scoped` (só aquele repositório), `workspace`
 (todos os repositórios do contexto) ou `global` (qualquer projeto) —, herdado do
