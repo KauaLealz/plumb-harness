@@ -1,16 +1,17 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  entryCommand, removeBlock, removeClaudeHook, removeCursorEntryHook, removeEntryHooks, toCursorAgent, upsertBlock,
-  upsertClaudeHook, upsertCursorEntryHook, upsertCursorHook, upsertEntryHooks, upsertMcpServer,
+  entryCommand, RENAMED_AGENTS, removeBlock, removeClaudeHook, removeCursorEntryHook, removeEntryHooks, toCursorAgent,
+  upsertBlock, upsertClaudeHook, upsertCursorEntryHook, upsertCursorHook, upsertEntryHooks, upsertMcpServer,
 } from '../lib/installer.js';
 
 const CLI = fileURLToPath(new URL('../bin/cli.js', import.meta.url));
+const ROOT = fileURLToPath(new URL('..', import.meta.url));
 
 // `knowledge-mcp` e `claude` falsos: respondem à versão e registram os argumentos recebidos.
 function fakes(home) {
@@ -186,9 +187,17 @@ test('install remove skills e agentes do Plumb que foram renomeados, e preserva 
   assert.equal(existsSync(join(skills, 'plumb-retro')), false);
   assert.equal(existsSync(join(skills, 'plumb-dream')), true);
   assert.equal(existsSync(join(agents, 'plumb-curator.md')), false);
-  assert.equal(existsSync(join(agents, 'plumb-dreamer.md')), false, 'o dreamer saiu: o orquestrador faz o fechamento');
   assert.equal(existsSync(join(agents, 'plumb-explorer.md')), true);
   assert.equal(readFileSync(join(agents, 'plumb-security.md'), 'utf8'), 'agente de outra pessoa\n');
+  // o dreamer voltou como coletor: a cópia antiga é substituída pela nova, não apagada
+  const dreamer = readFileSync(join(agents, 'plumb-dreamer.md'), 'utf8');
+  assert.match(dreamer, /Coletor do Plumb/, 'a versão instalada do dreamer é a atual');
+});
+
+test('nenhum agente vigente está na lista de removidos pela instalação', () => {
+  const vigentes = readdirSync(join(ROOT, 'agents')).filter((f) => f.endsWith('.md')).map((f) => f.replace(/\.md$/, ''));
+  const colisao = vigentes.filter((a) => RENAMED_AGENTS.includes(a));
+  assert.deepEqual(colisao, [], `a instalação apagaria agente que ela mesma acabou de escrever: ${colisao.join(', ')}`);
 });
 
 test('hooks de entrada: não duplicam, preservam os de terceiros e saem limpos', () => {
