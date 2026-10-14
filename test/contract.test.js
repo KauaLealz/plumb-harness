@@ -169,6 +169,28 @@ test('as lentes do revisor são as mesmas no fluxo, no contrato de prompt e no a
   assert.deepEqual(bad, [], bad.join('\n'));
 });
 
+test('o vocabulário de tags tem forma canônica e regra de fusão', () => {
+  // Sem forma definida, a primeira tag de cada área é inventada na hora: pagamento, pagamentos, payments.
+  const text = readFileSync(join(ROOT, 'skills', 'plumb', 'references', 'brain-model.md'), 'utf8');
+  const bad = [];
+  for (const [re, oque] of [
+    [/forma can[ôo]nica/i, 'a forma canônica da tag'],
+    [/plural/i, 'o número (plural)'],
+    [/fus[ãa]o|fundir|funda/i, 'a regra de fusão de variação'],
+    [/tag_update/, 'como fundir (tag_update)'],
+    [/tag_list/, 'consultar o vocabulário antes (tag_list)'],
+  ]) if (!re.test(text)) bad.push(oque);
+  assert.deepEqual(bad, [], `brain-model.md não define: ${bad.join(', ')}`);
+});
+
+test('as relações têm gatilho positivo, não só a recomendação de não criar', () => {
+  // "Na dúvida, não relacione" somado a "só se um precisa do outro" dava zero relação criada.
+  const text = readFileSync(join(ROOT, 'skills', 'plumb', 'references', 'brain-model.md'), 'utf8');
+  assert.ok(/precisaria abrir/i.test(text), 'falta a pergunta que dispara a relação');
+  assert.ok(/terceira vez|3[ªa] vez/i.test(text), 'falta o gatilho de repetição');
+  assert.ok(/suspeit/i.test(text), 'fechar sem nenhuma ligação precisa ser tratado como suspeito');
+});
+
 test('o modelo de organização cobre os seis subtipos de regra e os cinco de contexto', () => {
   // O fluxo colapsava tudo em decision e troubleshoot porque os outros subtipos só existiam no setup.
   const text = readFileSync(join(ROOT, 'skills', 'plumb', 'references', 'brain-model.md'), 'utf8');

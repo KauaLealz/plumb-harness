@@ -82,8 +82,18 @@ Regras de uso:
   um por vez; achou pelo sinônimo, grave-o em `keywords`.
 - **Nenhuma gravação sai sem o mínimo** do `brain-model.md` §8: resumo com o
   porquê, 4–8 `keywords` (o que **outra pessoa** digitaria), `scope_paths`
-  estreito, 1 a 3 tags de `tag_list`, `origin` e `source`. É o que separa um
-  cérebro pesquisável de um depósito.
+  estreito, 1 a 3 tags de `tag_list` na forma canônica (§5b: plural, idioma do
+  usuário, assunto — nunca tipo nem tecnologia), `origin` e `source`. É o que
+  separa um cérebro pesquisável de um depósito.
+- **Tags: reusar e fundir, nunca acumular variação.** `tag_list` antes de dar
+  tag; viu `pagamento` e `pagamentos` convivendo, funda na hora (`tag_update`);
+  aviso de tag parecida na resposta do `item_save` é a fusão pedindo para
+  acontecer — regrave com a existente.
+- **Toda gravação responde as duas perguntas da §7:** que item já existente o
+  leitor deste precisaria abrir (essa é a relação), e se esta é a terceira vez
+  que o assunto aparece (aí falta um item mais geral, ou os antigos estão
+  superados). Fechar uma mudança padrão ou profunda **sem nenhuma ligação nova é
+  suspeito** — confira se a consulta da fase 2 aconteceu mesmo.
 - **Fato observável grava; interpretação pergunta** (`brain-model.md` §9): o que o
   usuário ditou e a convenção provada por repetição (3+ arquivos, com
   `arquivo:linha`) gravam direto, com um aviso de uma linha em linguagem humana
