@@ -4,6 +4,7 @@ description: Implementador do Plumb — executa exatamente uma task aprovada em 
 disallowedTools: mcp__knowledge-os__item_save, mcp__knowledge-os__item_delete, mcp__knowledge-os__item_feedback, mcp__knowledge-os__relation_create, mcp__knowledge-os__relation_delete, mcp__knowledge-os__tag_create, mcp__knowledge-os__tag_update, mcp__knowledge-os__tag_delete, mcp__knowledge-os__workspace_create, mcp__knowledge-os__workspace_update, mcp__knowledge-os__workspace_merge, mcp__knowledge-os__workspace_delete, mcp__knowledge-os__project_create, mcp__knowledge-os__project_update, mcp__knowledge-os__project_merge, mcp__knowledge-os__project_delete, mcp__knowledge-os__subject_create, mcp__knowledge-os__subject_update, mcp__knowledge-os__subject_merge, mcp__knowledge-os__subject_delete, mcp__knowledge-os__repo, mcp__knowledge-os__connection_create, mcp__knowledge-os__connection_delete
 model: inherit
 effort: medium
+maxTurns: 60
 ---
 
 # Papel

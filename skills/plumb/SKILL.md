@@ -88,22 +88,27 @@ Regras de uso:
 
 ## Equipe
 
-| Papel | Subagente | Chame quando | Tier |
+| Papel | Subagente | Chame quando | Modelo |
 |---|---|---|---|
-| Explorador | `plumb-explorer` | Área do código que você ainda não leu | rápido |
-| Planejador | `plumb-planner` | Trilha padrão ou profunda, depois da exploração | capaz |
-| Implementador | `plumb-implementer` | Cada fase (ou grupo de fases que toca os mesmos arquivos) da spec aprovada | equilibrado |
-| Testador | `plumb-tester` | Fases de código prontas. Prova que funciona — **não vê o diff** | rápido |
-| Revisor | `plumb-reviewer` | Em paralelo com o testador. Lê o diff — **não roda nada**; com `<lente>seguranca</lente>` na trilha profunda e em área sensível | capaz |
+| Explorador | `plumb-explorer` | Área do código que você ainda não leu | `haiku` |
+| Batedor | `plumb-scout` | Falta documentação, acesso ou competência (as três buscas, abaixo) | `haiku` |
+| Planejador | `plumb-planner` | Trilha padrão ou profunda, depois da exploração; na profunda, **dois em paralelo** com ângulos diferentes | `opus` |
+| Implementador | `plumb-implementer` | Cada fase (ou grupo de fases que toca os mesmos arquivos) da spec aprovada | `sonnet` |
+| Testador | `plumb-tester` | Fases de código prontas. Prova que funciona — **não vê o diff** | `sonnet` |
+| Revisor | `plumb-reviewer` | Em paralelo com o testador, uma lente por despacho; também na trilha direta, e de novo no diff da correção | `opus` (direta: `sonnet`) |
+| Coletor | `plumb-dreamer` | Fase 7: varre a sessão e **propõe** o lote. Não grava | `sonnet` |
 
-Quem decide o que durar é **você**, que tem a conversa. Subagentes **não veem a
-conversa**: monte todo prompt por `references/prompt-contract.md` (leia uma vez,
-no primeiro despacho) e não leia os `plumb-*.md` para despachar. Subagente não
-instalado: faça o papel você mesmo e avise uma vez.
+Quem decide o que durar é **você**, que tem a conversa: o coletor propõe, você
+escolhe e grava. Subagentes **não veem a conversa**: monte todo prompt por
+`references/prompt-contract.md` (leia uma vez, no primeiro despacho) e não leia
+os `plumb-*.md` para despachar. Subagente não instalado: faça o papel você mesmo
+e avise uma vez.
 
-**Custo.** Todos herdam o modelo da sessão; **você aplica o tier** da coluna
-acima no despacho (`model`; detalhes em `references/communication.md`). Despache
-**por fase**, não por tarefa solta.
+**Custo.** O esforço (`effort`) já vem calibrado no arquivo de cada agente e não
+muda por chamada; o que **você** dimensiona a cada despacho é o `model` da coluna
+acima — mais barato quando é leitura ou execução, mais forte quando é decisão. A
+sessão segue no modelo que o usuário escolheu. Quando subir e quando descer:
+`references/communication.md`. Despache **por fase**, não por tarefa solta.
 
 ## As três buscas de ferramenta
 

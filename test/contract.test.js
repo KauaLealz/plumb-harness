@@ -102,6 +102,47 @@ test('a referência do cérebro cobre as 32 ferramentas, os tipos e o scope', ()
   }
 });
 
+// Dimensionamento: o modelo é escolhido pelo orquestrador a cada despacho (parâmetro `model`), e o esforço
+// vive no frontmatter porque a ferramenta de subagente não aceita `effort` por chamada.
+const EFFORT = new Set(['low', 'medium', 'high', 'xhigh', 'max']);
+
+function frontmatter(file) {
+  const text = readFileSync(file, 'utf8');
+  const m = text.match(/^---\n([\s\S]*?)\n---/);
+  assert.ok(m, `${relative(ROOT, file)} sem frontmatter`);
+  const fields = {};
+  for (const line of m[1].split('\n')) {
+    const kv = line.match(/^([a-zA-Z-]+):\s*(.*)$/);
+    if (kv) fields[kv[1]] = kv[2].trim();
+  }
+  return fields;
+}
+
+const agentFiles = readdirSync(join(ROOT, 'agents')).filter((f) => f.endsWith('.md')).map((f) => join(ROOT, 'agents', f));
+
+test('todo agente herda o modelo da sessão e declara esforço e teto de turnos', () => {
+  const bad = [];
+  for (const f of agentFiles) {
+    const fm = frontmatter(f);
+    const name = relative(ROOT, f);
+    if (fm.model !== 'inherit') bad.push(`${name}: model=${fm.model} — deve ser inherit (o tier vem do despacho)`);
+    if (!EFFORT.has(fm.effort)) bad.push(`${name}: effort=${fm.effort ?? '(ausente)'}`);
+    if (!/^\d+$/.test(fm.maxTurns ?? '')) bad.push(`${name}: maxTurns=${fm.maxTurns ?? '(ausente)'}`);
+  }
+  assert.deepEqual(bad, [], `frontmatter fora do contrato:\n${bad.join('\n')}`);
+});
+
+test('a tabela de tiers cobre todo agente instalado, com modelo e esforço', () => {
+  const text = readFileSync(join(ROOT, 'skills', 'plumb', 'references', 'communication.md'), 'utf8');
+  for (const f of agentFiles) {
+    const name = frontmatter(f).name;
+    assert.ok(text.includes(name), `communication.md não dimensiona ${name}`);
+  }
+  for (const t of ['haiku', 'sonnet', 'opus']) assert.ok(text.includes(t), `communication.md não cita ${t}`);
+  assert.ok(/sub[ai]|escalad/i.test(text), 'communication.md não diz quando subir de modelo');
+  assert.ok(/des[çc]a|descer/i.test(text), 'communication.md não diz quando descer de modelo');
+});
+
 test('perguntas ao usuário vão pela ferramenta de perguntas, não em texto', () => {
   const all = [...markdownFiles(join(ROOT, 'skills')), ...markdownFiles(join(ROOT, 'agents'))]
     .filter((f) => !f.endsWith('SOURCE.md'));

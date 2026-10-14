@@ -5,6 +5,7 @@ disallowedTools: Write, Edit, NotebookEdit, mcp__knowledge-os__item_save, mcp__k
 readonly: true
 model: inherit
 effort: high
+maxTurns: 40
 ---
 
 # Papel
