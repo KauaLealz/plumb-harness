@@ -17,7 +17,7 @@ const CRUD = ['list', 'create', 'update', 'merge', 'delete'];
 export const TOOLS = new Set([
   ...['workspace', 'project', 'subject'].flatMap((n) => CRUD.map((a) => `${n}_${a}`)),
   'repo',
-  'item_search', 'item_get', 'item_save', 'item_delete', 'item_feedback', 'item_graph',
+  'item_search', 'item_get', 'item_save', 'item_delete', 'item_graph',
   'relation_create', 'relation_delete',
   'tag_list', 'tag_create', 'tag_update', 'tag_delete',
   'connection_create', 'connection_list', 'connection_delete',
@@ -31,10 +31,12 @@ const FORBIDDEN = [
   [/memory_class|importance|confidence/, 'memory_class, importance e confidence saíram do modelo'],
   [/\bvocabulary\(|\bbackup\(|\bartifact\(/, 'vocabulary, backup e artifact saíram das ferramentas'],
   [/\blabels?\b/, 'labels saíram (viraram tags)'],
-  [/type"?:\s*"?(insight|procedure|knowledge|pattern|task)\b/, 'tipos antigos: use rule, howto, context, spec, secret'],
-  [/\b(Geral|Global)\b/, 'Geral e Global não são mais lugares: o alcance vem do scope (scoped, workspace, global)'],
-  [/\bchange\/[a-z<]/, 'a key da spec é spec/<id>'],
-  [/\bdream\/last\b/, 'o registro do sonho é spec/dream-last'],
+  [/type"?:\s*"?(insight|procedure|knowledge|pattern|task|spec)\b/, 'tipos antigos (inclui spec): use rule, howto, context, work, secret'],
+  [/"subtype"|subtype:\s*["'`]/, 'subtype saiu no v6: a nuance vai em tags'],
+  [/scope:\s*["'`](scoped|workspace|global)|scope=\["/, 'scope saiu no v6: o alcance vem da hierarquia (onde o item mora)'],
+  [/item_feedback/, 'o feedback saiu no v6: item errado/velho, o agente corrige ou remove'],
+  [/\bspec\/[a-z<]/, 'a key do plano é work/<id> (spec virou work)'],
+  [/\bdream\/[a-z<]/, 'o reflect não grava dream/<id>'],
   [/\b(regra|decisao|padrao|contexto|segredo)\/[a-z<]/, 'keys em português: use rule/, context/, secret/ …'],
 ];
 
@@ -89,15 +91,16 @@ test('nenhum texto usa conceito que o v2 removeu', () => {
   assert.deepEqual(bad, [], `\n${bad.join('\n')}`);
 });
 
-test('a referência do cérebro cobre as 32 ferramentas, os tipos e o scope', () => {
+test('a referência do cérebro cobre as 31 ferramentas, os tipos e os conceitos v6', () => {
   const text = readFileSync(join(ROOT, 'skills', 'plumb', 'references', 'brain.md'), 'utf8');
-  for (const t of ['item_search', 'item_get', 'item_save', 'item_delete', 'item_feedback', 'item_graph',
+  for (const t of ['item_search', 'item_get', 'item_save', 'item_delete', 'item_graph',
     'relation_create', 'relation_delete', 'tag_list', 'tag_create', 'tag_update', 'tag_delete',
     'connection_create', 'connection_list', 'connection_delete', 'health_check', '`repo`']) {
     assert.ok(text.includes(t), `brain.md não cita ${t}`);
   }
   for (const w of ['workspace_*', 'project_*', 'subject_*']) assert.ok(text.includes(w), `brain.md não cita ${w}`);
-  for (const w of ['`rule`', '`howto`', '`context`', '`spec`', '`secret`', 'scoped', 'workspace', 'global', 'origin', 'supersedes']) {
+  for (const w of ['`rule`', '`howto`', '`context`', '`work`', '`secret`', 'hierarquia', 'tags',
+    'depends_on', 'relates_to']) {
     assert.ok(text.includes(w), `brain.md não cobre ${w}`);
   }
 });

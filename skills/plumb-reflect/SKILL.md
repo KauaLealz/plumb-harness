@@ -1,15 +1,23 @@
----
-name: plumb-dream
-description: O sonho do Plumb — analisa a sessão inteira (os dois lados da conversa, erros de ferramenta, correções), propõe o que enriquece o segundo cérebro, agrupado por destino e com a evidência de cada item, e lista o que faltou durante o trabalho (acesso, documentação, competência) recomendando plumb-find-mcps, plumb-find-docs e plumb-find-skills pela ferramenta de perguntas; com "desde <data>" varre as sessões antigas; com "auditoria" revisa a saúde do cérebro (nunca usado, em revisão, duplicado, tags vazias e duplicadas). Use quando o usuário pedir, quando a entrega sugerir ou quando o início da sessão avisar de diretrizes que ficaram sem gravar.
+﻿---
+name: plumb-reflect
+description: A reflexão do Plumb — analisa a sessão inteira (os dois lados da conversa, erros de ferramenta, correções), propõe o que enriquece o segundo cérebro, agrupado por destino e com a evidência de cada item, e lista o que faltou durante o trabalho (acesso, documentação, competência) recomendando plumb-find-mcps, plumb-find-docs e plumb-find-skills pela ferramenta de perguntas; com "desde <data>" varre as sessões antigas; com "auditoria" revisa a saúde do cérebro (nunca usado, arquivado, duplicado, tags vazias e duplicadas). Dispara automaticamente no fim de uma sessão com aprendizado não gravado e no fechamento de uma mudança, além de à mão quando o usuário pedir ("/plumb-reflect", "o que dá pra aprender daqui").
 disable-model-invocation: true
 ---
 
-# Plumb dream
+# Plumb reflect
 
-Enquanto você trabalha, o agente esquece. O sonho é onde o que aconteceu vira o
+Enquanto você trabalha, o agente esquece. A reflexão é onde o que aconteceu vira o
 que fica: a correção que o usuário repetiu, o comando que falhou duas vezes, a
 preferência que ele teve que dizer de novo, o acesso que faltou, o que custou uma
 hora para descobrir.
+
+**Quando dispara.** Dois gatilhos automáticos, mais o manual: (1) no **fim da
+sessão**, um hook detecta aprendizado pendente (travou/destravou, o usuário
+corrigiu/repetiu algo, decisões) e sugere a reflexão; (2) no **fechamento de uma
+mudança** (a fase Aprender do `plumb-change` é a reflexão da própria mudança); (3) à
+mão, quando o usuário pede. Modelo v6 do cérebro: a spec de uma mudança é um item
+`work` (ciclo em tags `draft`/`active`/`done`), a nuance vai em tags, e o alcance é
+pela hierarquia — detalhes em `../plumb/references/brain.md`.
 
 Melhore o cérebro a partir da **evidência do próprio trabalho**, nunca de
 opinião: cada proposta cita o turno da conversa (ou o arquivo) que a sustenta. Quem
@@ -46,9 +54,9 @@ reaproveitado, 1 a 3 por item).
 
 | O usuário pediu | Modo |
 |---|---|
-| `/plumb-dream` (sem nada) | **Sessão atual** (seção 1) |
-| `/plumb-dream desde 2026-10-01`, "olha as últimas sessões" | **Sessões antigas** (seção 2) |
-| `/plumb-dream auditoria`, "limpa o cérebro" | **Auditoria** (seção 3) |
+| `/plumb-reflect` (sem nada) | **Sessão atual** (seção 1) |
+| `/plumb-reflect desde 2026-10-01`, "olha as últimas sessões" | **Sessões antigas** (seção 2) |
+| `/plumb-reflect auditoria`, "limpa o cérebro" | **Auditoria** (seção 3) |
 
 Os três terminam igual: propor (seção 4), aplicar e registrar (seção 5).
 
@@ -57,7 +65,7 @@ Os três terminam igual: propor (seção 4), aplicar e registrar (seção 5).
 **Coletar.**
 
 1. **A conversa.** O hook de entrada injeta, a cada mensagem, a linha
-   `Transcript desta sessão (para o /plumb-dream): <caminho>`. Use esse
+   `Transcript desta sessão (para o /plumb-reflect): <caminho>`. Use esse
    arquivo. Sem a linha (Cursor, hook não instalado): o transcript mais recente de
    `~/.claude/projects/<caminho-do-projeto-com-tracos>/*.jsonl`; sem transcript
    nenhum, a própria conversa que você tem em contexto.
@@ -81,8 +89,8 @@ Os três terminam igual: propor (seção 4), aplicar e registrar (seção 5).
    (e a fila offline). Não proponha de novo.
 3. **O estado do cérebro na área:** `item_search(repo=".")` e, para cada tema
    candidato, `item_search` pelos termos (duplicata, contradição).
-4. **O último sonho:** `item_get(keys=["spec/dream-last"], repo=".")` — a data e os
-   ajustes aplicados, com seus sinais-alvo (`missing` = primeiro sonho).
+4. **O último reflexão:** `item_get(keys=["work/dream-last"], repo=".")` — a data e os
+   ajustes aplicados, com seus sinais-alvo (`missing` = primeiro reflexão).
 5. **As specs concluídas no período:** `item_search(types=["spec"], status=["done"])`;
    leia só a seção `## Retro` e os Números do que importar.
 
@@ -98,7 +106,7 @@ Os três terminam igual: propor (seção 4), aplicar e registrar (seção 5).
 | passos que você executou e vão se repetir (migration, release, ambiente) | procedimento | `howto/*` com os comandos exatos |
 | uma escolha entre alternativas, com porquê | decisão | `rule/decision`, com a alternativa descartada |
 | algo que se repetiu 3+ vezes no código que você escreveu | molde | `rule/pattern`, com o arquivo-modelo |
-| um item que o pacote trouxe e estava errado, velho ou contradito pelo trabalho | item podre | `item_feedback` (`wrong`/`outdated`) ou regravar pela key |
+| um item que o pacote trouxe e estava errado, velho ou contradito pelo trabalho | item podre | `o feedback` (`wrong`/`outdated`) ou regravar pela key |
 | "o card diz…", "em produção dá…", "segue o Figma" sem você alcançar | falta de acesso | recomendação de MCP (`plumb-find-mcps`) |
 | você errou ou improvisou a API de uma biblioteca (erro de chamada, método que não existe, versão trocada) | falta documentação atual | recomendação de consulta (`plumb-find-docs`), registrada em `context/stack` |
 | você improvisou uma competência (revisão de segurança, migração, teste de interface, a stack específica) ou o usuário a pediu e você não tinha | falta competência | recomendação de skill (`plumb-find-skills`) |
@@ -121,7 +129,7 @@ sessão mostrou que faltava, em três grupos, **cada um com a evidência citada*
 
 **Compare** também o que o usuário **disse e usou** na sessão (preferências,
 correções, ferramentas que ele mesmo invocou) com o que o cérebro e as skills dele
-já têm (`item_search(scope=["global"])`, project `preferencias`, `~/.claude/CLAUDE.md`):
+já têm (`item_search(everywhere=True)`, project `preferencias`, `~/.claude/CLAUDE.md`):
 a diferença é o que falta registrar ou recomendar.
 
 **Agrupar.** Junte por **causa raiz**, não por texto parecido ("esqueceu a
@@ -135,7 +143,7 @@ migration" três vezes é uma causa só). Quanto vale uma ocorrência:
   evidência da sessão, citada, basta.** O dream já é pedido do usuário e nada se
   instala sem o "sim" dele. Sem evidência citada, não recomende.
 
-Para cada ajuste do sonho anterior: o sinal-alvo voltou? Não → manter. Menos →
+Para cada ajuste do reflexão anterior: o sinal-alvo voltou? Não → manter. Menos →
 manter e observar. Igual ou mais → reforçar de outro jeito ou reverter.
 
 ## 2 — Sessões antigas
@@ -143,7 +151,7 @@ manter e observar. Igual ou mais → reforçar de outro jeito ou reverter.
 Os transcripts de um projeto ficam todos na mesma pasta
 (`~/.claude/projects/<caminho-do-projeto-com-tracos>/`, a pasta do transcript
 desta sessão). Liste os `*.jsonl` com data de modificação desde `<data>`
-(`spec/dream-last` diz até onde já foi lido).
+(`work/dream-last` diz até onde já foi lido).
 
 Despache `plumb-explorer`, **um por transcript**, até 3 em paralelo (o resto, na
 fila). Cada um recebe o prompt pelo contrato de `../plumb/references/prompt-contract.md`:
@@ -217,7 +225,7 @@ Apresente **uma** mensagem, agrupada por **destino** (onde mora e para quem vale
 pergunte pela ferramenta (veja o fim desta seção):
 
 ```
-**Plumb dream — esta sessão (31 falas, 2 erros repetidos)**
+**Plumb reflect — esta sessão (31 falas, 2 erros repetidos)**
 
 Neste projeto
 1. ✔ grava — Erros de API sempre `{ error: string }` em português (você disse: "erro sempre em português"). rule/code · src/**
@@ -275,7 +283,7 @@ usuário:
 1. **`item_save`** de todos os itens aprovados numa chamada (novos e reforços, pela
    mesma key; `origin` conforme a fonte: `user` o que ele disse, `agent` o que você
    inferiu). Estrutura nova (workspace, project, subject, tag) só com o "sim" dela.
-2. **`item_feedback`**: `wrong`/`outdated` nos itens que o trabalho contradisse, `helped`
+2. **`o feedback`**: `wrong`/`outdated` nos itens que o trabalho contradisse, `helped`
    nos que valeram. **`relation_create`** para `supersedes` e dependências.
 3. Comandos do `AGENTS.md` que mudaram: edite o bloco e diga.
 4. **Ferramentas aprovadas** (a pergunta da seção 4):
@@ -289,11 +297,11 @@ usuário:
    - **Recusadas:** registre em `context/stack` como `recusado: <nome> — <data>
      (motivo)`; a próxima recomendação não repete. Modelo do `context/stack` em
      `../plumb-setup/references/catalog.md`.
-5. **Registre o sonho** — regrave `spec/dream-last` (substitui o anterior; o
+5. **Registre a reflexão** — regrave `work/dream-last` (substitui o anterior; o
    histórico fica nos ajustes aplicados):
 
 ```json
-{"key": "spec/dream-last", "type": "spec", "status": "done", "origin": "agent",
+{"key": "work/dream-last", "type": "work", "status": "done", "origin": "agent",
  "title": "Sonho de <AAAA-MM-DD>", "summary": "Concluída: <n> itens, <n> sessões, <n> ajustes",
  "content": "Trilha: dream
 Agente: <agente> · <sessão>
@@ -312,7 +320,7 @@ O cabeçalho segue o padrão de spec (`brain.md`); o `summary`, por estar conclu
 `Concluída: <resultado em uma frase>`. Sem tag de estado, porque a spec está `done`.
 
 Feche em uma linha: quantos itens entraram, as ferramentas aceitas e recusadas, o que
-ficou para observar e quando vale o próximo sonho (`na próxima sessão longa, ou
+ficou para observar e quando vale o próximo reflexão (`na próxima sessão longa, ou
 quando o início da sessão avisar`). Termine com o link `url` do item principal
-gravado (o `spec/dream-last` ou o mais relevante), se a resposta do `item_save` o
+gravado (o `work/dream-last` ou o mais relevante), se a resposta do `item_save` o
 trouxe; se não trouxe, diga a key.

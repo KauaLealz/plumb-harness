@@ -1,4 +1,4 @@
-# Contrato de prompt para subagentes
+﻿# Contrato de prompt para subagentes
 
 Um subagente começa do zero: não vê a conversa, não sabe o que foi combinado
 e não pode perguntar nada ao usuário. Tudo o que ele precisa tem que estar
@@ -18,7 +18,7 @@ Uma frase, um único objetivo, com o resultado esperado.
 
 <contexto>
 - Projeto: stack e comandos relevantes (do `AGENTS.md` e do pacote do cérebro).
-- Mudança: id, key da spec no cérebro (`spec/<id>`, legível com `item_get`), trilha.
+- Mudança: id, key da spec no cérebro (`work/<id>`, legível com `item_get`), trilha.
 - Worktree (padrão e profunda): o **caminho absoluto** de `.claude/worktrees/<id>`.
   O subagente trabalha, roda comandos e (se commita) commita só ali, nunca na
   árvore principal. Na trilha direta, omita.
@@ -79,7 +79,7 @@ Fazer o webhook recusar pagamentos Pix confirmados depois do prazo de 30 minutos
 
 <contexto>
 - Projeto: Node 20, testes com `node --test`; lint `npm run lint`.
-- Mudança: PAY-142, spec em `spec/pay-142` (trilha padrão). Worktree: `C:/repo/.claude/worktrees/pay-142`, trabalhe só nele. T1 pronta: `isExpired(payment, now)` existe em src/payments/pix.js, com testes.
+- Mudança: PAY-142, spec em `work/pay-142` (trilha padrão). Worktree: `C:/repo/.claude/worktrees/pay-142`, trabalhe só nele. T1 pronta: `isExpired(payment, now)` existe em src/payments/pix.js, com testes.
 - Decisão do usuário: recusar com motivo `expired`, sem estorno automático — o estorno manual já existe e o financeiro quer revisar caso a caso.
 - Do cérebro: `rule/money` — valores sempre em Money (src/shared/money.js), nunca number; `howto/webhook-idempotente` — o provedor reenvia a confirmação, o handler precisa ser idempotente.
 - O webhook fica em src/payments/webhook.js (handleConfirmation, linha ~40) e também atende cartão.

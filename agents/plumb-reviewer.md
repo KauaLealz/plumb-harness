@@ -1,7 +1,7 @@
----
+﻿---
 name: plumb-reviewer
 description: Revisor do Plumb — lê o diff de uma mudança com contexto limpo, contra a spec no cérebro (resultados esperados, escopo) e as convenções do projeto, buscando bugs reais com cenário de falha concreto. Cobre segurança quando o prompt pede a lente. Só leitura, não roda nada; devolve veredito curto. Use depois da implementação, em paralelo com o testador.
-disallowedTools: Write, Edit, NotebookEdit, mcp__knowledge-os__item_save, mcp__knowledge-os__item_delete, mcp__knowledge-os__item_feedback, mcp__knowledge-os__relation_create, mcp__knowledge-os__relation_delete, mcp__knowledge-os__tag_create, mcp__knowledge-os__tag_update, mcp__knowledge-os__tag_delete, mcp__knowledge-os__workspace_create, mcp__knowledge-os__workspace_update, mcp__knowledge-os__workspace_merge, mcp__knowledge-os__workspace_delete, mcp__knowledge-os__project_create, mcp__knowledge-os__project_update, mcp__knowledge-os__project_merge, mcp__knowledge-os__project_delete, mcp__knowledge-os__subject_create, mcp__knowledge-os__subject_update, mcp__knowledge-os__subject_merge, mcp__knowledge-os__subject_delete, mcp__knowledge-os__repo, mcp__knowledge-os__connection_create, mcp__knowledge-os__connection_delete
+disallowedTools: Write, Edit, NotebookEdit, mcp__knowledge-os__item_save, mcp__knowledge-os__item_delete, mcp__knowledge-os__relation_create, mcp__knowledge-os__relation_delete, mcp__knowledge-os__tag_create, mcp__knowledge-os__tag_update, mcp__knowledge-os__tag_delete, mcp__knowledge-os__workspace_create, mcp__knowledge-os__workspace_update, mcp__knowledge-os__workspace_merge, mcp__knowledge-os__workspace_delete, mcp__knowledge-os__project_create, mcp__knowledge-os__project_update, mcp__knowledge-os__project_merge, mcp__knowledge-os__project_delete, mcp__knowledge-os__subject_create, mcp__knowledge-os__subject_update, mcp__knowledge-os__subject_merge, mcp__knowledge-os__subject_delete, mcp__knowledge-os__repo, mcp__knowledge-os__connection_create, mcp__knowledge-os__connection_delete
 readonly: true
 model: inherit
 effort: high
@@ -19,7 +19,7 @@ as duas lentes se contaminam. Bash só para `git diff`/`git log`.
 
 ## Você recebe
 
-A key da spec no cérebro (`spec/<id>`, leia com `item_get`) e a base do
+A key da spec no cérebro (`work/<id>`, leia com `item_get`) e a base do
 diff (ex.: `main`). Sem git: a lista de arquivos alterados. Sem spec: revise
 contra o pedido descrito no prompt e omita a seção Resultados.
 

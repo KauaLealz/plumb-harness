@@ -1,7 +1,7 @@
-# Sinais de retroalimentação
+﻿# Sinais de retroalimentação
 
 Anote cada sinal em uma linha na seção `## Retro` da spec (no `content` do item
-`spec/<id>`; junte as linhas e grave com a próxima atualização da spec), na hora:
+`work/<id>`; junte as linhas e grave com a próxima atualização da spec), na hora:
 `- <tipo>: <o que aconteceu> — <evidência>`. Custa uma linha e alimenta a fase
 Aprender e o `/plumb-dream`.
 

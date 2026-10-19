@@ -1,11 +1,11 @@
-# Modelo da spec da mudança
+﻿# Modelo da spec da mudança
 
 A spec mora no segundo cérebro, como item `spec`. Mantenha só as seções que a
 trilha usa — seção vazia é ruído, não rigor. No idioma do usuário (títulos
 inclusive).
 
 ```json
-{"key": "spec/pay-142", "type": "spec", "status": "draft", "origin": "agent",
+{"key": "work/pay-142", "type": "work", "status": "draft", "origin": "agent",
  "title": "PAY-142 — Pix no checkout",
  "summary": "Aguardando aprovação · fase 0/4 · pay-142-pix · sem worktree · Claude (sessão 4f2a)",
  "tags": ["aguardando-aprovacao", "pagamentos"],
@@ -76,7 +76,7 @@ Números: <n> fases · <n> correções pós-revisão · <n> travamentos · <n> d
   `Parada`, `Concluída` (`Concluída: Pix devolve o QR code`). É o que as outras
   sessões veem nas specs ativas e o que uma sessão retomada lê primeiro.
   Atualize a cada fase, junto da tag de estado e de `Atualizado`, na regravação
-  que já faz (chamada pequena: `{"key": "spec/pay-142", "summary": "...", "tags": [...]}`).
+  que já faz (chamada pequena: `{"key": "work/pay-142", "summary": "...", "tags": [...]}`).
 - **`tags`** — estado (`aguardando-aprovacao` com `draft`, `em-andamento` com
   `active`, `parada`) + 1 a 3 de área ou tema (de `tag_list`) + `worktree` quando
   houver. Ao concluir saem as de estado e `worktree`. Padrão completo: `brain.md` §15.
