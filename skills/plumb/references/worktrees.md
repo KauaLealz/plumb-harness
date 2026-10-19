@@ -1,4 +1,4 @@
-# Worktree por mudança
+﻿# Worktree por mudança
 
 Toda mudança **padrão ou profunda** trabalha num worktree próprio, em
 `.claude/worktrees/<id>` dentro do repositório, numa branch própria criada a
@@ -93,7 +93,7 @@ status=["active","draft"])`):
 |---|---|
 | Worktree em `.claude/worktrees/` sem spec ativa | Pode ser sobra de uma mudança concluída ou abandonada; sugira limpar (passo 6), com o "sim" |
 | Spec ativa que cita `Worktree` que não existe | Recriar (passo 7) ou arquivar a spec, com o "sim" |
-| Spec `active` de trilha padrão ou profunda sem `Worktree` | Mudança do fluxo antigo; só avise. Não é órfã: `draft`, `spec/setup-*`, `spec/dream-*` e `Trilha: setup\|dream` nunca têm worktree |
+| Spec `active` de trilha padrão ou profunda sem `Worktree` | Mudança do fluxo antigo; só avise. Não é órfã: `draft`, `work/setup-*`, `work/dream-*` e `Trilha: setup\|dream` nunca têm worktree |
 | `Atualizado` com mais de 3 dias | Sugira a tag `parada` no lugar de `em-andamento` (com o "sim") |
 
 Nunca apague worktree nem branch de outro agente sem o "sim" do usuário.

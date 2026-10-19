@@ -58,7 +58,8 @@ test('install --both global: skills, agentes e instrução; idempotente; uninsta
   run('install', '--both');
   assert.ok(existsSync(join(home, '.claude', 'skills', 'plumb', 'SKILL.md')));
   assert.ok(existsSync(join(home, '.claude', 'skills', 'plumb-setup', 'references', 'catalog.md')));
-  assert.ok(existsSync(join(home, '.claude', 'skills', 'plumb-grill', 'SKILL.md')), 'o /plumb-grill é instalado');
+  assert.ok(existsSync(join(home, '.claude', 'skills', 'plumb-align', 'SKILL.md')), 'o /plumb-align é instalado');
+  assert.ok(existsSync(join(home, '.claude', 'skills', 'plumb-change', 'SKILL.md')), 'o /plumb-change é instalado');
   assert.ok(!existsSync(join(home, '.cursor', 'skills')), 'com os dois, o Cursor lê .claude/skills');
   assert.match(readFileSync(join(home, '.cursor', 'agents', 'plumb-explorer.md'), 'utf8'), /^model: inherit$/m);
   // os agentes herdam o modelo da sessão; o tier por papel fica no corpo, não no frontmatter
@@ -174,6 +175,10 @@ test('install remove skills e agentes do Plumb que foram renomeados, e preserva 
   const agents = join(home, '.claude', 'agents');
   mkdirSync(join(skills, 'plumb-retro'), { recursive: true });
   writeFileSync(join(skills, 'plumb-retro', 'SKILL.md'), 'skill antiga\n');
+  mkdirSync(join(skills, 'plumb-grill'), { recursive: true });
+  writeFileSync(join(skills, 'plumb-grill', 'SKILL.md'), 'skill antiga (renomeada para align)\n');
+  mkdirSync(join(skills, 'plumb-dream'), { recursive: true });
+  writeFileSync(join(skills, 'plumb-dream', 'SKILL.md'), 'skill antiga (renomeada para reflect)\n');
   mkdirSync(agents, { recursive: true });
   writeFileSync(join(agents, 'plumb-curator.md'), 'Curador do Plumb — texto antigo\n');
   writeFileSync(join(agents, 'plumb-dreamer.md'), 'Dreamer do Plumb — texto antigo\n');
@@ -184,7 +189,9 @@ test('install remove skills e agentes do Plumb que foram renomeados, e preserva 
     { env: { ...process.env, ...fakes(home) }, encoding: 'utf8' });
 
   assert.equal(existsSync(join(skills, 'plumb-retro')), false);
-  assert.equal(existsSync(join(skills, 'plumb-dream')), true);
+  assert.equal(existsSync(join(skills, 'plumb-grill')), false, 'grill virou align');
+  assert.equal(existsSync(join(skills, 'plumb-dream')), false, 'dream virou reflect');
+  assert.equal(existsSync(join(skills, 'plumb-reflect', 'SKILL.md')), true);
   assert.equal(existsSync(join(agents, 'plumb-curator.md')), false);
   assert.equal(existsSync(join(agents, 'plumb-dreamer.md')), false, 'o dreamer saiu: o orquestrador faz o fechamento');
   assert.equal(existsSync(join(agents, 'plumb-explorer.md')), true);

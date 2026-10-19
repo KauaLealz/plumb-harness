@@ -31,11 +31,11 @@ const HOUR = 3_600_000;
 test('o roteador cabe em 20 linhas e manda carregar a skill, classificar e consultar o cérebro', () => {
   assert.ok(ROUTER.length <= 20);
   const text = ROUTER.join('\n');
-  assert.match(text, /skill `plumb`/);
-  assert.match(text, /Classifique/);
+  assert.match(text, /carregue a skill/i);
+  assert.match(text, /Classifique/i);
   assert.match(text, /segundo cérebro/);
-  assert.match(text, /grill/);
-  assert.match(text, /\/plumb-grill/);
+  assert.match(text, /plumb-change/);
+  assert.match(text, /plumb-align/);
   assert.match(text, /worktree/);
   assert.match(text, /ferramenta de perguntas/);
   for (const busca of ['plumb-find-docs', 'plumb-find-mcps', 'plumb-find-skills']) assert.ok(text.includes(busca), busca);
@@ -127,7 +127,7 @@ test('claude-session avisa da sessão anterior inativa com diretriz sem gravaç�
   const atual = transcript([user('oi')], dir, 'atual.jsonl');
   const out = handle('--claude-session', { transcript_path: atual, source: 'startup' });
   assert.match(out.hookSpecificOutput.additionalContext, /1 frase\(s\)/);
-  assert.match(out.hookSpecificOutput.additionalContext, /\/plumb-dream/);
+  assert.match(out.hookSpecificOutput.additionalContext, /\/plumb-reflect/);
   assert.ok(handle('--claude-session', { transcript_path: atual }), 'sem source também avisa');
   assert.equal(handle('--claude-session', { transcript_path: atual, source: 'resume' }), null, 'resume e compact não repetem o aviso');
   assert.equal(handle('--claude-session', { transcript_path: atual, source: 'compact' }), null);
@@ -156,7 +156,7 @@ test('o script nunca trava a sessão: entrada inválida ou modo desconhecido sae
   }
   const ok = run(['--claude-prompt'], '\uFEFF' + JSON.stringify({ prompt: 'oi', transcript_path: '/t.jsonl' }));
   assert.equal(ok.status, 0);
-  assert.match(JSON.parse(ok.stdout).hookSpecificOutput.additionalContext, /skill `plumb`/);
+  assert.match(JSON.parse(ok.stdout).hookSpecificOutput.additionalContext, /carregue a skill/i);
 });
 
 test('o script roda também quando chamado por um link (dotfiles, junction): não fica mudo', () => {

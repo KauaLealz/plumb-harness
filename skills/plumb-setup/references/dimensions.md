@@ -1,4 +1,4 @@
-# As dimensões do setup
+﻿# As dimensões do setup
 
 O setup percorre estas dez dimensões, na ordem, no modelo grill: o
 que o repositório responde é **mostrado com a evidência e confirmado**; o que ele não
@@ -41,7 +41,7 @@ ferramenta, se é isso mesmo (recomendação: pular). Nunca pule em silêncio.
 |---|---|
 | **Explora** | manifestos e lockfiles, `docker-compose`, CI, `.env.example` (só os **nomes** das variáveis), versões em `.nvmrc`/`.tool-versions`, remote do git |
 | **Pergunta** | Roda onde (local, container, nuvem)? Há serviço que o código não mostra (banco gerenciado, fila, terceiro)? Qual versão de runtime o time usa de fato? |
-| **Nasce** | `context/stack` — o que o projeto usa **e o que o agente alcança**, uma linha por sistema: *conectado*, *sem MCP* (existe e o agente não alcança: candidato), *não usam* ou *recusado* (nunca pergunte de novo). Segue o modelo em `catalog.md` · `context/environment` (subtipo `environment`) — como subir o ambiente, portas, serviços, `links` |
+| **Nasce** | `context/stack` — o que o projeto usa **e o que o agente alcança**, uma linha por sistema: *conectado*, *sem MCP* (existe e o agente não alcança: candidato), *não usam* ou *recusado* (nunca pergunte de novo). Segue o modelo em `catalog.md` · `context/environment`  — como subir o ambiente, portas, serviços, `links` |
 
 ## 3. Mapa do código
 
@@ -122,7 +122,7 @@ fica de fora.
 - O que o usuário já tem: `~/.claude/skills`, `.claude/skills` e, se a ferramenta
   oferecer, as de listar e sugerir skills e plugins (para ver o que está instalado
   e o que o catálogo dele sugere).
-- O que ele já sabe e prefere: `~/.claude/CLAUDE.md`, os itens `scope=global` e o
+- O que ele já sabe e prefere: `~/.claude/CLAUDE.md`, os itens que valem no workspace Pessoal e o
   project `preferencias` do cérebro, os itens anteriores do projeto.
 - Lacuna = competência que o trabalho deste projeto pede (teste de interface,
   migração de banco, revisão de segurança, acessibilidade, a stack específica) e
@@ -156,7 +156,7 @@ nada for preciso).
 
 | | |
 |---|---|
-| **Explora** | o que já existe como `scope=global` (`item_search(scope=["global"])`), o `~/.claude/CLAUDE.md`, o idioma da conversa |
+| **Explora** | o que já existe como `scope=global` (`item_search(everywhere=True)`), o `~/.claude/CLAUDE.md`, o idioma da conversa |
 | **Pergunta** | Só o que **falta** depois de ler o que já existe (juntas pela ferramenta, até 4 por chamada; mais que isso, em duas): idioma das respostas, tom e nível de detalhe, como quer ser avisado, o que nunca fazer sem perguntar, ferramentas pessoais, particularidades da máquina |
 | **Nasce** | `rule/process` e `context/environment` no project `preferencias` do workspace pessoal global, com `scope=global`. **Tudo aqui pede o "sim"** (vale em todo projeto dele). Não duplique o que já está lá |
 

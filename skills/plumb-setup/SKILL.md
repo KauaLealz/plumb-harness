@@ -1,4 +1,4 @@
----
+﻿---
 name: plumb-setup
 description: Grill pesado sobre um repositório que monta a base do segundo cérebro (Knowledge OS) com o usuário — liga o projeto, percorre dez dimensões (produto, stack, mapa, comandos, convenções, áreas sensíveis, procedimentos, ferramentas, time, preferências) perguntando em lote (até 4 perguntas por chamada, nunca uma de cada vez), sempre com a recomendação primeiro e pela ferramenta de perguntas; na dimensão de ferramentas varre dependências, MCPs, skills e plugins e recomenda documentação, acessos e competências que faltam (plumb-find-docs, plumb-find-mcps, plumb-find-skills). Leva regras e skills de projeto existentes para o cérebro, pergunta como preparar um worktree novo e grava o bloco de comandos no AGENTS.md. Retomável; grava cada dimensão depois da confirmação. Rode uma vez por repositório, ou de novo para auditar.
 disable-model-invocation: true
@@ -63,8 +63,8 @@ dimensões, com o que explorar, o que perguntar e o que nasce:
 
 ## 0 — Retomar
 
-`item_search(repo=".", types=["spec"], status=["active","draft"], query="setup")`.
-Existe `spec/setup-<repo>`? Diga em uma linha onde parou (`Retomando o setup do
+`item_search(repo=".", types=["work"], status=["active","draft"], query="setup")`.
+Existe `work/setup-<repo>`? Diga em uma linha onde parou (`Retomando o setup do
 agenda-api: já guardei produto, stack e mapa; falta convenções.`) e siga da
 dimensão seguinte. Sem ela, é um setup novo.
 
@@ -72,7 +72,7 @@ dimensão seguinte. Sem ela, é um setup novo.
 
 Veja o que já existe: `AGENTS.md`, `CLAUDE.md`, `.claude/rules/`, `.cursor/rules/`,
 `.claude/skills/`, `.claude/settings.json`, uma pasta `.plumb/` de versões antigas
-(os planos dela migram para o cérebro como itens `spec`), e o cérebro.
+(os planos dela migram para o cérebro como itens `work`), e o cérebro.
 Classifique:
 
 - **novo** — ainda não há código de produto (só README, licença, ou nada) → modo
@@ -87,7 +87,7 @@ Classifique:
 
 Antes de qualquer coisa, **olhe o cérebro**: `health_check`, `connection_list`,
 `workspace_list`, `project_list` do workspace candidato, `item_search(repo=".")` e
-`item_search(scope=["global"])` (as preferências e regras globais que já existem).
+`item_search(everywhere=True)` (as preferências e regras globais que já existem).
 
 - **Sem as ferramentas `knowledge-os` na sessão:** diga que o Plumb depende dele e
   como instalar (`npx plumb-harness install` registra o servidor e os hooks; precisa
@@ -134,7 +134,7 @@ Uma mensagem só, curta, com o que o repositório é (uma frase), o que já exis
 (arquivos de agente, cérebro) e como vai ser a entrevista (as dez dimensões, em uma
 linha). A estrutura (conexão, workspace, ligação) já foi perguntada uma a uma; com
 as respostas, `repo(action="link", repo=".", workspace=<W>, project=<P>)` e crie
-`spec/setup-<repo>` pelo padrão de item (`brain.md`, seção da spec; sem a seção,
+`work/setup-<repo>` pelo padrão de item (`brain.md`, seção da spec; sem a seção,
 pelo que segue):
 
 - `status: active`; `summary` na linha fixa `<estado> · <fase n/total> · <branch> ·
@@ -315,7 +315,7 @@ Com as dez dimensões feitas (ou adiadas):
    padrão ou profunda começa com o grill (todas as perguntas de uma vez, com a
    recomendação primeiro, sempre pela ferramenta de perguntas), vira uma spec (objetivo,
    resultados esperados observáveis, fases com critério de saída) aprovada antes
-   de codar — com o segundo cérebro, guarde-a como item `spec/<id>` — e roda em um
+   de codar — com o segundo cérebro, guarde-a como item `work/<id>` — e roda em um
    worktree próprio, um por mudança. Escreva os testes primeiro; peça confirmação
    antes de push, PR ou merge. Em qualquer mudança, até um typo: rode os testes e o
    lint afetados e reporte a evidência — nunca diga "pronto" sem isso. Falta
@@ -331,7 +331,7 @@ Com as dez dimensões feitas (ou adiadas):
    foram para o cérebro (recomendação: remover) e, com o "sim", remova **só depois**
    de gravadas.
 4. **`.plumb/` de versões antigas** — mudanças em andamento viram itens
-   `spec/<id>` (o arquivo como `content`, `status: active`); as arquivadas, o mesmo
+   `work/<id>` (o arquivo como `content`, `status: active`); as arquivadas, o mesmo
    com `status: done`. A pasta é ignorada pelo git, então a remoção **não tem volta**:
    só com o "sim" do usuário (pergunta pela ferramenta) e depois de conferir com
    `item_get` que os itens **entraram de verdade no cérebro** (a fila offline não
@@ -350,7 +350,7 @@ Com as dez dimensões feitas (ou adiadas):
    duplicatas e variações (`tag_update` mescla; `brain.md`, seção Tags) e proponha
    `tag_create` só para assunto com 3+ itens; `subject_create` só para área com nome
    próprio e muitos itens. Pergunte (multiSelect) o que aplicar.
-7. **Encerre a spec** `spec/setup-<repo>`: `status: done`, `summary` no formato fixo
+7. **Encerre a spec** `work/setup-<repo>`: `status: done`, `summary` no formato fixo
    com `Concluída` e o resultado, `Atualizado` no cabeçalho, sem tag de estado. Capture
    o `url` que o `item_save` devolver. **Verifique:** `item_search(repo=".")` devolve
    o essencial; o `health_check` está sem arquivo quebrado.
@@ -359,7 +359,7 @@ Feche em 2–4 linhas, em linguagem de resultado: o que ficou pronto (arquivos e
 quantos itens foram para o cérebro, por tipo), as recomendações aceitas e as
 recusadas, o que ficou adiado e como começar (`Pronto. Agora é só pedir — por
 exemplo, "implementa o PAY-142". Quando quiser guardar o que uma sessão ensinou:
-/plumb-dream.`). Termine com o link `url` do item principal gravado (a spec do
+/plumb-reflect.`). Termine com o link `url` do item principal gravado (a spec do
 setup), se a resposta do `item_save` o trouxe; se não trouxe, diga a key.
 
 Em uma nova execução, grave só o que mudou e mostre o antes → depois.

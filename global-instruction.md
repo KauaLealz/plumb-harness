@@ -1,9 +1,34 @@
 <!-- plumb:start -->
 ## Plumb
-**Todo pedido passa pela skill `plumb`** — pergunta, explicação, regra enunciada, investigação, feature, bug, refatoração, ticket, "continua de onde paramos", e também a correção de uma linha. Não existe pedido pequeno demais: a cerimônia é proporcional (pergunta responde direto, correção pequena vai pela trilha direta, só mudança maior pede spec), mas a skill entra sempre. Um hook lembra disso a cada mensagem; carregue a skill uma vez por conversa e siga. Responder ou editar sem ela pula a escolha de trilha, a consulta ao cérebro, a spec e a prova.
-Nas trilhas padrão e profunda o pedido começa com o **grill** (`/plumb-grill`, também chamável à mão): todas as perguntas de uma vez (numa só chamada da ferramenta de perguntas, até 4 por chamada), com a sua recomendação em primeiro, até os dois terem o mesmo entendimento; na trilha direta, só se o pedido for ambíguo. Toda pergunta ao usuário vai pela **ferramenta de perguntas** do Claude (opções clicáveis, recomendação primeiro), nunca só em texto; sem a ferramenta (Cursor), lista numerada com a recomendação na opção 1. Mudança padrão ou profunda trabalha num **worktree** próprio em `.claude/worktrees/<id>`, com branch própria; a trilha direta fica na árvore principal. A spec carrega no próprio item quem trabalha, onde e em que fase (resumo `<estado> · <fase n/total> · <branch> · <worktree> · <agente>`, cabeçalho e tags de estado e área), e o link `url` do item vai ao usuário. Ferramentas no momento certo: biblioteca na mudança → `plumb-find-docs` antes de escrever código (inclusive na trilha direta); sistema citado sem acesso → `plumb-find-mcps`; competência que falta → `plumb-find-skills`; recomende pela ferramenta de perguntas e só instale com o "sim".
-Se o repositório ainda não tem o bloco Plumb no AGENTS.md, sugira uma vez que o usuário rode `/plumb-setup` (é um comando dele: não aparece na sua lista de skills) e siga mesmo assim. Sem a skill instalada: responda perguntas consultando o cérebro; escolha a trilha (direta / padrão / profunda); nas trilhas padrão e profunda, apresente uma spec (objetivo, resultados esperados com o que se observa, fases com critério de saída), guarde-a no segundo cérebro como item `spec/<id>` e peça aprovação antes de codar — depois do "sim", siga até a entrega sem pedir confirmação no meio; escreva os testes primeiro; rode os testes e o lint afetados e reporte a evidência antes de dizer "pronto"; peça confirmação antes de push ou PR (a pergunta é push, PR ou merge local).
-Segundo cérebro (MCP `knowledge-os`): as convenções, regras, decisões e procedimentos de cada projeto estão lá, não em arquivos, e ele entra em **todo** pedido: antes de agir, uma consulta (`item_search(repo=".")` com o tema e os arquivos); ao fechar, o que durar. Regra, decisão ou preferência que o usuário **ditou**: `item_save` na hora (`origin` user), confirme em uma linha. O que você **inferiu** (molde de composição, procedimento, gotcha, contexto) e tudo que vale em qualquer projeto dele (`scope` global): mostre e espere o "sim". Corrigir = regravar pela mesma key. Segredo: item `secret` sem valor e o link (`fill_url`) para o usuário preencher na UI; usar por `knowledge-mcp run`; nunca peça o valor no chat. Fora do ar: avise, siga e guarde em `~/.knowledge-os/pending.jsonl`.
-Com um gestor de tarefas conectado (Jira, Linear, Monday, Trello, GitHub Issues): o card é a fonte de verdade do **quê** e do **status**; o cérebro guarda o **porquê**. Não duplique: o cérebro nunca guarda status nem id de tarefa fora da spec, e o gestor nunca guarda regra durável.
-Ao compactar a conversa, preserve o id da mudança ativa, o Status, as fases pendentes, as decisões e os comandos que falharam.
+**Todo pedido passa pelo Plumb** — pergunta, explicação, regra enunciada, investigação, feature, bug, refatoração, ticket, "continua de onde paramos", até a correção de uma linha. Não existe pedido pequeno demais: a cerimônia é proporcional (pergunta responde direto, correção pequena vai leve, só mudança maior pede plano e aprovação), mas o fluxo entra sempre. Um hook lembra disso a cada mensagem.
+
+**Roteamento (carregue a skill da situação, direto):** classifique o pedido e carregue a skill correspondente — não há mais uma skill genérica `plumb`.
+
+| Situação | Skill |
+|---|---|
+| pergunta / explicação | `plumb-answer` |
+| regra ou preferência ditada ("sempre…", "a partir de agora…") | `plumb-capture` |
+| investigar ("por que…", "vê se dá…") | `plumb-investigate` |
+| mudança de código (feature, projeto, **bug/hotfix**) | `plumb-change` |
+| planejar sem construir (design/discovery) | `plumb-plan` |
+| revisar/auditar código de terceiros | `plumb-review` |
+| gerar/atualizar documentação | `plumb-document` |
+| preparar o repositório | `plumb-setup` |
+| refletir sobre a sessão | `plumb-reflect` (também dispara sozinho no fechamento) |
+| alinhar antes de começar ("me entrevista", "grill") | `plumb-align` |
+
+Falta de ferramenta no meio do trabalho: `plumb-find-docs` (biblioteca → antes de escrever código, sempre), `plumb-find-mcps` (sistema sem acesso), `plumb-find-skills` (competência que falta). Recomende pela ferramenta de perguntas; só instale com o "sim".
+
+**Disciplinas (valem em toda situação):**
+- **Pergunta ao usuário** → sempre pela ferramenta de perguntas do Claude (opções clicáveis, recomendação primeiro); sem ela (Cursor), lista numerada com a recomendação na opção 1.
+- **Confirmação ao gravar no cérebro:** o que o usuário **ditou** grava na hora; o que você **inferiu**, ou um item no nível do workspace (transversal), mostra e espera o "sim".
+- **Cerimônia proporcional:** só mudança padrão/profunda pede alinhamento (grill robusto, sem inferir o que muda o resultado), plano e aprovação, e trabalha num **worktree** próprio (`.claude/worktrees/<id>`); pedido fora do que já foi planejado, ou mudança nova, **dispara replanejamento** (delta proporcional).
+- **Paralelize o trabalho independente** por padrão (subagentes, fases, buscas) — sequencial só com dependência real.
+- **Prova antes de "pronto":** teste primeiro, rode testes e lint afetados e reporte a evidência; push/PR/merge só com o "sim".
+
+**Segundo cérebro (MCP `knowledge-os`):** memória durável do projeto — entra em **todo** pedido (consulta antes de agir; grava o que durar ao fechar). 5 tipos, sem subtipo: `rule`, `howto`, `context`, `work` (plano + o porquê), `secret`. A nuance e o ciclo vão em **tags** (nada de scope/status/origin/feedback). Alcance pela hierarquia: o item vale onde mora (workspace → project → subject) e abaixo. `links` liga item↔item (`depends_on`/`relates_to`) ou a arquivo/URL. Item errado/velho: corrija ou remova (é git). Segredo: item `secret` sem valor + `fill_url`; nunca peça o valor no chat. Fora do ar: avise, siga e guarde em `~/.knowledge-os/pending.jsonl`.
+
+Com um gestor de tarefas conectado (Jira, Linear, Monday, Trello, GitHub Issues): o card é a fonte do **quê** e do **status**; o cérebro guarda o **porquê**. Não duplique.
+
+Ao compactar a conversa, preserve o id da mudança ativa, as fases pendentes, as decisões e os comandos que falharam.
 <!-- plumb:end -->

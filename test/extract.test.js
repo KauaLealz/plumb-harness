@@ -5,9 +5,9 @@ import { cpSync, mkdirSync, mkdtempSync, symlinkSync, writeFileSync } from 'node
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { extract, parseArgs, redact } from '../skills/plumb-dream/scripts/extract.mjs';
+import { extract, parseArgs, redact } from '../skills/plumb-reflect/scripts/extract.mjs';
 
-const SCRIPT_DIR = fileURLToPath(new URL('../skills/plumb-dream/scripts/', import.meta.url));
+const SCRIPT_DIR = fileURLToPath(new URL('../skills/plumb-reflect/scripts/', import.meta.url));
 const SCRIPT = join(SCRIPT_DIR, 'extract.mjs');
 
 const FIXTURE = [

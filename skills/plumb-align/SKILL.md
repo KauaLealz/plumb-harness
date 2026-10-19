@@ -1,14 +1,14 @@
 ---
-name: plumb-grill
-description: Entrevista o usuário com todas as perguntas de uma vez (numa só chamada da ferramenta de perguntas) e sempre com a recomendação do agente, até os dois terem o mesmo entendimento do que será feito — sem escrever spec nem código. Use quando o usuário disser "me entrevista", "me faz perguntas", "grill me", "quero alinhar antes de começar", "/plumb-grill <tema>", ou quando o orquestrador entrar na fase de alinhar. Interviews the user with all questions at once (batched in a single tool call), each with a recommended answer, until you share an understanding; writes no spec and no code.
+name: plumb-align
+description: Entrevista o usuário com todas as perguntas de uma vez (numa só chamada da ferramenta de perguntas) e sempre com a recomendação do agente, até os dois terem o mesmo entendimento do que será feito — sem escrever spec nem código. Use quando o usuário disser "me entrevista", "me faz perguntas", "grill me", "quero alinhar antes de começar", "/plumb-align <tema>", ou quando o orquestrador entrar na fase de alinhar. Interviews the user with all questions at once (batched in a single tool call), each with a recommended answer, until you share an understanding; writes no spec and no code.
 argument-hint: "<tema a alinhar>"
 ---
 
-# Plumb — grill
+# Plumb — alinhar
 
 Entreviste o usuário sobre o tema até haver **entendimento compartilhado**. Esta
 skill só entrevista: não escreve spec, não escreve código, não grava no cérebro
-(exceto o que o usuário ditar como regra, pela rota Diretriz do orquestrador).
+(exceto o que o usuário ditar como regra, pela rota `plumb-capture`).
 
 Tema: $ARGUMENTS (se vazio, o assunto da última mensagem do usuário)
 
@@ -85,8 +85,11 @@ geral nem vale para outro pedido.
 Confirmação pela ferramenta de perguntas: "Confirma esse entendimento?" com a
 opção recomendada primeiro (confirmar) e "Ajustar" em seguida.
 
-## Quando o orquestrador chama
+## Quando o orquestrador (plumb-change / plumb-plan) chama
 
-Nas trilhas padrão e profunda o orquestrador lê esta skill na fase Alinhar e
-segue o mesmo protocolo; o resumo confirmado vira o "Combinado" da spec. Na
-trilha direta só se o pedido for ambíguo, e então basta uma pergunta.
+Nas trilhas padrão e profunda o `plumb-change` e o `plumb-plan` leem esta skill na
+fase de alinhar e seguem o mesmo protocolo; o resumo confirmado vira o "Combinado"
+da spec. Grill **robusto**: não infira o que muda o resultado — pergunte. Na trilha
+direta só alinhe se o pedido for ambíguo, e então basta uma pergunta. Pedido fora
+do que já foi planejado, ou mudança nova no meio: replaneje (volte ao alinhamento,
+delta proporcional ao tamanho), em vez de absorver escopo novo sem combinar.
