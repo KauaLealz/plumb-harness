@@ -1,58 +1,49 @@
 ---
 name: plumb-plan
-description: Planeja sem construir — design, discovery ou arquitetura que produz um plano e decisões, mas não vira código agora. Use quando o usuário quer desenhar uma solução, comparar abordagens, estruturar uma feature grande ou decidir um rumo antes de implementar ("vamos desenhar X", "me ajuda a planejar Y", "qual a melhor arquitetura para Z"). Conduz um grill robusto, explora o necessário, produz um item `work` (rascunho) com o plano e as `rule` das decisões, e para antes de escrever código. Não use quando o pedido já é para implementar (use plumb-change), nem para uma pergunta simples (plumb-answer).
-disable-model-invocation: true
+description: Desenha sem construir — explora, entrevista e escreve a spec aprovada, e PARA antes do código. Use quando o usuário quer decidir o rumo ou a arquitetura antes de implementar ("vamos desenhar X", "me ajuda a planejar Y", "qual a melhor arquitetura para Z", "planeja", "discovery", "arquitetura antes de construir"). Na profunda, compara abordagens e sintetiza a recomendada com o porquê. Não escreve código. Designs without building — explores, grills and writes the approved spec, then stops before any code; compares approaches and synthesizes the recommended one when complex; writes no code.
 ---
 
-# Plumb — planejar
+# Plumb — plan (desenhar sem construir)
 
-**No idioma do usuário.** Você desenha com o usuário uma solução ou um rumo, e
-**para antes do código**. O que sai é um plano aprovado e as decisões registradas —
-quando ele quiser construir, o `plumb-change` parte daqui.
+**No idioma do usuário.** Você desenha com o usuário o rumo ou a arquitetura de uma mudança e
+**para antes do código**. O entregável é a **spec aprovada** (`.plumb/work/<id>.md`); quando o
+usuário quiser construir, o fluxo de código retoma dela. É a **mesma maquinaria** do fluxo de
+mudança — `explore` → `plumb-grill` → `plumb-spec` — com um **ponto de parada diferente**: a
+aprovação, não a implementação.
 
-O segundo cérebro entra em toda fase (`../plumb/references/brain.md`, leia uma vez):
-o plano é um item **`work`** com a tag `draft`; as decisões são `rule` (com o porquê
-e a alternativa descartada no `content`).
+Leia `playbook.md` (como planejar bem) uma vez. O cérebro é opcional e aqui é **só leitura**
+(`../plumb/references/knowledge-model.md`).
 
-## 1 — Entender
+## Princípios
 
-- **Explorar (só leitura):** `plumb-explorer` na área, ou leia você se for pequena —
-  o plano precisa bater com o que o código **de fato** faz.
-- **Consultar o cérebro:** decisões anteriores na área (uma `rule` que o plano
-  contraria vira pergunta), `context` do produto e do mapa.
-- **Checagem de ferramentas:** usa biblioteca cujo uso não está no código →
-  `plumb-find-docs` antes de desenhar sobre ela; sistema sem acesso →
-  `plumb-find-mcps`; competência que falta → `plumb-find-skills`.
+- **Desenhar, não construir.** O entregável é a decisão e a spec. **Não escreva código** — nem um
+  rascunho de implementação. Aprovada a spec, você para.
+- **O plano bate com o que o código faz.** Desenhe sobre a realidade do repositório, não sobre o que
+  ele deveria fazer: explore antes (`explore`, proporcional ao score).
+- **O que fica em aberto volta ao grill, não vira suposição.** Num plano, as decisões abertas **são**
+  o trabalho. Nada que mude o resultado é inferido em silêncio.
+- **Profunda = comparar e sintetizar.** Com 2+ abordagens plausíveis, compare-as de ângulos
+  diferentes, enxerte o melhor de cada e recomende uma **com o porquê**. A escolhida vai em **1 linha
+  no Objetivo** da spec — **sem seção Design** (`playbook.md`).
 
-## 2 — Alinhar (grill robusto)
+## Procedimento
 
-Leia `../plumb-align/SKILL.md`. Entreviste o usuário com todas as perguntas de uma
-vez (recomendação primeiro), **sem inferir o que muda o resultado** — num plano, as
-decisões em aberto são o trabalho, não suposições. Cubra a árvore de decisões que a
-exploração deixou: requisitos, restrições, trade-offs, o que fica fora de escopo.
-Até haver entendimento compartilhado.
+1. **Explore o rumo.** Rode `explore` na área (profundidade pelo score): o que o código de fato faz,
+   o `.plumb/knowledge/` (projeto + global), o card, restrições e pontos de integração. Falta
+   ferramenta? `plumb-find-docs` (lib antes de desenhar sobre ela), `plumb-find-mcps` (sistema sem
+   acesso).
+2. **Grill.** Chame `plumb-grill` sobre o tema: alinhe a árvore de decisões (requisitos, restrições,
+   trade-offs, fora de escopo) até o entendimento compartilhado. O que a exploração já respondeu não
+   vira pergunta; o que muda o resultado e não dá para inferir, vira.
+3. **Spec (com design quando complexo).** Chame `plumb-spec` para transformar o Combinado em spec.
+   Na profunda, o **modo design** compara 2+ abordagens e condensa a escolhida em 1 linha no Objetivo.
+   Rode o **spec-lint** e o **gate de aprovação**.
+4. **Pare.** Aprovada a spec, o planejamento terminou. Não implemente.
 
-## 3 — Desenhar
+## Saída → próximo passo
 
-Produza o plano. Na profunda (2+ abordagens plausíveis), despache `plumb-planner`
-para gerar e comparar as opções (cada uma de um ângulo), com os trade-offs; sintetize
-a recomendada, enxertando o que as outras têm de melhor. Área pequena que você já
-leu: desenhe você, pelo formato do planejador.
-
-O plano traz: **objetivo**, **fora de escopo**, **resultados esperados** (o que se
-observa), **abordagem recomendada** com o porquê e as descartadas, e, se vira
-construção depois, as **fases** (papel, dependência, critério de saída). Perguntas
-em aberto voltam ao grill, não viram suposição.
-
-## 4 — Gravar e apresentar
-
-- O plano: item **`work/<id>`**, tag `draft` + tag de área, no project certo.
-- As decisões que já valem (independentes de implementar): `rule/<nome>` cada,
-  `origin` certo (`user` o que ele ditou, `agent` o inferido) — o inferido pede o
-  "sim" antes de gravar.
-- `links` (`relates_to`) entre o `work` e as `rule` que ele gera.
-
-Apresente o plano (em linguagem de resultado, sem ids internos) e termine com o link
-`url`. **Não escreva código.** Se o usuário aprovar e pedir para construir, aí sim é
-`plumb-change`, que retoma deste `work`. Próximo passo óbvio que não é seu: uma
-frase afirmativa (`Quando quiser, o próximo passo é implementar a fase 1.`).
+Entregue a **spec aprovada** em `.plumb/work/<id>.md` (resumo em linguagem de resultado, sem ids
+internos). O planejamento acaba aqui. **Quando o usuário quiser construir**, o próximo passo é
+implementar via **`plumb-code`** a partir desta spec — o fluxo de código retoma dela (grill/spec já
+estão feitos). Diga isso em uma frase afirmativa: `Quando quiser, o próximo passo é construir a
+fase 1 com o plumb-code.`

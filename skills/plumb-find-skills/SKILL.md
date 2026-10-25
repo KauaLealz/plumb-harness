@@ -1,162 +1,101 @@
 ---
 name: plumb-find-skills
 description: >-
-  Encontra skills de agente instaláveis quando falta ao time uma competência
-  inteira que alguém já resolveu — use quando o usuário perguntar "como faço X",
-  "tem uma skill para X?", quiser ampliar o que o agente sabe fazer, quando o
-  planejador sinalizar "Ferramenta que falta", ou quando a sessão tiver
-  improvisado uma capacidade que merecia uma skill. A recomendação vai ao
-  usuário por múltipla escolha; o Plumb copia uma skill revisada em vez de
-  instalar direto. / Finds installable agent skills when the user asks "how do
-  I do X", "find a skill for X", wants to extend capabilities, or the work shows
-  a whole competency the team lacks.
+  Achar OU criar skill: encontra skills de agente instaláveis quando falta ao
+  time uma competência inteira que alguém já resolveu e, quando não existe
+  nenhuma, PROPÕE criar uma skill nova (guardada, com revisão de segurança). Use
+  quando o usuário perguntar "como faço X", "tem uma skill para X?", quiser
+  ampliar o que o agente sabe fazer, quando um passo sinalizar "Ferramenta que
+  falta", ou quando a sessão tiver improvisado uma capacidade que merecia uma
+  skill. A recomendação vai ao usuário por múltipla escolha; o Plumb copia uma
+  skill revisada (ou cria uma revisada) em vez de instalar direto; nada entra sem
+  o "sim". / Find OR create agent skills: discovers installable skills when the
+  team lacks a whole competency and, when none exists, proposes creating a new one
+  (stored, security-reviewed). Nothing is installed or created without a "yes".
 ---
 
-# Find Skills
+# Encontrar (ou criar) skills
 
-This skill helps you discover and install skills from the open agent skills ecosystem.
+**No idioma do usuário.** Skill é o que o agente **sabe fazer**. Quando falta uma
+competência inteira — alguém já resolveu e empacotou, ou ninguém resolveu ainda —
+a resposta é uma skill: **achar** uma instalável ou **criar** uma nova. As duas
+entram **guardadas** (revisadas, só com o "sim").
 
-## When to Use This Skill
+Leia nada extra: o procedimento está aqui. Para criar, você compartilha o
+mecanismo de autoria com o skill-creator do `plumb-learn`/`plumb-reflect`.
 
-Use this skill when the user:
+## Quando usar
 
-- Asks "how do I do X" where X might be a common task with an existing skill
-- Says "find a skill for X" or "is there a skill for X"
-- Asks "can you do X" where X is a specialized capability
-- Expresses interest in extending agent capabilities
-- Wants to search for tools, templates, or workflows
-- Mentions they wish they had help with a specific domain (design, testing, deployment, etc.)
+- O usuário pergunta "como faço X", "tem uma skill para X?", "você consegue X?"
+  (X é uma capacidade especializada).
+- Quer ampliar o que o agente sabe fazer (design, testes, deploy, um domínio).
+- Um passo sinalizou "Ferramenta que falta".
+- A sessão **improvisou** uma capacidade ou repetiu um procedimento que mereceria
+  virar skill (gatilho prospectivo; o retrospectivo é do `plumb-reflect`).
 
-## What is the Skills CLI?
+**Regra vs skill:** se for uma **restrição/convenção declarativa** ("conventional
+commits", "evidência inclui screenshot"), não é skill — é **regra** em
+`.plumb/knowledge/` (`../plumb/references/knowledge-model.md`). Skill é
+**capacidade/procedimento invocável** com passos próprios.
 
-The Skills CLI (`npx skills`) is the package manager for the open agent skills ecosystem. Skills are modular packages that extend agent capabilities with specialized knowledge, workflows, and tools.
+## Parte 1 — Achar uma skill existente
 
-**Key commands:**
+### O que é a CLI de skills
 
-- `npx skills find [query] [--owner <owner>]` - Search for skills interactively or by keyword, optionally scoped to a GitHub owner
-- `npx skills add <package>` - Install a skill from GitHub or other sources
-- `npx skills update` - Update all installed skills
+`npx skills` é o gerenciador do ecossistema aberto de skills. Comandos:
 
-**Browse skills at:** https://skills.sh/
+- `npx skills find [query] [--owner <owner>]` — busca por palavra-chave, opcional
+  por dono do GitHub.
+- `npx skills add <owner/repo@skill>` — instala a partir do GitHub.
+- `npx skills update` — atualiza as instaladas.
 
-## How to Help Users Find Skills
+Catálogo: https://skills.sh/ (o leaderboard ranqueia por instalações — comece por
+ele para ver se já existe algo consolidado no domínio).
 
-### Step 1: Understand What They Need
+### Buscar e qualificar
 
-When a user asks for help with something, identify:
+1. **Entenda a necessidade:** domínio (React, testes, deploy…), tarefa específica,
+   e se é comum a ponto de já existir skill.
+2. **Leaderboard primeiro**, depois `npx skills find <query específica>` (ex.:
+   `react performance`, `pr review`, `changelog`).
+3. **Qualifique antes de recomendar** (nunca só pelo resultado da busca):
+   instalações (prefira 1K+; desconfie de <100), reputação da origem (oficiais
+   como `vercel-labs`, `anthropics`, `microsoft` > autor desconhecido), estrelas
+   do repo (<100 estrelas = ceticismo).
 
-1. The domain (e.g., React, testing, design, deployment)
-2. The specific task (e.g., writing tests, creating animations, reviewing PRs)
-3. Whether this is a common enough task that a skill likely exists
+### Propor (nunca instalar direto)
 
-### Step 2: Check the Leaderboard First
+Skills de terceiro rodam com as permissões do seu agente (um estudo Snyk de 2026
+achou problemas críticos em ~13% das skills publicadas, e maliciosas confirmadas).
+Por isso:
 
-Before running a CLI search, check the [skills.sh leaderboard](https://skills.sh/) to see if a well-known skill already exists for the domain. The leaderboard ranks skills by total installs, surfacing the most popular and battle-tested options.
+1. **Mostre o candidato** (origem, estrelas/instalações, licença, última
+   atualização) e pergunte se segue — pela **ferramenta de perguntas** (lista
+   numerada com a recomendação na opção 1 quando não houver).
+2. Com o "sim": leia o `SKILL.md` e **todo** arquivo em `scripts/` antes de
+   instalar, e rode um scanner de segurança de skill se houver.
+3. **Prefira copiar** para o repositório curado de skills do usuário, **pinada num
+   commit** (com origem e licença), em vez de instalar direto do registro.
+   Instale direto só se o usuário pedir: `npx skills add <owner/repo@skill> -g`.
+   Nunca passe `-y` — a confirmação é parte da revisão.
 
-For example, top skills for web development include:
-- `vercel-labs/agent-skills` — React, Next.js, web design (100K+ installs each)
-- `anthropics/skills` — Frontend design, document processing (100K+ installs)
+## Parte 2 — Criar uma skill nova (quando não há)
 
-### Step 3: Search for Skills
+Se a busca não achou nada que sirva, **ofereça criar** uma skill — não apenas
+"faço na mão desta vez".
 
-If the leaderboard doesn't cover the user's need, run the find command:
+1. **Confirme que vale:** é uma capacidade que vai **repetir**? No descartável,
+   faça direto e não crie skill.
+2. **Proponha pela ferramenta de perguntas** o que a skill faria (nome, gatilho,
+   passos em uma linha). **Só cria com o "sim".**
+3. **Autore** com o mesmo mecanismo do skill-creator (`plumb-learn`/
+   `plumb-reflect`): `SKILL.md` enxuto (description bilíngue, gatilho claro) +
+   `playbook.md` quando houver expertise profunda. Siga o tom das skills do Plumb.
+4. **Guardada, revisada:** a skill nova passa pela mesma revisão de segurança de
+   uma de terceiro antes de entrar, e é **copiada para o repositório curado**
+   (não instalada solta). Entra só com o "sim".
 
-```bash
-npx skills find [query] [--owner <owner>]
-```
+## Quando nada serve e não vale criar
 
-For example:
-
-- User asks "how do I make my React app faster?" → `npx skills find react performance`
-- User asks "can you help me with PR reviews?" → `npx skills find pr review`
-- User asks "I need to create a changelog" → `npx skills find changelog`
-
-### Step 4: Verify Quality Before Recommending
-
-**Do not recommend a skill based solely on search results.** Always verify:
-
-1. **Install count** — Prefer skills with 1K+ installs. Be cautious with anything under 100.
-2. **Source reputation** — Official sources (`vercel-labs`, `anthropics`, `microsoft`) are more trustworthy than unknown authors.
-3. **GitHub stars** — Check the source repository. A skill from a repo with <100 stars should be treated with skepticism.
-
-### Step 5: Present Options to the User
-
-When you find relevant skills, present them to the user with:
-
-1. The skill name and what it does
-2. The install count and source
-3. The install command they can run
-4. A link to learn more at skills.sh
-
-Example response:
-
-```
-I found a skill that might help! The "react-best-practices" skill provides
-React and Next.js performance optimization guidelines from Vercel Engineering.
-(185K installs)
-
-To install it:
-npx skills add vercel-labs/agent-skills@react-best-practices
-
-Learn more: https://skills.sh/vercel-labs/agent-skills/react-best-practices
-```
-
-### Step 6: Review Before Installing (Plumb)
-
-Third-party skills run with your agent's permissions; a 2026 Snyk study found
-critical issues in about 13% of published skills and confirmed malicious ones.
-So, instead of installing directly:
-
-1. Show the user the candidate (source, stars/installs, license, last update)
-   and ask the user whether to proceed through the question tool (a numbered text list
-   if there is none).
-2. If yes, read its `SKILL.md` and every file in `scripts/` before installing,
-   and run a skill security scanner if one is available (e.g. the
-   `agent-tooling` skill's scanner, or getsentry's `skill-scanner`).
-3. Prefer adding it to the user's curated skills repository as a copy pinned to
-   a commit (with source and license), over installing it straight from the
-   registry. Install directly only if the user explicitly asks:
-
-```bash
-npx skills add <owner/repo@skill> -g
-```
-
-Never pass `-y`: the confirmation prompt is part of the review.
-
-## Common Skill Categories
-
-When searching, consider these common categories:
-
-| Category        | Example Queries                          |
-| --------------- | ---------------------------------------- |
-| Web Development | react, nextjs, typescript, css, tailwind |
-| Testing         | testing, jest, playwright, e2e           |
-| DevOps          | deploy, docker, kubernetes, ci-cd        |
-| Documentation   | docs, readme, changelog, api-docs        |
-| Code Quality    | review, lint, refactor, best-practices   |
-| Design          | ui, ux, design-system, accessibility     |
-| Productivity    | workflow, automation, git                |
-
-## Tips for Effective Searches
-
-1. **Use specific keywords**: "react testing" is better than just "testing"
-2. **Try alternative terms**: If "deploy" doesn't work, try "deployment" or "ci-cd"
-3. **Check popular sources**: Many skills come from `vercel-labs/agent-skills` or `ComposioHQ/awesome-claude-skills`
-
-## When No Skills Are Found
-
-If no relevant skills exist:
-
-1. Acknowledge that no existing skill was found
-2. Offer to help with the task directly using your general capabilities
-3. Suggest the user could create their own skill with `npx skills init`
-
-Example:
-
-```
-I searched for skills related to "xyz" but didn't find any matches.
-I can still help you with this task directly. (Offer to continue through the question tool.)
-
-If this is something you do often, you could create your own skill:
-npx skills init my-xyz-skill
-```
+Diga que não achou skill e que criar não se paga aqui; siga com a capacidade geral
+do agente e registre no cérebro o que durar (via `plumb-learn`).

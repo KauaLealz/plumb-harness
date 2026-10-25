@@ -14,9 +14,9 @@
 
 ## Custo: o tier de cada agente
 
-Nenhum agente crava um modelo: todos herdam o da sessão, e o orquestrador aplica
-o tier no despacho (parâmetro `model`), escolhendo entre os modelos que a
-ferramenta oferece hoje.
+Nenhum agente crava um modelo: todos herdam o da sessão, e você aplica o tier no
+despacho (parâmetro `model`), escolhendo entre os modelos que a ferramenta
+oferece hoje.
 
 | Tier | Para que serve | Quem |
 |---|---|---|
@@ -24,6 +24,6 @@ ferramenta oferece hoje.
 | **equilibrado** | escrever código dentro de uma fase já definida | implementador |
 | **capaz** | escolher o que construir, achar bug sutil | planejador, revisor |
 
-Suba o implementador para **capaz** na trilha profunda ou depois de uma falha na
-mesma fase. Cada despacho novo relê o código do zero: despache **por fase**, não
-por tarefa solta.
+Suba o implementador (`plumb-code`) para **capaz** na trilha profunda ou depois de
+uma falha na mesma fase. Cada despacho novo relê o código do zero: despache **por
+fase**, não por tarefa solta.

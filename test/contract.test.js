@@ -1,44 +1,16 @@
-// Contrato das skills e agentes com o Knowledge OS v2.
+// Contrato interno do Plumb v7.
 //
-// As skills falam com o servidor por nomes de ferramenta, tipos e conceitos. Se um texto citar uma ferramenta que não
-// existe (ou um conceito que o v2 removeu), o agente tenta chamar e falha em runtime. Este teste trava isso.
-//
-// Fonte da lista: spec `change/brain-v2` (second-brain-mcp-server), resultado esperado 24. Quando o v2 mudar a lista,
-// este é o lugar de atualizar.
+// O v7 não depende de um servidor de cérebro: a memória são arquivos em .plumb/knowledge. Este teste
+// trava regressões para o modelo v6 (skills antigas, ferramentas do cérebro MCP, conceitos removidos)
+// e garante a estrutura das skills (SKILL.md + playbook.md) e a disciplina de perguntas.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs';
 import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-
-const CRUD = ['list', 'create', 'update', 'merge', 'delete'];
-export const TOOLS = new Set([
-  ...['workspace', 'project', 'subject'].flatMap((n) => CRUD.map((a) => `${n}_${a}`)),
-  'repo',
-  'item_search', 'item_get', 'item_save', 'item_delete', 'item_graph',
-  'relation_create', 'relation_delete',
-  'tag_list', 'tag_create', 'tag_update', 'tag_delete',
-  'connection_create', 'connection_list', 'connection_delete',
-  'health_check',
-]);
-// Parâmetros que começam como nome de ferramenta mas não são ferramentas.
-const PARAMS = new Set(['relation_types', 'connection_id']);
-
-const FORBIDDEN = [
-  [/context_get/, 'context_get saiu: o pacote vem do hook e item_search(repo=".") traz o essencial'],
-  [/memory_class|importance|confidence/, 'memory_class, importance e confidence saíram do modelo'],
-  [/\bvocabulary\(|\bbackup\(|\bartifact\(/, 'vocabulary, backup e artifact saíram das ferramentas'],
-  [/\blabels?\b/, 'labels saíram (viraram tags)'],
-  [/type"?:\s*"?(insight|procedure|knowledge|pattern|task|spec)\b/, 'tipos antigos (inclui spec): use rule, howto, context, work, secret'],
-  [/"subtype"|subtype:\s*["'`]/, 'subtype saiu no v6: a nuance vai em tags'],
-  [/scope:\s*["'`](scoped|workspace|global)|scope=\["/, 'scope saiu no v6: o alcance vem da hierarquia (onde o item mora)'],
-  [/item_feedback/, 'o feedback saiu no v6: item errado/velho, o agente corrige ou remove'],
-  [/\bspec\/[a-z<]/, 'a key do plano é work/<id> (spec virou work)'],
-  [/\bdream\/[a-z<]/, 'o reflect não grava dream/<id>'],
-  [/\b(regra|decisao|padrao|contexto|segredo)\/[a-z<]/, 'keys em português: use rule/, context/, secret/ …'],
-];
+const SKILLS_DIR = join(ROOT, 'skills');
 
 function markdownFiles(dir) {
   return readdirSync(dir).flatMap((name) => {
@@ -48,42 +20,53 @@ function markdownFiles(dir) {
   });
 }
 
-// As cópias de terceiros (find-docs, find-skills) são do fornecedor e não falam do cérebro.
+// Cópias de terceiros (upstream): não seguem o nosso modelo de conteúdo.
 const THIRD_PARTY = ['plumb-find-docs', 'plumb-find-skills'];
-const files = [...markdownFiles(join(ROOT, 'skills')), ...markdownFiles(join(ROOT, 'agents'))].filter(
-  (f) => !THIRD_PARTY.some((t) => f.includes(`${t}`)) && !f.endsWith('SOURCE.md'),
-);
+const allMd = [...markdownFiles(SKILLS_DIR), ...markdownFiles(join(ROOT, 'agents'))].filter((f) => !f.endsWith('SOURCE.md'));
+const ours = allMd.filter((f) => !THIRD_PARTY.some((t) => f.includes(t)));
+
+// Skills que, no v7, têm SKILL.md + playbook.md (as de passo e apoio; não os find-* nem o core plumb).
+const WITH_PLAYBOOK = [
+  'plumb-ask', 'plumb-grill', 'plumb-spec', 'plumb-code', 'plumb-qa', 'plumb-review',
+  'plumb-learn', 'plumb-ship', 'plumb-plan', 'plumb-document', 'plumb-init', 'plumb-reflect',
+];
+
+const FORBIDDEN = [
+  [/plumb-(change|answer|capture|investigate|setup|align|dream|retro)\b/, 'skill do v6 removida/renomeada (v7: ask, grill, spec, code, qa, review, learn, ship, plan, document, init, reflect)'],
+  [/mcp__knowledge-os__item_(save|get|search|delete|graph)/, 'o v7 não grava/lê por ferramenta do cérebro MCP — a memória são arquivos em .plumb/knowledge'],
+  [/\bitem_feedback\b/, 'o feedback saiu: item errado/velho, corrige ou remove o arquivo'],
+  [/"?subtype"?\s*[:=]/, 'subtype saiu: a nuance vai em tags/pastas'],
+  [/\bscope:\s*["'`(]/, 'scope saiu: o alcance é a hierarquia de pastas (.plumb do projeto vs global)'],
+  [/type"?:\s*"?(insight|procedure|knowledge|spec)\b/, 'tipos fixos saíram no v7: o cérebro é markdown livre'],
+];
 
 test('há skills e agentes para conferir', () => {
-  assert.ok(files.length >= 10, `só ${files.length} arquivos`);
+  assert.ok(ours.length >= 20, `só ${ours.length} arquivos`);
 });
 
-test('toda ferramenta do cérebro citada existe no v2', () => {
+test('cada skill de passo/apoio tem SKILL.md + playbook.md', () => {
   const bad = [];
-  for (const f of files) {
-    const text = readFileSync(f, 'utf8');
-    for (const m of text.matchAll(/mcp__knowledge-os__([a-z_*]+)/g)) {
-      const name = m[1].replace(/_\*$/, '');
-      const prefix = [...TOOLS].some((t) => t === name || t.startsWith(`${name}_`));
-      if (!prefix) bad.push(`${relative(ROOT, f)}: mcp__knowledge-os__${m[1]}`);
-    }
-    for (const m of text.matchAll(/\b((?:workspace|project|subject|item|relation|tag|label|connection|context|memory)_[a-z_]+)\b/g)) {
-      const name = m[1];
-      if (name.endsWith('_')) continue;
-      if (TOOLS.has(name) || PARAMS.has(name) || name === 'scope_paths') continue;
-      if (/^(workspace|project|subject)_\*$/.test(name)) continue;
-      bad.push(`${relative(ROOT, f)}: ${name}`);
-    }
+  for (const s of WITH_PLAYBOOK) {
+    if (!existsSync(join(SKILLS_DIR, s, 'SKILL.md'))) bad.push(`${s}: falta SKILL.md`);
+    if (!existsSync(join(SKILLS_DIR, s, 'playbook.md'))) bad.push(`${s}: falta playbook.md`);
   }
-  assert.deepEqual(bad, [], `ferramentas ou campos que o v2 não tem:\n${bad.join('\n')}`);
+  assert.deepEqual(bad, [], `\n${bad.join('\n')}`);
 });
 
-test('nenhum texto usa conceito que o v2 removeu', () => {
+test('as skills de passo/apoio são invocáveis pelo modelo (sem disable-model-invocation, para a coreografia)', () => {
   const bad = [];
-  for (const f of files) {
+  for (const s of WITH_PLAYBOOK) {
+    const text = readFileSync(join(SKILLS_DIR, s, 'SKILL.md'), 'utf8');
+    if (/disable-model-invocation:\s*true/.test(text)) bad.push(s);
+  }
+  assert.deepEqual(bad, [], `skills com disable-model-invocation (quebram a coreografia): ${bad.join(', ')}`);
+});
+
+test('nenhum texto usa skill do v6 nem conceito removido', () => {
+  const bad = [];
+  for (const f of ours) {
     const text = readFileSync(f, 'utf8');
     for (const [re, why] of FORBIDDEN) {
-      if (!why) continue;
       const m = text.match(re);
       if (m) bad.push(`${relative(ROOT, f)}: "${m[0]}" — ${why}`);
     }
@@ -91,26 +74,10 @@ test('nenhum texto usa conceito que o v2 removeu', () => {
   assert.deepEqual(bad, [], `\n${bad.join('\n')}`);
 });
 
-test('a referência do cérebro cobre as 31 ferramentas, os tipos e os conceitos v6', () => {
-  const text = readFileSync(join(ROOT, 'skills', 'plumb', 'references', 'brain.md'), 'utf8');
-  for (const t of ['item_search', 'item_get', 'item_save', 'item_delete', 'item_graph',
-    'relation_create', 'relation_delete', 'tag_list', 'tag_create', 'tag_update', 'tag_delete',
-    'connection_create', 'connection_list', 'connection_delete', 'health_check', '`repo`']) {
-    assert.ok(text.includes(t), `brain.md não cita ${t}`);
-  }
-  for (const w of ['workspace_*', 'project_*', 'subject_*']) assert.ok(text.includes(w), `brain.md não cita ${w}`);
-  for (const w of ['`rule`', '`howto`', '`context`', '`work`', '`secret`', 'hierarquia', 'tags',
-    'depends_on', 'relates_to']) {
-    assert.ok(text.includes(w), `brain.md não cobre ${w}`);
-  }
-});
-
 test('perguntas ao usuário vão pela ferramenta de perguntas, não em texto', () => {
-  const all = [...markdownFiles(join(ROOT, 'skills')), ...markdownFiles(join(ROOT, 'agents'))]
-    .filter((f) => !f.endsWith('SOURCE.md'));
   const bad = [];
-  for (const f of all) {
-    const m = readFileSync(f, 'utf8').match(/Posso seguir|ask whether to proceed|Would you like me to proceed/i);
+  for (const f of allMd) {
+    const m = readFileSync(f, 'utf8').match(/Posso seguir\?|ask whether to proceed|Would you like me to proceed/i);
     if (m) bad.push(`${relative(ROOT, f)}: "${m[0]}"`);
   }
   assert.deepEqual(bad, [], `pergunta só em texto:\n${bad.join('\n')}`);

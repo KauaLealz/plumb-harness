@@ -1,34 +1,47 @@
 ---
 name: plumb-document
-description: Gera ou atualiza documentação (README, docs do repositório, comentários de alto nível, guia de uso) a partir do que o código de fato faz, consultando o cérebro antes. Use quando o usuário pede "documenta X", "atualiza o README", "escreve um guia de…". A documentação descreve só o comportamento atual; decisão e porquê duráveis vão para o cérebro. / Writes or updates docs from what the code actually does.
-argument-hint: "<o que documentar>"
+description: Gera ou atualiza documentação do comportamento ATUAL para humanos (README, docs/, guia de uso, comentários de alto nível) a partir do que o código de fato faz — explora o código antes, não inventa. Use quando o usuário pede "documenta X", "atualiza o README", "escreve um guia de…". A doc vai para o repositório e descreve só o que o sistema faz hoje. Writes or updates human-facing docs of the CURRENT behavior from what the code actually does; explores first, invents nothing; lives in the repo.
 ---
 
-# Plumb — documentar
+# Plumb — document (documentar o comportamento atual)
 
-Produza ou atualize documentação fiel ao que o código **faz hoje**.
+**No idioma do usuário** (a doc em si, no idioma que o projeto já usa). Você descreve o que o
+sistema **faz hoje** para **pessoas** — não o porquê, não a intenção, não o que ainda vai mudar.
 
-No idioma do usuário (a doc em si, no idioma que o projeto usa).
+Leia `playbook.md` (como documentar bem) uma vez. O cérebro é opcional
+(`../plumb/references/knowledge-model.md`).
 
-## Fluxo
+## Princípios
 
-1. **Consulte o cérebro** pelo tema e pela área (`item_search`): convenções de
-   documentação, glossário, mapa do código já podem existir e guiam o tom e os termos.
-2. **Leia o código** da área (você ou o `plumb-explorer`) para documentar o
-   comportamento **real**, não o pretendido.
-3. **Escreva/atualize** a doc. Regra do projeto: a **documentação descreve só o
-   comportamento atual** — sem roadmap, histórico, auditoria nem menção a legado;
-   regra e decisão durável vão para o cérebro, não para a doc.
-4. **Prove**: se há como (um link checker, um `markdownlint`, o build da doc),
-   rode e reporte; senão, releia e confira que cada afirmação bate com o código.
+- **Comportamento observável, não intenção.** Documente o que o código **de fato faz** (entrada,
+  saída, efeito, erro), não o que deveria fazer. Explore o código antes; não documente o que não
+  confirmou. Sem roadmap, sem histórico, sem "em breve".
+- **Fronteira doc ↔ cérebro.** A doc descreve **o quê/como usar** para humanos e vai para o
+  **repositório** (README, `docs/`). O **porquê**, as convenções e as decisões duráveis são o
+  cérebro do agente (`.plumb/knowledge/`) — **nunca** se misturam na doc. Se documentando você
+  descobrir uma decisão/porquê que vale guardar, isso vai pro cérebro via **`plumb-learn`**, não pra
+  doc.
+- **Não invente.** Sem exemplo que você não rodou, sem flag que você não viu, sem endpoint que não
+  existe. Afirmação sem respaldo no código não entra.
 
-## Quando gravar no cérebro
+## Procedimento
 
-O **contexto durável** que você levantou documentando (mapa do código, glossário,
-stack, ambiente) vira `context`, com o "sim" (foi inferido). Modelo em
-`../plumb/references/brain.md`.
+1. **Consulte o cérebro** (`.plumb/knowledge/`, projeto + global) pela área: glossário, termos,
+   mapa do código e — importante — um **template/estilo de doc da empresa**, se houver.
+2. **Explore o código** da área (subagentes de leitura em paralelo em área grande; devolve
+   `arquivo:linha`). Documente o comportamento **real** a partir do que leu/rodou.
+3. **Escreva/atualize** a doc no repo, no estilo e na estrutura certos (ver `playbook.md`:
+   README, guia de uso, referência). Atualizar: case com o que já existe; corrija o defasado.
+4. **Prove.** Se há como (link checker, `markdownlint`, o build da doc, rodar um exemplo que você
+   escreveu), rode e reporte; senão, releia e confira que **cada afirmação bate com o código**.
 
-## Entrega
+## Override (dev/empresa)
 
-Diga o que ficou documentado e onde. Nada sai da máquina (push, PR) sem o "sim" do
-usuário, pela ferramenta de perguntas.
+Se o `.plumb/knowledge/` traz um **template ou estilo de doc** da empresa, ele **vence** o default
+deste playbook (precedência projeto → global → default do harness). Siga a estrutura deles.
+
+## Saída
+
+Diga o que ficou documentado e **onde** (caminho no repo). A doc fica no **repositório**; nada sai
+da máquina (push, PR) sem o "sim" do usuário. Decisão ou porquê durável que apareceu no caminho →
+**`plumb-learn`** (não entra na doc).
