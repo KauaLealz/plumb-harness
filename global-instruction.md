@@ -1,34 +1,55 @@
 <!-- plumb:start -->
 ## Plumb
-**Todo pedido passa pelo Plumb** — pergunta, explicação, regra enunciada, investigação, feature, bug, refatoração, ticket, "continua de onde paramos", até a correção de uma linha. Não existe pedido pequeno demais: a cerimônia é proporcional (pergunta responde direto, correção pequena vai leve, só mudança maior pede plano e aprovação), mas o fluxo entra sempre. Um hook lembra disso a cada mensagem.
 
-**Roteamento (carregue a skill da situação, direto):** classifique o pedido e carregue a skill correspondente — não há mais uma skill genérica `plumb`.
+**Todo pedido passa pelo Plumb** — pergunta, regra enunciada, investigação, feature, bug,
+refatoração, ticket, "continua de onde paramos", até a correção de uma linha. A cerimônia é
+**proporcional ao score de complexidade** (1–10), mas o fluxo entra sempre. Um hook lembra disso a
+cada mensagem.
+
+**Não há orquestrador: você (o modelo) coordena por coreografia.** Classifique o pedido, carregue a
+skill da situação, e cada skill aponta a próxima. A **spec é o estado** (o que foi feito, o que
+falta).
 
 | Situação | Skill |
 |---|---|
-| pergunta / explicação | `plumb-answer` |
-| regra ou preferência ditada ("sempre…", "a partir de agora…") | `plumb-capture` |
-| investigar ("por que…", "vê se dá…") | `plumb-investigate` |
-| mudança de código (feature, projeto, **bug/hotfix**) | `plumb-change` |
-| planejar sem construir (design/discovery) | `plumb-plan` |
-| revisar/auditar código de terceiros | `plumb-review` |
-| gerar/atualizar documentação | `plumb-document` |
-| preparar o repositório | `plumb-setup` |
-| refletir sobre a sessão | `plumb-reflect` (também dispara sozinho no fechamento) |
-| alinhar antes de começar ("me entrevista", "grill") | `plumb-align` |
+| pergunta, explicação ou investigação | `plumb-ask` |
+| mudança de código (feature, bug, refactor, migração, deploy, fila…) | roteie pelo score: direta → corrige; senão `plumb-grill` → `plumb-spec` → `plumb-code` → `plumb-qa` + `plumb-review` → `plumb-learn` → `plumb-ship` |
+| planejar sem construir | `plumb-plan` (explore+grill+spec, para antes do código) |
+| revisar código/PR | `plumb-review` |
+| documentar (comportamento atual, para humanos) | `plumb-document` |
+| preparar o repositório | `plumb-init` |
+| regra/decisão ditada, ou fechar o aprendizado de uma mudança | `plumb-learn` |
+| refletir sobre a sessão | `plumb-reflect` |
+| falta doc de lib → `plumb-find-docs` · falta acesso a sistema → `plumb-find-mcps` · falta competência → `plumb-find-skills` (achar-ou-criar; só com o "sim") | |
 
-Falta de ferramenta no meio do trabalho: `plumb-find-docs` (biblioteca → antes de escrever código, sempre), `plumb-find-mcps` (sistema sem acesso), `plumb-find-skills` (competência que falta). Recomende pela ferramenta de perguntas; só instale com o "sim".
+**Triagem (score → trilha):** 1–2 direta (sem grill/spec: corrige, roda os checks, reporta) ·
+3–5 padrão (fluxo completo) · 6–8 profunda (+design na spec, lente de segurança, EARS no crítico) ·
+9–10 programa (+longa duração: feature_list, progresso, init.sh, E2E, waves). Sinais do score:
+amplitude, risco (auth/pagamento/dado/contrato/migração/infra), incerteza, novidade, raio de
+impacto, reversibilidade.
 
-**Disciplinas (valem em toda situação):**
-- **Pergunta ao usuário** → sempre pela ferramenta de perguntas do Claude (opções clicáveis, recomendação primeiro); sem ela (Cursor), lista numerada com a recomendação na opção 1.
-- **Confirmação ao gravar no cérebro:** o que o usuário **ditou** grava na hora; o que você **inferiu**, ou um item no nível do workspace (transversal), mostra e espera o "sim".
-- **Cerimônia proporcional:** só mudança padrão/profunda pede alinhamento (grill robusto, sem inferir o que muda o resultado), plano e aprovação, e trabalha num **worktree** próprio (`.claude/worktrees/<id>`); pedido fora do que já foi planejado, ou mudança nova, **dispara replanejamento** (delta proporcional).
-- **Paralelize o trabalho independente** por padrão (subagentes, fases, buscas) — sequencial só com dependência real.
-- **Prova antes de "pronto":** teste primeiro, rode testes e lint afetados e reporte a evidência; push/PR/merge só com o "sim".
+**Segundo cérebro — arquivos, estilo Obsidian, OPCIONAL (tudo funciona com e sem):**
+- Lê e grava markdown livre (sem tipos fixos) em **duas camadas:** `.plumb/knowledge/` (do projeto,
+  commitado) e `~/.plumb/knowledge/` (global/pessoal). O agente vê **global + projeto**.
+- **Consulte antes de agir** (proporcional ao score) e **grave o que durar** no fecho. Regra ditada
+  pelo usuário grava na hora (`plumb-learn`); o que você inferiu pede o "sim".
+- Precedência de override: **projeto → global → default do harness**. As regras do dev/empresa
+  **vencem** o default; o harness se adapta, não impõe.
+- `knowledge-os` (MCP) é opcional — se instalado, acelera busca/UI; sem ele, lê os arquivos direto.
 
-**Segundo cérebro (MCP `knowledge-os`):** memória durável do projeto — entra em **todo** pedido (consulta antes de agir; grava o que durar ao fechar). 5 tipos, sem subtipo: `rule`, `howto`, `context`, `work` (plano + o porquê), `secret`. A nuance e o ciclo vão em **tags** (nada de scope/status/origin/feedback). Alcance pela hierarquia: o item vale onde mora (workspace → project → subject) e abaixo. `links` liga item↔item (`depends_on`/`relates_to`) ou a arquivo/URL. Item errado/velho: corrija ou remova (é git). Segredo: item `secret` sem valor + `fill_url`; nunca peça o valor no chat. Fora do ar: avise, siga e guarde em `~/.knowledge-os/pending.jsonl`.
+**A spec e o estado de execução são git/worktree-native**, nunca no cérebro: `.plumb/work/<id>.md`
+na branch da mudança (some no merge). Coordenação e "continua o X": `git worktree list` + a spec na
+branch + card. Com um gestor de tarefas (Jira/Linear/GitHub Issues): o card é o **quê + status**; o
+`.plumb/knowledge` guarda o **porquê**.
 
-Com um gestor de tarefas conectado (Jira, Linear, Monday, Trello, GitHub Issues): o card é a fonte do **quê** e do **status**; o cérebro guarda o **porquê**. Não duplique.
+**Disciplinas (toda situação):**
+- **Pergunta ao usuário** → ferramenta de perguntas (opções clicáveis, recomendação primeiro); sem
+  ela, lista numerada com a recomendação na opção 1. **Não infira o que muda o resultado: pergunte.**
+- **Prova antes de "pronto":** no nível certo pela natureza (nunca só teste unitário); reporte a
+  evidência. Push/PR/merge só com o "sim".
+- **Paralelize** o trabalho independente (subagentes, fases/waves, buscas) por padrão.
+- Cérebro/arquivo indisponível: avise em uma linha e siga.
 
-Ao compactar a conversa, preserve o id da mudança ativa, as fases pendentes, as decisões e os comandos que falharam.
+Ao compactar a conversa, preserve o id da mudança ativa, as fases pendentes, as decisões e os
+comandos que falharam.
 <!-- plumb:end -->

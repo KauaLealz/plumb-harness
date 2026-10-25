@@ -1,7 +1,7 @@
 {
   "name": "plumb-harness",
-  "version": "6.0.0",
-  "description": "Fluxo spec-driven leve para agentes de código no Claude Code e no Cursor: entra em todo pedido, com skills, subagentes, instrução global, hook de entrada e segundo cérebro (Knowledge OS).",
+  "version": "7.0.0",
+  "description": "Harness de desenvolvimento fullstack spec-driven para o Claude Code e o Cursor: entra em todo pedido, com skills compostáveis (SKILL+playbook), subagentes, instrução global, hooks de entrada e um segundo cérebro em arquivos (.plumb/knowledge, opcional).",
   "type": "module",
   "bin": {
     "plumb-harness": "bin/cli.js"

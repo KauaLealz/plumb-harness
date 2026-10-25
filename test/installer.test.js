@@ -6,24 +6,14 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import {
-  entryCommand, removeBlock, removeClaudeHook, removeCursorEntryHook, removeEntryHooks, toCursorAgent, upsertBlock,
-  upsertClaudeHook, upsertCursorEntryHook, upsertCursorHook, upsertEntryHooks, upsertMcpServer,
+  entryCommand, removeBlock, removeCursorEntryHook, removeEntryHooks, toCursorAgent, upsertBlock,
+  upsertCursorEntryHook, upsertEntryHooks,
 } from '../lib/installer.js';
 
 const CLI = fileURLToPath(new URL('../bin/cli.js', import.meta.url));
 
-// `knowledge-mcp` e `claude` falsos: respondem à versão e registram os argumentos recebidos.
-function fakes(home) {
-  const bin = join(home, 'bin');
-  mkdirSync(bin, { recursive: true });
-  const brain = join(bin, 'brain.mjs');
-  writeFileSync(brain, "console.log('knowledge-mcp 9.9.9');\n");
-  const claude = join(bin, 'claude.mjs');
-  const log = JSON.stringify(join(home, 'claude-calls.txt'));
-  writeFileSync(claude, `import { appendFileSync } from 'node:fs';\nappendFileSync(${log}, process.argv.slice(2).join(' ') + '\\n');\n`);
-  const q = (f) => `"${process.execPath}" "${f}"`;
-  return { PLUMB_HOME: home, PLUMB_BRAIN_CMD: q(brain), PLUMB_CLAUDE_CMD: q(claude) };
-}
+// v7: o cérebro são arquivos, não há MCP a registrar; basta isolar o HOME.
+const env = (home) => ({ ...process.env, PLUMB_HOME: home });
 const BLOCK = '<!-- plumb:start -->\n## Plumb\nuse a skill\n<!-- plumb:end -->\n';
 
 test('upsertBlock acrescenta preservando o conteúdo', () => {
@@ -51,39 +41,34 @@ test('install --both global: skills, agentes e instrução; idempotente; uninsta
   const home = mkdtempSync(join(tmpdir(), 'plumb-'));
   mkdirSync(join(home, '.claude'));
   writeFileSync(join(home, '.claude', 'CLAUDE.md'), '# Minhas regras\n');
-  const run = (...args) =>
-    execFileSync(process.execPath, [CLI, ...args], { env: { ...process.env, ...fakes(home) }, encoding: 'utf8' });
+  const run = (...args) => execFileSync(process.execPath, [CLI, ...args], { env: env(home), encoding: 'utf8' });
 
   run('install', '--both');
   run('install', '--both');
-  assert.ok(existsSync(join(home, '.claude', 'skills', 'plumb', 'SKILL.md')));
-  assert.ok(existsSync(join(home, '.claude', 'skills', 'plumb-setup', 'references', 'catalog.md')));
-  assert.ok(existsSync(join(home, '.claude', 'skills', 'plumb-align', 'SKILL.md')), 'o /plumb-align é instalado');
-  assert.ok(existsSync(join(home, '.claude', 'skills', 'plumb-change', 'SKILL.md')), 'o /plumb-change é instalado');
+  // o core plumb/ não tem SKILL.md no v7 (só hooks + references); as skills são as novas
+  assert.ok(existsSync(join(home, '.claude', 'skills', 'plumb', 'hooks', 'entry.mjs')));
+  assert.ok(!existsSync(join(home, '.claude', 'skills', 'plumb', 'SKILL.md')), 'o orquestrador v6 saiu');
+  assert.ok(existsSync(join(home, '.claude', 'skills', 'plumb-qa', 'SKILL.md')));
+  assert.ok(existsSync(join(home, '.claude', 'skills', 'plumb-code', 'playbook.md')), 'skill de passo tem playbook');
+  assert.ok(existsSync(join(home, '.claude', 'skills', 'plumb-init', 'SKILL.md')), 'setup virou init');
   assert.ok(!existsSync(join(home, '.cursor', 'skills')), 'com os dois, o Cursor lê .claude/skills');
   assert.match(readFileSync(join(home, '.cursor', 'agents', 'plumb-explorer.md'), 'utf8'), /^model: inherit$/m);
-  // os agentes herdam o modelo da sessão; o tier por papel fica no corpo, não no frontmatter
   assert.match(readFileSync(join(home, '.claude', 'agents', 'plumb-explorer.md'), 'utf8'), /^model: inherit$/m);
   const md = readFileSync(join(home, '.claude', 'CLAUDE.md'), 'utf8');
   assert.equal(md.match(/plumb:start/g).length, 1);
   assert.ok(md.startsWith('# Minhas regras'));
-  assert.match(run('status'), /Claude Code\s+skills: v\d.*instrução global: sim · hook de entrada: sim · hook do cérebro: sim/);
+  assert.match(run('status'), /Claude Code\s+skills: v\d.*instrução global: sim · hook de entrada: sim/);
 
   const settings = JSON.parse(readFileSync(join(home, '.claude', 'settings.json'), 'utf8'));
-  assert.equal(settings.hooks.SessionStart.length, 2, 'hooks do cérebro e de entrada, sem duplicar');
-  assert.ok(settings.hooks.SessionStart.some((g) => /context --hook claude$/.test(g.hooks[0].command)));
+  assert.equal(settings.hooks.SessionStart.length, 1, 'só o hook de entrada no SessionStart (sem hook do cérebro)');
   assert.equal(settings.hooks.UserPromptSubmit.length, 1);
   assert.match(settings.hooks.UserPromptSubmit[0].hooks[0].command, /^node ".*\/skills\/plumb\/hooks\/entry\.mjs" --claude-prompt$/);
+  assert.match(settings.hooks.SessionStart[0].hooks[0].command, /--claude-session$/);
   assert.match(settings.hooks.Stop[0].hooks[0].command, /--claude-stop$/);
-  assert.ok(existsSync(join(home, '.claude', 'skills', 'plumb', 'hooks', 'entry.mjs')));
-  const calls = readFileSync(join(home, 'claude-calls.txt'), 'utf8');
-  assert.match(calls, /mcp add --scope user knowledge-os -e LOG_LEVEL=WARNING -- /);
-  const cursorMcp = JSON.parse(readFileSync(join(home, '.cursor', 'mcp.json'), 'utf8'));
-  assert.equal(cursorMcp.mcpServers['knowledge-os'].env.LOG_LEVEL, 'WARNING');
   const cursorHooks = JSON.parse(readFileSync(join(home, '.cursor', 'hooks.json'), 'utf8'));
-  assert.equal(cursorHooks.hooks.sessionStart.length, 2, 'hook do cérebro e roteador de entrada');
+  assert.equal(cursorHooks.hooks.sessionStart.length, 1, 'só o roteador de entrada');
   assert.ok(cursorHooks.hooks.sessionStart.some((h) => /entry\.mjs" --cursor-session$/.test(h.command)));
-  assert.ok(!cursorHooks.hooks.beforeSubmitPrompt, 'o Cursor não injeta contexto por prompt');
+  assert.ok(!existsSync(join(home, '.cursor', 'mcp.json')), 'v7 não registra MCP');
 
   run('uninstall', '--both');
   assert.ok(!existsSync(join(home, '.claude', 'skills', 'plumb')));
@@ -95,19 +80,20 @@ test('install --both global: skills, agentes e instrução; idempotente; uninsta
 
 test('install --cursor sozinho grava as skills em ~/.cursor/skills', () => {
   const home = mkdtempSync(join(tmpdir(), 'plumb-'));
-  execFileSync(process.execPath, [CLI, 'install', '--cursor'], { env: { ...process.env, ...fakes(home) }, encoding: 'utf8' });
-  assert.ok(existsSync(join(home, '.cursor', 'skills', 'plumb', 'SKILL.md')));
+  execFileSync(process.execPath, [CLI, 'install', '--cursor'], { env: env(home), encoding: 'utf8' });
+  assert.ok(existsSync(join(home, '.cursor', 'skills', 'plumb', 'hooks', 'entry.mjs')));
+  assert.ok(existsSync(join(home, '.cursor', 'skills', 'plumb-qa', 'SKILL.md')));
   assert.ok(!existsSync(join(home, '.claude')), 'não toca no Claude Code');
 });
 
-test('install remove as cópias antigas do Plumb (find-docs/find-skills) e preserva homônimas de terceiros', () => {
+test('install remove as cópias antigas sem prefixo (find-docs/find-skills) e preserva homônimas de terceiros', () => {
   const home = mkdtempSync(join(tmpdir(), 'plumb-'));
   const dir = join(home, '.claude', 'skills');
   mkdirSync(join(dir, 'find-docs'), { recursive: true });
   writeFileSync(join(dir, 'find-docs', 'SOURCE.md'), '- Alterações locais: nenhuma');
   mkdirSync(join(dir, 'find-skills'), { recursive: true });
-  writeFileSync(join(dir, 'find-skills', 'SKILL.md'), ['---', 'name: find-skills', '---', ''].join(String.fromCharCode(10)));
-  execFileSync(process.execPath, [CLI, 'install', '--claude', '--no-brain'], { env: { ...process.env, PLUMB_HOME: home }, encoding: 'utf8' });
+  writeFileSync(join(dir, 'find-skills', 'SKILL.md'), ['---', 'name: find-skills', '---', ''].join('\n'));
+  execFileSync(process.execPath, [CLI, 'install', '--claude'], { env: env(home), encoding: 'utf8' });
   assert.ok(!existsSync(join(dir, 'find-docs')), 'cópia antiga do Plumb removida');
   assert.ok(existsSync(join(dir, 'find-skills', 'SKILL.md')), 'skill de terceiro preservada');
   assert.ok(existsSync(join(dir, 'plumb-find-docs', 'SKILL.md')));
@@ -120,80 +106,50 @@ test('install sem ferramenta e sem terminal interativo pede a flag', () => {
     /informe --claude, --cursor ou --both/,
   );
 });
-test('hook do Claude preserva os outros hooks e não duplica', () => {
-  const other = { hooks: { SessionStart: [{ matcher: 'startup', hooks: [{ type: 'command', command: 'echo oi' }] }], Stop: [] }, model: 'x' };
-  const once = upsertClaudeHook(other, 'knowledge-mcp');
-  const twice = upsertClaudeHook(once, 'knowledge-mcp');
-  assert.equal(twice.hooks.SessionStart.length, 2);
-  assert.equal(twice.model, 'x');
-  assert.deepEqual(removeClaudeHook(twice), other);
-});
 
-test('hook do Cursor e mcp.json preservam o que já existe', () => {
-  const hooks = upsertCursorHook(upsertCursorHook({ version: 1, hooks: { stop: [{ command: 'x' }] } }, 'k'), 'k');
-  assert.deepEqual(hooks.hooks.sessionStart, [{ command: 'k context --hook cursor' }]);
-  assert.deepEqual(hooks.hooks.stop, [{ command: 'x' }]);
-  const mcp = upsertMcpServer({ mcpServers: { github: { url: 'u' } } }, 'knowledge-mcp');
-  assert.deepEqual(Object.keys(mcp.mcpServers), ['github', 'knowledge-os']);
-  const quoted = upsertMcpServer({}, '"C:\\Program Files\\py.exe" -m src.cli').mcpServers['knowledge-os'];
-  assert.equal(quoted.command, 'C:\\Program Files\\py.exe');
-  assert.deepEqual(quoted.args, ['-m', 'src.cli']);
-});
-
-test('sem knowledge-mcp instalado, avisa e não registra hook', () => {
-  const home = mkdtempSync(join(tmpdir(), 'plumb-'));
-  const out = execFileSync(process.execPath, [CLI, 'install', '--claude'], {
-    env: { ...process.env, PLUMB_HOME: home, PLUMB_BRAIN_CMD: 'comando-que-nao-existe-plumb' }, encoding: 'utf8',
-  });
-  assert.match(out, /knowledge-mcp` não encontrado/);
-  const hooks = JSON.parse(readFileSync(join(home, '.claude', 'settings.json'), 'utf8')).hooks;
-  assert.ok(hooks.UserPromptSubmit, 'o hook de entrada não depende do cérebro');
-  assert.ok(!(hooks.SessionStart || []).some((g) => /context --hook/.test(g.hooks[0].command)), 'sem hook do cérebro');
-});
-
-test('install --project grava .mcp.json e o hook no projeto', () => {
+test('install --project grava o hook no projeto com caminho portável e sem MCP', () => {
   const home = mkdtempSync(join(tmpdir(), 'plumb-'));
   const proj = join(home, 'app');
   mkdirSync(proj);
-  execFileSync(process.execPath, [CLI, 'install', '--both', '--project'], { cwd: proj, env: { ...process.env, ...fakes(home) }, encoding: 'utf8' });
-  assert.ok(JSON.parse(readFileSync(join(proj, '.mcp.json'), 'utf8')).mcpServers['knowledge-os']);
+  execFileSync(process.execPath, [CLI, 'install', '--both', '--project'], { cwd: proj, env: env(home), encoding: 'utf8' });
   assert.ok(JSON.parse(readFileSync(join(proj, '.claude', 'settings.json'), 'utf8')).hooks.SessionStart);
   assert.ok(JSON.parse(readFileSync(join(proj, '.cursor', 'hooks.json'), 'utf8')).hooks.sessionStart);
-  // o arquivo do projeto é commitado: nenhum caminho da máquina de quem instalou
+  assert.ok(!existsSync(join(proj, '.mcp.json')), 'v7 não grava .mcp.json');
   const projSettings = readFileSync(join(proj, '.claude', 'settings.json'), 'utf8');
   assert.match(projSettings, /node \\"\$CLAUDE_PROJECT_DIR\/\.claude\/skills\/plumb\/hooks\/entry\.mjs\\" --claude-prompt/);
-  assert.ok(!projSettings.includes(proj.replaceAll(String.fromCharCode(92), '/')) && !projSettings.includes(home.replaceAll(String.fromCharCode(92), '/')));
+  assert.ok(!projSettings.includes(proj.replaceAll('\\', '/')) && !projSettings.includes(home.replaceAll('\\', '/')));
   const projCursor = readFileSync(join(proj, '.cursor', 'hooks.json'), 'utf8');
   assert.match(projCursor, /node \\"\.claude\/skills\/plumb\/hooks\/entry\.mjs\\" --cursor-session/);
   assert.ok(existsSync(join(proj, '.claude', 'skills', 'plumb', 'hooks', 'entry.mjs')));
-  assert.ok(!existsSync(join(home, 'claude-calls.txt')), 'no projeto não usa claude mcp add');
 });
 
-test('install remove skills e agentes do Plumb que foram renomeados, e preserva homônimos de terceiros', () => {
+test('install remove skills e agentes do Plumb que saíram no v7, e preserva homônimos de terceiros', () => {
   const home = mkdtempSync(join(tmpdir(), 'plumb-'));
   const skills = join(home, '.claude', 'skills');
   const agents = join(home, '.claude', 'agents');
-  mkdirSync(join(skills, 'plumb-retro'), { recursive: true });
-  writeFileSync(join(skills, 'plumb-retro', 'SKILL.md'), 'skill antiga\n');
-  mkdirSync(join(skills, 'plumb-grill'), { recursive: true });
-  writeFileSync(join(skills, 'plumb-grill', 'SKILL.md'), 'skill antiga (renomeada para align)\n');
-  mkdirSync(join(skills, 'plumb-dream'), { recursive: true });
-  writeFileSync(join(skills, 'plumb-dream', 'SKILL.md'), 'skill antiga (renomeada para reflect)\n');
+  for (const s of ['plumb-retro', 'plumb-change', 'plumb-setup', 'plumb-align', 'plumb-dream']) {
+    mkdirSync(join(skills, s), { recursive: true });
+    writeFileSync(join(skills, s, 'SKILL.md'), 'skill antiga\n');
+  }
+  // o orquestrador v6 em skills/plumb/SKILL.md
+  mkdirSync(join(skills, 'plumb'), { recursive: true });
+  writeFileSync(join(skills, 'plumb', 'SKILL.md'), 'orquestrador antigo\n');
   mkdirSync(agents, { recursive: true });
   writeFileSync(join(agents, 'plumb-curator.md'), 'Curador do Plumb — texto antigo\n');
   writeFileSync(join(agents, 'plumb-dreamer.md'), 'Dreamer do Plumb — texto antigo\n');
-  // homônimo de terceiro: não é nosso, não some
   writeFileSync(join(agents, 'plumb-security.md'), 'agente de outra pessoa\n');
 
-  execFileSync(process.execPath, [CLI, 'install', '--claude'],
-    { env: { ...process.env, ...fakes(home) }, encoding: 'utf8' });
+  execFileSync(process.execPath, [CLI, 'install', '--claude'], { env: env(home), encoding: 'utf8' });
 
-  assert.equal(existsSync(join(skills, 'plumb-retro')), false);
-  assert.equal(existsSync(join(skills, 'plumb-grill')), false, 'grill virou align');
-  assert.equal(existsSync(join(skills, 'plumb-dream')), false, 'dream virou reflect');
+  for (const s of ['plumb-retro', 'plumb-change', 'plumb-setup', 'plumb-align', 'plumb-dream']) {
+    assert.equal(existsSync(join(skills, s)), false, `${s} removida`);
+  }
+  assert.equal(existsSync(join(skills, 'plumb', 'SKILL.md')), false, 'o orquestrador v6 saiu');
+  assert.equal(existsSync(join(skills, 'plumb', 'hooks', 'entry.mjs')), true, 'o core plumb/ (hooks) fica');
   assert.equal(existsSync(join(skills, 'plumb-reflect', 'SKILL.md')), true);
+  assert.equal(existsSync(join(skills, 'plumb-code', 'SKILL.md')), true);
   assert.equal(existsSync(join(agents, 'plumb-curator.md')), false);
-  assert.equal(existsSync(join(agents, 'plumb-dreamer.md')), false, 'o dreamer saiu: o orquestrador faz o fechamento');
+  assert.equal(existsSync(join(agents, 'plumb-dreamer.md')), false);
   assert.equal(existsSync(join(agents, 'plumb-explorer.md')), true);
   assert.equal(readFileSync(join(agents, 'plumb-security.md'), 'utf8'), 'agente de outra pessoa\n');
 });
@@ -210,7 +166,6 @@ test('hooks de entrada: não duplicam, preservam os de terceiros e saem limpos',
   assert.equal(twice.hooks.UserPromptSubmit[0].hooks[0].command, 'node "C:/Users/x/.claude/skills/plumb/hooks/entry.mjs" --claude-prompt');
   assert.deepEqual(removeEntryHooks(twice), other);
   assert.equal(entryCommand('C:' + BS + 'a b' + BS + 'c.mjs', '--m'), 'node "C:/a b/c.mjs" --m');
-  // caracteres especiais do bash dentro das aspas são escapados; o modo raw deixa a variável do projeto expandir
   assert.equal(entryCommand('/p/$(rm -rf x)/`y`/"z".mjs', '--m'), 'node "/p/\\$(rm -rf x)/\\`y\\`/\\"z\\".mjs" --m');
   assert.equal(entryCommand('$CLAUDE_PROJECT_DIR/.claude/skills/plumb/hooks/entry.mjs', '--m', { raw: true }),
     'node "$CLAUDE_PROJECT_DIR/.claude/skills/plumb/hooks/entry.mjs" --m');
@@ -221,8 +176,7 @@ test('hooks de entrada: não duplicam, preservam os de terceiros e saem limpos',
 
 test('uninstall com settings.json inválido para antes de apagar o script dos hooks', () => {
   const home = mkdtempSync(join(tmpdir(), 'plumb-'));
-  const env = { ...process.env, ...fakes(home) };
-  const run = (...args) => execFileSync(process.execPath, [CLI, ...args], { env, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+  const run = (...args) => execFileSync(process.execPath, [CLI, ...args], { env: env(home), encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
   run('install', '--claude');
   const entry = join(home, '.claude', 'skills', 'plumb', 'hooks', 'entry.mjs');
   assert.ok(existsSync(entry));
@@ -233,8 +187,7 @@ test('uninstall com settings.json inválido para antes de apagar o script dos ho
 
 test('uninstall --claude depois de --both tira também o hook do Cursor que apontava para as skills do Claude Code', () => {
   const home = mkdtempSync(join(tmpdir(), 'plumb-'));
-  const env = { ...process.env, ...fakes(home) };
-  const run = (...args) => execFileSync(process.execPath, [CLI, ...args], { env, encoding: 'utf8' });
+  const run = (...args) => execFileSync(process.execPath, [CLI, ...args], { env: env(home), encoding: 'utf8' });
   run('install', '--both');
   run('uninstall', '--claude');
   const cursorHooks = JSON.parse(readFileSync(join(home, '.cursor', 'hooks.json'), 'utf8'));

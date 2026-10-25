@@ -1,5 +1,41 @@
 # Changelog
 
+## 7.0.0
+
+Redesenho completo como **harness de desenvolvimento fullstack**, revisado com o usuário
+peça por peça (desenho em `docs/plumb-v7-blueprint.md`, decisões em
+`docs/plumb-v7-decisions.md`). O segundo cérebro deixa de ser uma dependência e vira uma
+camada de conhecimento em **arquivos**; o orquestrador some e o fluxo passa a ser
+**coreografado**; cada skill ganha um **playbook** de expertise.
+
+### Quebras de compatibilidade
+
+| Antes (v6) | Agora (v7) |
+|---|---|
+| Segundo cérebro obrigatório via MCP `knowledge-os`, 5 tipos fixos, workspace/hierarquia | Cérebro em **arquivos markdown livres** (estilo Obsidian) em `.plumb/knowledge/` (projeto) e `~/.plumb/knowledge/` (global); **opcional** — tudo funciona sem; `knowledge-os` vira acelerador opcional via `plumb-find-mcps` |
+| Spec como item `work` no cérebro | Spec **git/worktree-native**: `.plumb/work/<id>.md` na branch, removida no merge |
+| Orquestrador `plumb-change` dirige o fluxo | **Coreografia**: o modelo roteia pela regra do hook + triagem por **score (1–10)**, a spec é o estado, cada skill aponta a próxima |
+| Skills por situação (answer/change/investigate/setup/align) | Skills **compostáveis** por passo + apoio, cada uma `SKILL.md` + `playbook.md`; chamáveis sozinhas |
+| Instalador registra o MCP e um hook de cérebro | Instalador só copia skills/agentes/instrução e os hooks de entrada; o `SessionStart` carrega o pacote do `.plumb/knowledge` |
+
+### Skills (v7)
+
+- **Leitura:** `plumb-ask` (funde answer+investigate).
+- **Passos:** `plumb-grill`, `plumb-spec`, `plumb-code` (ex-build), `plumb-qa`, `plumb-review`,
+  `plumb-learn` (funde capture + skill-creator), `plumb-ship`.
+- **Apoio:** `plumb-plan`, `plumb-document`, `plumb-init` (ex-setup), `plumb-reflect`,
+  `plumb-find-docs`, `plumb-find-mcps` e `plumb-find-skills` (achar-ou-criar).
+- **Removidas:** `plumb-change`, `plumb-answer`, `plumb-capture`, `plumb-investigate`,
+  `plumb-setup`, `plumb-align`, `plumb-dream` (e o orquestrador em `skills/plumb/SKILL.md`).
+
+### Destaques
+
+- **Score de complexidade** rege a cerimônia (direta/padrão/profunda/programa).
+- **qa** com escada de prova por natureza (nunca só unitário); **review** em dois eixos, só reporta.
+- **Adaptação ao dev/empresa:** tudo que o harness formata é default sobrescrevível
+  (precedência projeto → global → default).
+- **Prova:** `npm test` 42/42 (instalador, hook de entrada + pacote do `.plumb`, contrato v7, extrator).
+
 ## 6.0.0
 
 O Plumb deixa de decidir por conta própria: **entrevista** o usuário no modelo

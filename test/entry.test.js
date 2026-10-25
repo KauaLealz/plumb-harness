@@ -5,7 +5,7 @@ import { cpSync, mkdirSync, mkdtempSync, readFileSync, symlinkSync, utimesSync, 
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { ROUTER, handle, isDirective, isSave, previousSessionNote, stopCheck, userText } from '../skills/plumb/hooks/entry.mjs';
+import { ROUTER, handle, isDirective, isSave, knowledgePackage, previousSessionNote, stopCheck, userText } from '../skills/plumb/hooks/entry.mjs';
 
 const HOOK_DIR = fileURLToPath(new URL('../skills/plumb/hooks/', import.meta.url));
 const SCRIPT = join(HOOK_DIR, 'entry.mjs');
@@ -13,7 +13,8 @@ const SCRIPT = join(HOOK_DIR, 'entry.mjs');
 const user = (text) => ({ type: 'user', message: { role: 'user', content: text } });
 const toolResult = () => ({ type: 'user', toolUseResult: {}, message: { role: 'user', content: [{ type: 'tool_result', content: 'ok' }] } });
 const tool = (name, input = {}) => ({ type: 'assistant', message: { content: [{ type: 'tool_use', name, input }] } });
-const assistantSave = () => tool('mcp__knowledge-os__item_save');
+// v7: gravar conhecimento é escrever markdown em .plumb/knowledge (ou a fila offline), não item_save.
+const assistantSave = () => tool('Write', { file_path: '.plumb/knowledge/pagamentos/money.md' });
 const assistantText = () => ({ type: 'assistant', message: { content: [{ type: 'text', text: 'feito' }] } });
 
 function transcript(entries, dir = mkdtempSync(join(tmpdir(), 'plumb-entry-')), name = 'sessao.jsonl', ageMs = 0) {
@@ -28,23 +29,26 @@ function transcript(entries, dir = mkdtempSync(join(tmpdir(), 'plumb-entry-')), 
 
 const HOUR = 3_600_000;
 
-test('o roteador cabe em 20 linhas e manda carregar a skill, classificar e consultar o cérebro', () => {
+test('o roteador cabe em 20 linhas e manda classificar, carregar a skill e usar o .plumb/knowledge', () => {
   assert.ok(ROUTER.length <= 20);
   const text = ROUTER.join('\n');
   assert.match(text, /carregue a skill/i);
-  assert.match(text, /Classifique/i);
-  assert.match(text, /segundo cérebro/);
-  assert.match(text, /plumb-change/);
-  assert.match(text, /plumb-align/);
+  assert.match(text, /classifique/i);
+  assert.match(text, /\.plumb\/knowledge/);
+  assert.match(text, /plumb-ask/);
+  assert.match(text, /plumb-grill/);
+  assert.match(text, /plumb-code/);
   assert.match(text, /worktree/);
   assert.match(text, /ferramenta de perguntas/);
   for (const busca of ['plumb-find-docs', 'plumb-find-mcps', 'plumb-find-skills']) assert.ok(text.includes(busca), busca);
   assert.doesNotMatch(text, /Decidi|decidir, não perguntar/i);
+  // v7: sem orquestrador, sem skills antigas
+  assert.doesNotMatch(text, /plumb-change|plumb-align|plumb-setup\b/);
 });
 
-test('a instrução global fala de grill, worktree, ferramenta de perguntas e das três buscas', () => {
+test('a instrução global fala de grill, worktree, ferramenta de perguntas, .plumb e das três buscas', () => {
   const text = readFileSync(new URL('../global-instruction.md', import.meta.url), 'utf8');
-  for (const re of [/grill/, /worktree/, /ferramenta de perguntas/, /plumb-find-docs/, /plumb-find-mcps/, /plumb-find-skills/]) assert.match(text, re);
+  for (const re of [/grill/, /worktree/, /ferramenta de perguntas/, /\.plumb\/knowledge/, /plumb-find-docs/, /plumb-find-mcps/, /plumb-find-skills/]) assert.match(text, re);
   assert.doesNotMatch(text, /Decidi|decidir, não perguntar/i);
 });
 
@@ -91,12 +95,23 @@ test('isDirective: imperativo na voz do usuário sim; pergunta, relato, preferê
   ]) assert.equal(isDirective(no), false, no);
 });
 
+test('isSave reconhece escrita em .plumb/knowledge (Write/Edit) e a fila offline (Bash/PowerShell), não item_save', () => {
+  assert.equal(isSave(tool('Write', { file_path: '.plumb/knowledge/pagamentos/money.md' })), true);
+  assert.equal(isSave(tool('Edit', { file_path: 'C:/repo/.plumb/knowledge/rules.md' })), true);
+  assert.equal(isSave(tool('Bash', { command: 'cat >> ~/.knowledge-os/pending.jsonl <<EOF' })), true);
+  assert.equal(isSave(tool('PowerShell', { command: 'Add-Content $HOME\\.knowledge-os\\pending.jsonl $linha' })), true);
+  assert.equal(isSave(tool('Write', { file_path: 'src/server.js' })), false);
+  assert.equal(isSave(tool('mcp__knowledge-os__item_save')), false, 'v7 não grava por item_save');
+  assert.equal(isSave(tool('Bash', { command: 'ls' })), false);
+  assert.equal(isSave(assistantText()), false);
+});
+
 test('stop bloqueia uma diretriz sem gravação e deixa passar o resto', () => {
   const directive = user('a partir de agora, mensagens de erro sempre em português');
   const t = transcript([directive, assistantText()]);
   const out = stopCheck({ transcript_path: t });
   assert.equal(out.decision, 'block');
-  assert.match(out.reason, /item_save/);
+  assert.match(out.reason, /\.plumb\/knowledge/);
   assert.match(out.reason, /terceiros/);
 
   assert.equal(stopCheck({ transcript_path: t, stop_hook_active: true }), null, 'nunca em laço');
@@ -111,14 +126,20 @@ test('stop só olha a última fala do usuário', () => {
   assert.equal(stopCheck({ transcript_path: t }), null);
 });
 
-test('isSave reconhece item_save e a fila offline por Bash, PowerShell, Write e Edit', () => {
-  assert.equal(isSave(assistantSave()), true);
-  assert.equal(isSave(tool('Bash', { command: 'cat >> ~/.knowledge-os/pending.jsonl <<EOF' })), true);
-  assert.equal(isSave(tool('PowerShell', { command: 'Add-Content $HOME\\.knowledge-os\\pending.jsonl $linha' })), true);
-  assert.equal(isSave(tool('Write', { file_path: 'C:/Users/x/.knowledge-os/pending.jsonl' })), true);
-  assert.equal(isSave(tool('Edit', { file_path: '/home/x/.knowledge-os/pending.jsonl' })), true);
-  assert.equal(isSave(tool('Bash', { command: 'ls' })), false);
-  assert.equal(isSave(assistantText()), false);
+test('knowledgePackage junta os resumos do .plumb/knowledge do projeto e do global', () => {
+  const proj = mkdtempSync(join(tmpdir(), 'plumb-proj-'));
+  const home = mkdtempSync(join(tmpdir(), 'plumb-home-'));
+  mkdirSync(join(proj, '.plumb', 'knowledge', 'pagamentos'), { recursive: true });
+  writeFileSync(join(proj, '.plumb', 'knowledge', 'rules.md'), '---\nsummary: Erros sempre em português.\n---\n# Regras\n');
+  writeFileSync(join(proj, '.plumb', 'knowledge', 'pagamentos', 'money.md'), '---\nsummary: Valores sempre em centavos inteiros.\n---\n# Money\n');
+  mkdirSync(join(home, '.plumb', 'knowledge'), { recursive: true });
+  writeFileSync(join(home, '.plumb', 'knowledge', 'estilo.md'), '---\nsummary: Responda no idioma do usuário.\n---\n# Estilo\n');
+  const pkg = knowledgePackage(proj, home);
+  assert.match(pkg, /\.plumb\/knowledge/);
+  assert.match(pkg, /centavos inteiros/);
+  assert.match(pkg, /\(projeto\) rules\.md/);
+  assert.match(pkg, /\(global\) estilo\.md/);
+  assert.equal(knowledgePackage(mkdtempSync(join(tmpdir(), 'vazio-')), mkdtempSync(join(tmpdir(), 'vazio2-'))), null, 'sem notas, nada');
 });
 
 test('claude-session avisa da sessão anterior inativa com diretriz sem gravação', () => {
@@ -129,7 +150,7 @@ test('claude-session avisa da sessão anterior inativa com diretriz sem gravaç�
   assert.match(out.hookSpecificOutput.additionalContext, /1 frase\(s\)/);
   assert.match(out.hookSpecificOutput.additionalContext, /\/plumb-reflect/);
   assert.ok(handle('--claude-session', { transcript_path: atual }), 'sem source também avisa');
-  assert.equal(handle('--claude-session', { transcript_path: atual, source: 'resume' }), null, 'resume e compact não repetem o aviso');
+  assert.equal(handle('--claude-session', { transcript_path: atual, source: 'resume' }), null, 'resume não repete o aviso');
   assert.equal(handle('--claude-session', { transcript_path: atual, source: 'compact' }), null);
 });
 
@@ -139,7 +160,7 @@ test('claude-session não avisa quando gravou, quando a sessão é paralela aind
   assert.equal(previousSessionNote({ transcript_path: join(dir2, 'atual.jsonl') }), null, 'gravou: nada a avisar');
 
   const dir3 = mkdtempSync(join(tmpdir(), 'plumb-entry-'));
-  transcript([user('sempre use centavos inteiros')], dir3, 'viva.jsonl'); // mexida agora: outra sessão rodando
+  transcript([user('sempre use centavos inteiros')], dir3, 'viva.jsonl');
   assert.equal(previousSessionNote({ transcript_path: join(dir3, 'atual.jsonl') }), null, 'sessão paralela viva não conta');
 
   const dir4 = mkdtempSync(join(tmpdir(), 'plumb-entry-'));
@@ -154,7 +175,7 @@ test('o script nunca trava a sessão: entrada inválida ou modo desconhecido sae
     assert.equal(r.status, 0);
     assert.equal(r.stdout, '');
   }
-  const ok = run(['--claude-prompt'], '\uFEFF' + JSON.stringify({ prompt: 'oi', transcript_path: '/t.jsonl' }));
+  const ok = run(['--claude-prompt'], '﻿' + JSON.stringify({ prompt: 'oi', transcript_path: '/t.jsonl' }));
   assert.equal(ok.status, 0);
   assert.match(JSON.parse(ok.stdout).hookSpecificOutput.additionalContext, /carregue a skill/i);
 });
@@ -166,9 +187,9 @@ test('o script roda também quando chamado por um link (dotfiles, junction): nã
   cpSync(HOOK_DIR, real, { recursive: true });
   const link = join(base, 'link');
   try {
-    symlinkSync(real, link, 'junction'); // junction no Windows não pede administrador; no resto vira link comum
-  } catch (err) {
-    return; // sem permissão para criar link neste ambiente: o caso não se aplica
+    symlinkSync(real, link, 'junction');
+  } catch {
+    return;
   }
   const r = spawnSync(process.execPath, [join(link, 'entry.mjs'), '--claude-prompt'], { input: '{}', encoding: 'utf8' });
   assert.equal(r.status, 0);
