@@ -1,24 +1,30 @@
 ---
 name: plumb-learn
-description: Grava o que dura como markdown no segundo cérebro — captura na hora a regra que o usuário DITOU ("sempre X", "aqui a gente…", "a partir de agora…"), sintetiza o aprendizado no fecho de uma mudança (o que travou/destravou, o que ele corrigiu, decisões + porquê, pegadinha) e PROPÕE uma skill quando a sessão improvisou uma capacidade. Use quando o usuário ditar uma regra ("lembra disso", "guarda que"), ou ao fechar uma mudança. É a única skill de escrita de conhecimento. Writes durable knowledge as markdown: instant capture of a dictated rule, synthesis at a change's close, and proposes a skill when the session improvised a capability.
+description: Grava o que dura como markdown no segundo cérebro — captura na hora a regra que o usuário DITOU ("sempre X", "a partir de agora…"), capta a CORREÇÃO do usuário ao jeito de trabalhar ("na verdade faz assim", "da próxima vez…") atualizando a preferência/regra relacionada, sintetiza o aprendizado no fecho de uma mudança e PROPÕE uma skill quando a sessão improvisou uma capacidade. Use quando o usuário ditar uma regra, corrigir o seu jeito de fazer, ou ao fechar uma mudança. É a única skill de escrita de conhecimento. Writes durable knowledge as markdown: instant capture of a dictated rule, reactive capture of a correction (updates the related preference), synthesis at a change's close, and proposes a skill.
 ---
 
 # Plumb — learn (gravar o que dura)
 
-**No idioma do usuário.** Você é a **única skill de escrita de conhecimento**. Faz três coisas:
-**captura** a regra que o usuário ditou, **sintetiza** o aprendizado no fecho de uma mudança, e
-**propõe skills** quando a sessão improvisou uma capacidade. Separado do `plumb-reflect` (que é a
-retro da sessão inteira).
+**No idioma do usuário.** Você é a **única skill de escrita de conhecimento**. Faz quatro coisas:
+**captura** a regra que o usuário ditou, capta a **correção** dele ao seu jeito de trabalhar,
+**sintetiza** o aprendizado no fecho de uma mudança, e **propõe skills** quando a sessão improvisou
+uma capacidade. Separado do `plumb-reflect` (que é a retro da sessão inteira).
 
 Leia `playbook.md` (o teste de cada candidato, onde cada coisa mora, como escrever um bom `summary`,
 quando o skill-creator dispara) uma vez. O modelo do cérebro:
 `../plumb/references/knowledge-model.md`.
 
-## Três entradas
+## Quatro entradas
 
 - **Captura instantânea** — o usuário **ditou** uma regra/decisão/preferência ("sempre X", "aqui a
   gente…", "a partir de agora…", "nunca…", "lembra disso", "guarda que"). Grava **na hora**, confirma
   em uma linha. Não pede o "sim" (ele mesmo ditou).
+- **Correção reativa** — o usuário **corrigiu o seu jeito de trabalhar** ("na verdade faz assim",
+  "não era pra fazer assim", "da próxima vez…", "prefiro assim"). **Distinga** correção durável (sobre
+  *como* a skill trabalha → persiste) de escolha pontual de produto (só desta vez → não vira nota).
+  Durável: **atualize o item relacionado** (`preferences/<skill>.md` ou a `rule`), não crie um novo —
+  é aprendizado reativo, a forma mais rica de preferência. Se a mesma correção já apareceu em outro
+  projeto, é **candidata a promover para global** (ver `plumb-reflect`).
 - **Síntese no fecho** — ao fechar uma mudança, varre os candidatos (o que travou e destravou, o que
   o usuário corrigiu/repetiu, decisões + porquê, convenção nova, pegadinha) e propõe gravar.
 - **Skill-creator** — a sessão improvisou uma capacidade ou repetiu um procedimento que mereceria

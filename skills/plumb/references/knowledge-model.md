@@ -24,8 +24,10 @@ empresa/cliente moram no próprio repo** (dentro de `.plumb/knowledge/`), não n
     <item>.md                   um arquivo por item (uma decisão, uma pegadinha, um howto)
 ```
 
-`~/.plumb/knowledge/` segue o mesmo formato. Comece com `rules.md`; crie subpastas de área quando
-houver 2+ itens de um tema. Nada de pasta com 0–1 item.
+`~/.plumb/knowledge/` segue o mesmo formato, e guarda também o **perfil do usuário** —
+`~/.plumb/knowledge/profile.md` — o "jeito" consolidado dele (idioma, estilo, valores de engenharia,
+preferências recorrentes), mantido pelo `plumb-reflect` e revisável pelo modo `perfil`. Comece com
+`rules.md`; crie subpastas de área quando houver 2+ itens de um tema. Nada de pasta com 0–1 item.
 
 ## Formato de uma nota
 

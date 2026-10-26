@@ -81,6 +81,8 @@ test('isDirective: imperativo na voz do usuário sim; pergunta, relato, preferê
     'nunca commite direto na main',
     'não use mais moment.js',
     'lembre-se que o deploy é pelo make release',
+    'da próxima vez, use pnpm em vez de npm',
+    'no futuro, rode o lint antes de commitar',
   ]) assert.equal(isDirective(ok), true, ok);
   for (const no of [
     'roda os testes e me diz se sempre falha',

@@ -24,6 +24,7 @@ export const ROUTER = [
   '- A spec e o estado de execução são git/worktree-native (`.plumb/work/<id>.md` na branch), nunca no cérebro.',
   '- Pergunta ao usuário → ferramenta de perguntas (recomendação primeiro); sem ela, lista numerada. Não infira o que muda o resultado: pergunte.',
   '- Cada skill explora antes, mas na dúvida PERGUNTA o que precisa (nunca adivinha fato operacional: o que/onde roda/cenários/formato); após cada resposta passa pelo `plumb-learn` para gravar o que durar (projeto ou global) e não reinterrogar.',
+  '- Quando o usuário CORRIGE o seu jeito de trabalhar ("na verdade faz assim", "da próxima vez…"), isso é sinal de aprendizado: leve ao `plumb-learn` para ATUALIZAR a preferência/regra relacionada (não só registrar), distinguindo correção durável de escolha pontual de produto.',
   '- Prova antes de "pronto", no nível certo pela natureza (nunca só teste unitário). Push/PR/merge só com o "sim".',
   '- Paralelize o trabalho independente. Arquivo/cérebro indisponível: avise em uma linha e siga.',
 ];
@@ -31,6 +32,7 @@ export const ROUTER = [
 // Frases imperativas, na voz do próprio usuário, que enunciam uma regra ou decisão.
 const DIRECTIVE = new RegExp(
   '(?:^|[^\\p{L}])(?:a partir de agora|de agora em diante|daqui pra frente|daqui para frente|' +
+    'da pr[óo]xima vez|no futuro|' + // correções duráveis ao jeito de trabalhar
     'sempre (?:use|grave|rode|escreva|fa[cç]a)|use sempre|nunca (?:use|fa[cç]a|grave|commite)|' +
     'n[aã]o (?:use|fa[cç]a) mais|lembre-se (?:de )?que|regra:)',
   'iu',

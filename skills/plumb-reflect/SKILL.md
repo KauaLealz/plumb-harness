@@ -1,6 +1,6 @@
 ---
 name: plumb-reflect
-description: Retro da SESSÃO INTEIRA — lê o transcript (os dois lados, erros de ferramenta, correções do usuário), propõe os aprendizados duráveis por destino (.plumb/knowledge/ projeto vs global) e sugere skills novas (skill-creator em nível de sessão), gravando com confirmação. Modos extras — "desde <data>" varre sessões antigas (um explorador por transcript, em paralelo) e "auditoria" revisa a saúde do .plumb/knowledge/. Dispara sozinho no fecho da sessão e é chamável. Use quando o usuário disser "reflete", "o que aprendemos", "/plumb-reflect", "auditoria do conhecimento". Session-wide retro over the transcript; proposes durable learnings by destination plus skill suggestions; modes "desde <date>" and "auditoria".
+description: Retro da SESSÃO INTEIRA — lê o transcript (os dois lados, erros de ferramenta, correções do usuário), propõe os aprendizados duráveis por destino (.plumb/knowledge/ projeto vs global) e sugere skills novas (skill-creator em nível de sessão), gravando com confirmação. Modos extras — "desde <data>" varre sessões antigas (um explorador por transcript, em paralelo), "auditoria" revisa a saúde E a adaptação do .plumb/knowledge/ (reperguntas, preferências nunca usadas, candidatas a promover para global), e "perfil" mostra/edita/audita o que o Plumb aprendeu sobre o usuário (~/.plumb/knowledge/profile.md). Dispara sozinho no fecho da sessão e é chamável. Use quando o usuário disser "reflete", "o que aprendemos", "/plumb-reflect", "auditoria do conhecimento", "o que você sabe sobre mim", "/plumb-reflect perfil". Session-wide retro; modes "desde <date>", "auditoria" (health + adaptation) and "perfil" (view/edit the learned user profile).
 ---
 
 # Plumb — reflect (retro da sessão inteira)
@@ -23,7 +23,12 @@ destino, o skill-creator, os modos `desde` e `auditoria`) uma vez.
 |---|---|
 | `/plumb-reflect`, "reflete", "o que aprendemos", fecho da sessão | **Sessão atual** |
 | `/plumb-reflect desde 2026-10-01`, "olha as últimas sessões" | **Sessões antigas** (exploradores em paralelo) |
-| `/plumb-reflect auditoria`, "limpa o conhecimento" | **Auditoria** (saúde do `.plumb/knowledge/`) |
+| `/plumb-reflect auditoria`, "limpa o conhecimento" | **Auditoria** (saúde **e adaptação** do `.plumb/knowledge/`) |
+| `/plumb-reflect perfil`, "o que você sabe sobre mim", "minhas preferências" | **Perfil** (ver/editar/auditar `~/.plumb/knowledge/profile.md` + `preferences/`) |
+
+A **adaptação** é o loop que faz o harness melhorar com o uso: a auditoria detecta repergunta do que
+já estava salvo, preferência nunca usada ou obsoleta, e preferência/regra que **recorre em vários
+projetos** (candidata a promover para global). Detalhe no `playbook.md`.
 
 ## Princípios
 

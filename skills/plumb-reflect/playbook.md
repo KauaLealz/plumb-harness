@@ -119,6 +119,20 @@ proponha o ajuste mais barato que ataca a causa:
 Nunca apague uma regra que o **usuário ditou** sem perguntar. Confirme as remoções (é git, dá para
 voltar, mas confirme assim mesmo).
 
+### Adaptação (o loop que melhora com o uso)
+
+Além da saúde, a auditoria olha se o harness está **se encaixando** ao usuário:
+
+- **Repergunta:** no transcript (ou nas sessões do `desde`), uma pergunta que uma preferência salva
+  **já respondia** → a skill não leu o `preferences/` antes de perguntar, ou a nota está mal nomeada/
+  no lugar errado. Reforce (mova, renomeie, ou aponte a aderência). É o sinal nº 1 de que a
+  adaptação furou.
+- **Preferência órfã/obsoleta:** item em `preferences/<skill>.md` (projeto + global) sem sinal de uso,
+  ou **contradito** pelo que o usuário fez na prática → pergunte se ainda vale; ajuste ou remova.
+- **Promoção entre projetos:** a mesma preferência/regra aparece no `.plumb/knowledge/` de **2+
+  projetos** (ou recorreu em sessões de repos diferentes no `desde`) → **proponha promover para o
+  global** (`~/.plumb/knowledge/`), e deixar só a especialização no projeto. Global sempre pede o "sim".
+
 ## 7 — Propor e gravar
 
 Uma **mensagem só**, agrupada por **destino** (neste projeto / para você em qualquer projeto), cada
@@ -131,6 +145,24 @@ Grave só o aprovado como markdown (`summary:` com o porquê + corpo; `knowledge
 pelo mesmo arquivo. Não há teto de itens, mas cada um passa pelo teste "dura? vale além desta sessão?
 não se redescobre em segundos lendo o código?". Nada para propor é um **resultado válido** — diga em
 uma linha o que você olhou.
+
+## 8 — Modo `perfil` (o que o Plumb aprendeu sobre o usuário)
+
+Transparência e controle: o usuário vê, edita e manda no que o harness assumiu sobre ele.
+
+1. **Mostre o perfil atual** — leia `~/.plumb/knowledge/profile.md` (o retrato do "jeito" do usuário)
+   e as preferências globais (`~/.plumb/knowledge/preferences/*.md`), e resuma em linguagem humana:
+   "o que sei sobre como você gosta de trabalhar" (idioma, estilo, valores de engenharia,
+   preferências por skill). Sem `profile.md` ainda: diga, e ofereça montá-lo a partir das preferências.
+2. **Edite/audite** — ofereça, pela ferramenta de perguntas: corrigir um traço, remover o que não
+   vale mais, ou consolidar preferências recorrentes num traço de perfil. Aponte contradições entre
+   preferências.
+3. **Mantenha o `profile.md`** — um retrato **curto** (frontmatter `summary:` + corpo em tópicos),
+   atualizado a partir das preferências e das correções recorrentes. É global: **proponha e confirme**
+   (o "sim") antes de gravar; o usuário ditou os traços dele, mas o perfil é uma síntese sua.
+
+O perfil é o que dá ao harness um ponto de partida "do jeito do usuário" em qualquer projeto novo,
+antes mesmo das preferências por skill daquele repo.
 
 ## Pegadinhas
 

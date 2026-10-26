@@ -50,6 +50,10 @@ branch + card. Com um gestor de tarefas (Jira/Linear/GitHub Issues): o card é o
   do entregável); **nunca adivinha fato operacional**. Após **cada resposta**, passa pelo
   `plumb-learn` para gravar o que durar (projeto ou global) e não reinterrogar. Detalhe:
   `references/preferences.md`.
+- **Correção é aprendizado:** quando o usuário corrige o seu jeito de trabalhar ("na verdade…", "da
+  próxima vez…", "prefiro assim"), leve ao `plumb-learn` para **atualizar** a preferência/regra
+  relacionada — distinguindo correção durável (persiste) de escolha pontual de produto (não vira
+  nota). Correção que se repete em vários projetos é candidata a **promover para global**.
 - **Prova antes de "pronto":** no nível certo pela natureza (nunca só teste unitário); reporte a
   evidência. Push/PR/merge só com o "sim".
 - **Paralelize** o trabalho independente (subagentes, fases/waves, buscas) por padrão.
