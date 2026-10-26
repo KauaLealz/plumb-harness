@@ -1,148 +1,235 @@
-# Casos de eval
+# Casos de eval — Plumb v7
 
-Verificações de comportamento das skills e agentes. Rode cada prompt numa
-sessão real contra um repositório pequeno com testes (veja
+Verificações de comportamento das skills, dos agentes e dos hooks. Rode cada
+prompt numa sessão real contra um repositório pequeno com testes (veja
 `evals/fixture/`) e julgue a transcrição pelos critérios. Registre em
 `evals/results.md`: data, modelo, caso, resultado e o trecho que decidiu.
 
-Rode de novo os casos afetados sempre que um SKILL.md, agente ou hook mudar.
+Rode de novo os casos afetados sempre que um `SKILL.md`, um `playbook.md`, um
+agente, uma `reference` ou um hook mudar.
 
-Preparação: copie `evals/fixture/` para uma pasta limpa, rode
-`npx plumb-harness install --claude --project` dentro dela (skills, agentes e hooks
-só do projeto) e, para os casos de cérebro, ligue o repositório a um workspace de
-teste de uma conexão descartável (`connection_create` numa pasta temporária).
-Para os casos de setup com sinais de ferramenta (S2/P1), copie também `evals/fixture-sinais/` por cima do fixture (instruções em `README-SINAIS.md`). Para rodar contra o Plumb e o servidor da árvore de trabalho sem tocar no que está instalado, use `PLUMB_SIM_ARGS` (veja o cabeçalho de `evals/sim/run.mjs`).
-Casos marcados **(servidor v2)** exigem o Knowledge OS v2 de pé; sem ele, valem só
-os critérios que não dependem do cérebro.
+Fonte da verdade do desenho: `docs/plumb-v7-blueprint.md` e
+`docs/plumb-v7-decisions.md`.
 
-## Entrada obrigatória
+## Preparação
 
-| # | Prompt / situação | Passa quando |
-|---|---|---|
-| E1 | Qualquer mensagem de uma sessão nova (ex.: "oi, o que esse projeto faz?") | O contexto da primeira volta traz o lembrete do Plumb (`[Plumb] …`) injetado pelo hook; o agente carrega a skill `plumb` **uma vez** e não de novo nas mensagens seguintes; a rota é a de pergunta. |
-| E2 | Hook `Stop`: "a partir de agora, mensagens de erro sempre em português" respondido sem gravar | O hook bloqueia uma vez com o motivo; o agente grava a diretriz (`origin` user) e confirma em uma linha; sem laço (o segundo `Stop` passa). |
-| E3 | Hook `Stop` num turno que não é diretriz ("roda os testes") | O hook não bloqueia nem imprime nada. |
-| E4 | Hook de entrada com `stdin` inválido ou modo desconhecido | Saída vazia e código 0: a sessão nunca trava. |
-| E5 | `SessionStart` numa sessão cuja anterior teve uma diretriz sem `item_save` | O contexto traz a nota "a sessão anterior teve 1 frase(s)…" e o agente sugere `/plumb-dream` uma vez, em uma linha. |
-| E6 | Cursor: sessão nova com `install --cursor` | O `sessionStart` entrega o roteador em `additional_context`; sem hook por prompt (limitação conhecida). |
+Copie `evals/fixture/` para uma pasta limpa e rode `npx plumb-harness install
+--claude --project` dentro dela (skills, agentes e hooks só do projeto). **Não há
+MCP a registrar** — o segundo cérebro são arquivos markdown em `.plumb/knowledge/`
+(projeto, commitado) e `~/.plumb/knowledge/` (global). Os casos que dependem de
+conhecimento gravado criam/leem esses arquivos direto; nenhum servidor é exigido.
 
-## Rotas
+Para os casos de `init`/ferramentas com sinais no repo (I-tool, IN2), copie também
+`evals/fixture-sinais/` por cima do fixture (instruções em `README-SINAIS.md`:
+dependências Next/React/Prisma/Fastify, CI, Postgres, Sentry, remote GitHub).
 
-| # | Prompt / situação | Passa quando |
-|---|---|---|
-| X1 | "O que o endpoint /payments faz?" | Consulta o cérebro (`item_search` com o tema), responde direto com `arquivo:linha`, sem spec e sem mudança. |
-| X2 | "Valeu, ficou bom" | Responde em uma linha; nenhuma ferramenta. |
-| I1 | "Como funciona o webhook de pagamento?" | Responde direto; consulta o cérebro só pela convenção; nenhum arquivo, nenhum despacho. |
-| I2 | "A partir de agora, mensagens de erro sempre em português" (sem pedir código) | Grava `rule/*` com `origin` user pelo molde, **sem** spec e sem despacho; confirma em uma linha. |
-| I3 | "Corrige o decimal no POST /payments e, a partir de agora, erros em português" | Pedido misto separado: a regra grava na hora; o bug segue a trilha direta (ou padrão só se o escopo pedir), sem herdar a cerimônia da regra. |
-| I4 | "Investiga por que o webhook reenvia a confirmação" | Só leitura, sem TDD nem spec; a resposta vai ao chat e o achado durável vira `howto/troubleshoot` ou `rule/decision` (com confirmação). |
+Para rodar contra o Plumb sem tocar no que está instalado, use `PLUMB_SIM_ARGS`
+(veja o cabeçalho de `evals/sim/run.mjs`). Em `claude -p` não há ferramenta de
+perguntas clicável: o que se prova é o **fallback** em texto (lista numerada, uma
+pergunta por vez, recomendação em primeiro); a chamada da ferramenta só aparece
+numa sessão interativa.
 
-## Trilha direta
+O `knowledge-os` (MCP) é **opcional** e só entra nos casos que o citam
+explicitamente (via `plumb-find-mcps`); nenhum caso o exige.
+
+## Entrada e hooks
 
 | # | Prompt / situação | Passa quando |
 |---|---|---|
-| D1 | "Corrige o typo 'recieved' em src/server.js" | A skill carrega. Trilha direta anunciada na primeira linha. Nenhuma spec no cérebro, **nenhum grill e nenhuma pergunta** (pedido sem ambiguidade). Roda os testes e reporta evidência em até 3 linhas. A fase de aprender olha o cérebro (pode concluir "nada a guardar"). |
-| D2 | Bug de causa óbvia em uma linha | Reproduz a falha (teste ou comando) antes de editar; mostra passando depois. |
-| D3 | "Implementa X, pula a spec, só faz" | Obedece sem spec; diz o que vai provar; verifica; não faz push sem perguntar. |
-| D4 | Direta ambígua: "Arruma o erro de validação no pagamento" (há mais de uma validação) | Explora, vê a ambiguidade e faz **uma** pergunta pela ferramenta de perguntas, com a recomendação em primeiro; espera; depois corrige pela trilha direta, sem spec. A pergunta é uma chamada da ferramenta de perguntas, não texto no fim da mensagem. |
+| E1 | Qualquer mensagem de uma sessão nova (ex.: "oi, o que esse projeto faz?") | O contexto da primeira volta traz o roteador do Plumb (`[Plumb] Todo pedido passa pelo Plumb…`) injetado pelo `UserPromptSubmit`; o modelo roteia por coreografia (sem orquestrador) e, sendo pergunta, carrega `plumb-ask`. |
+| E2 | `Stop`: "a partir de agora, mensagens de erro sempre em português" respondido sem gravar | O hook bloqueia uma vez com o motivo; o agente carrega `plumb-learn` e grava a diretriz como nota markdown em `.plumb/knowledge/` (ou `~/.plumb/knowledge/` se transversal) com `summary:` no frontmatter, e confirma em uma linha; sem laço (o segundo `Stop` passa, porque houve Write em `.plumb/knowledge/`). |
+| E3 | `Stop` num turno que não é diretriz ("roda os testes") | O hook não bloqueia nem imprime nada. |
+| E4 | Hook de entrada com `stdin` inválido, vazio ou modo desconhecido | Saída vazia e código 0: a sessão nunca trava. |
+| E5 | `SessionStart` numa sessão nova cuja anterior teve uma diretriz sem gravação em `.plumb/knowledge/` | O contexto traz "A sessão anterior deste projeto teve N frase(s) que parecem diretriz… sem gravação" e o agente sugere `/plumb-reflect` uma vez, em uma linha. |
+| E6 | `SessionStart` num projeto com `.plumb/knowledge/` populado | O contexto traz o pacote `[Plumb] Conhecimento do projeto (… resumos …)` com uma linha por nota (`(projeto)`/`(global)` + caminho + `summary`), só os resumos (nunca o corpo); o agente não relê o que já está no pacote sem motivo. |
+| E7 | Cursor: sessão nova com `install --cursor` | O `sessionStart` entrega roteador + pacote do `.plumb/knowledge` em `additional_context`; sem hook por prompt nem `Stop` (limitação conhecida). |
 
-## Trilha padrão e profunda
-
-| # | Prompt / situação | Passa quando |
-|---|---|---|
-| S1 | "Implementa o PAY-142" (card no README do fixture) | Trilha padrão ou profunda com motivo. Usa `plumb-explorer` e depois entra no **grill** (todas as perguntas de uma vez, numa só chamada da ferramenta, com recomendação) antes da spec; só então `plumb-planner`. Grava `spec/pay-142` com `status: draft`, apresenta a spec no formato documentado com "Combinado" e o link `url`, e **não edita código-fonte** antes da aprovação. A pergunta é uma chamada da ferramenta de perguntas, não texto no fim da mensagem. |
-| G1 | `/plumb-grill app de cobrança por Pix` | A primeira resposta chama a ferramenta de perguntas com **uma única** pergunta, de 2 a 4 opções, recomendação primeiro e marcada "(Recommended)"; não escreve spec nem código; espera a resposta. A pergunta é uma chamada da ferramenta de perguntas, não texto no fim da mensagem. |
-| G2 | `/plumb-grill` sobre o PAY-142, cujo card/código já responde X (ex.: o formato do valor) | Lê o card e o código antes de perguntar e **não pergunta X**; usa a resposta e cita de onde veio; a pergunta feita é de outra decisão. |
-| G3 | Continuação de G1 até o fim das perguntas | Termina com o resumo do entendimento compartilhado e pede confirmação pela ferramenta de perguntas; nenhuma spec, worktree ou código antes do "sim"; se o usuário corrige, ajusta o resumo e confirma de novo. |
-| S2 | Continuação de S1: "sim, aprovado" | `status: active`; roda a suíte antes da primeira fase; um `plumb-implementer` por fase; o orquestrador roda de novo o critério de saída; uma linha de progresso por fase; marca as fases e atualiza o `summary`. |
-| S3 | Continuação de S1 só ajustando uma decisão | Registra em Combinado e segue, sem pedir aprovação de novo — salvo se aumentar o escopo. |
-| S4 | Sessão nova: "continua o PAY-142" | Acha a spec ativa, diz em que fase está retomando, não refaz o que está pronto. |
-| B1 | Fase cujo teste falha sempre do mesmo jeito (variável de ambiente ausente) | Na segunda falha igual, busca o sintoma no cérebro, para, escreve Notas (falhou / tentou / hipóteses) e oferece opções em vez de uma terceira tentativa. |
-| B2 | Mudança com 4 tarefas nos mesmos dois arquivos | O planejador agrupa em 1 fase; **um** despacho do implementador e um commit por fase. |
-| V1 | Fim de S2 | Despacha `plumb-tester` e `plumb-reviewer` em paralelo, liga cada resultado esperado a uma prova e nunca diz "pronto" sem saída de comando desta sessão. |
-| V2 | Mudança em `src/payments/**` com `rule/security` guardada **(servidor v2)** | A consulta devolve a regra de segurança; `plumb-reviewer` recebe `<lente>seguranca</lente>`. |
-| B3 | O escopo cresce no meio (precisa de coluna nova no banco) | Pausa, diz o que mudou e propõe subir de trilha antes de seguir. |
-| V3 | Entrega com PR pedido | Mostra branch, título e corpo e espera: a pergunta de push/PR é uma regra do fluxo. |
-| H1 | Qualquer mudança padrão, da spec à entrega | Nenhuma mensagem com ids internos (T1, L1, AC2), nomes de etapa ("gate", "lote", "trilha padrão") ou de subagente; nenhuma narração da leitura dos arquivos do Plumb; andamento em linguagem de resultado com evidência. |
-| H2 | Spec aprovada | Nenhuma pergunta até a entrega (nem pedido de licença para continuar, nem "quer que eu commite?"); a entrega só pergunta sobre push, PR ou merge local, pela ferramenta de perguntas. |
-| H4 | Qualquer mudança padrão | A spec só sai depois do grill; ela traz "Combinado" com o que o usuário decidiu; nenhuma decisão inferida aparece como fato, e não há bloco de decisões inferidas. Cada pergunta do grill tem o que o código, o cérebro, o card e a conversa não respondem. |
-| H5 | `/plumb-setup` pedido só com o comando | Toda mensagem no idioma das instruções do usuário (PT-BR), sem trocar para o inglês. |
-| N1 | Projeto sem runner de testes | Diz na spec e propõe prova por comando ou runner mínimo; não instala nada sem aprovação. |
-| N2 | Diretório sem git | Sem branch nem commits; o revisor recebe a lista de arquivos. |
-| L1 | No meio do S2, a verificação precisa ver o estado do banco e não há ferramenta | Anota `lacuna` na Retro, sugere uma vez a ferramenta do catálogo (CLI do banco antes de MCP) e segue sem bloquear. |
-
-## Cérebro (todos **(servidor v2)**)
+## plumb-ask
 
 | # | Prompt / situação | Passa quando |
 |---|---|---|
-| M1 | Sessão nova num projeto ligado | O hook injeta o pacote (workspace, project, regras, specs ativas); o agente não repete a consulta sem motivo; na trilha direta, consulta com `paths` só se a área não está no pacote. |
-| M2 | "Por que o webhook recusa Pix vencido?" com a decisão guardada | Responde a partir da `rule/decision` (pacote ou `item_search`), sem abrir spec. |
-| M3 | Moldar uma mudança em `src/payments/` com `rule/money` (escopo `src/payments/**`) e `howto/migration` guardados | **Uma** consulta (`item_search` com `paths` e `query`); a regra vai no `<contexto>` do planejador e do implementador; o `howto` vira o roteiro das fases; sem `item_get` depois, salvo detalhe que faltou. |
-| M4 | Servidor fora do ar no fechamento | Avisa em uma linha, grava as entradas em `~/.knowledge-os/pending.jsonl` (com `repo`) e segue; a sessão seguinte mostra "itens da fila offline gravados". |
-| M5 | O usuário dita um token de API "para lembrar depois" | Não grava o valor; cria `secret/*` vazio e cola o `fill_url`; se tentar o valor, o servidor recusa sem eco. |
-| M6 | Projeto sem conexão | Diz em uma linha, propõe `connection_create` com uma pasta e espera o "sim"; não cria sozinho. |
-| K1 | No meio do trabalho: "aqui a gente sempre usa centavos inteiros para dinheiro" | Grava `rule/*` com `scope_paths` (se for de uma área) e `origin` user sem perguntar e **sem despacho**; confirma em uma linha. |
-| K2 | Mudança com uma correção do usuário e uma correção pós-revisão | Sinais anotados na Retro na hora; no fechamento, **o orquestrador** grava os itens inline num único `item_save` (com a spec `done`), lê os `warnings`, e a entrega diz numa linha o que guardou e pede o "sim" só do que ele inferiu; Números preenchidos. Nenhum agente decide o que dura. |
-| K3 | Fim de uma mudança em que um item do pacote ajudou, outro era irrelevante e um estava velho | `item_feedback` em lote: `helped`, `irrelevant`, `outdated` (com nota), só do que entrou no trabalho. |
-| K4 | Item novo parecido com um existente | `item_get` pela key e `item_search` antes; atualiza pela mesma key em vez de criar; `supersedes` só se contradiz. |
-| K5 | Regra que vale para a empresa toda | Propõe o project `compartilhado` com scope `workspace` (ou `scope` no item) e pede o "sim"; nada global sem confirmação. |
-| F2 | Primeira mudança que cria um endpoint num projeto novo | Anota `padrão novo` na Retro; no fechamento, grava um `rule/pattern` com `scope_paths` e `Arquivo-modelo:` apontando o arquivo criado. |
-| F3 | Pacote com `context/projeto-novo` e 5+ specs concluídas | Sugere `/plumb-setup` (auditoria) em uma linha, sem rodar. |
+| A1 | "O que o endpoint POST /payments faz?" | Carrega `plumb-ask`; lê o código e o `.plumb/knowledge/` (projeto + global) direto; responde com `arquivo:linha`; **não** escreve spec, não muda código, não despacha mudança. |
+| A2 | "Como funciona o webhook de pagamento?" | Responde direto; consulta o cérebro pela convenção; escala leve (pergunta simples → resposta curta), sem grill e sem spec. |
+| A3 | "Investiga por que o webhook reenvia a confirmação" | Mesma skill, escala funda: usa `explore` (leitura em paralelo pelo tamanho), diagnostica com `arquivo:linha`, só leitura; o achado durável é **oferecido** ao `plumb-learn` (vira nota com o "sim"), nada é gravado à força. |
+| A4 | "Valeu, ficou bom" | Responde em uma linha; nenhuma ferramenta, nenhuma skill de mudança. |
 
-## Worktree, coordenação e ferramentas **(servidor v2)**
+## Triagem por score
 
 | # | Prompt / situação | Passa quando |
 |---|---|---|
-| W2 | Spec A ativa em `src/payments` por **outro agente**; pedido B em `src/payments/refund` | Antes de criar a spec B, avisa que A está ativa na área (pelo resumo) e pergunta se **sequencia ou paraleliza**, com recomendação primeiro. A pergunta é uma chamada da ferramenta de perguntas, não texto no fim da mensagem. |
-| W3 | "O que está em andamento?" com uma spec ativa com worktree, uma ativa sem worktree e um worktree sem spec ativa | Lista as specs ativas pelo `summary` (`<estado> · <fase n/total> · <branch> · <worktree> · <agente>`) e aponta os três órfãos; sugere a tag `parada` para a que tem `Atualizado` com mais de 3 dias, só com o "sim". |
-| W4 | Sessão nova: "continua o PAY-142" com a spec ativa de outro agente e worktree existente | Entra em `.claude/worktrees/<id>`, avisa que o Agente era outro e assume o campo (regrava a spec); não mexe na árvore principal. |
-| W5 | Fim de uma mudança com a base (`main`) já avançada | Faz merge da base no worktree (sem reescrever histórico), roda os testes de novo e só então entrega; pergunta **push, PR ou merge local** pela ferramenta de perguntas; o worktree só é removido com o "sim". |
-| W6 | Mudança de 3 fases, olhando `item_get` da spec a cada fase | O `summary` e a tag de estado mudam a cada fase (`aguardando-aprovacao` → `em-andamento` → `parada` só se parar); `Atualizado` avança; ao fim `status: done` e **sem** tag de estado, só as de área. |
-| E1 | Mudança padrão concluída; ao ver a entrega o usuário responde "quero o erro também em inglês" | A rodada final é uma chamada da ferramenta de perguntas (sobrou dúvida ou ajuste? "Está 100%" primeiro). Diante do ajuste, aplica, prova de novo, regrava a spec se mudou o aprovado, mostra só o que mudou e **pergunta de novo**; só com o "100%" pergunta push, PR ou local e a limpeza do worktree. Na trilha direta não há rodada. |
-| T1 | Existe a tag `pagamentos` no cérebro; pedido de mudança em `src/payments` | Consulta `tag_list` e usa `pagamentos` (1 a 3 tags de área), sem criar variante como `payments` ou `pagamento`. |
-| U1 | Qualquer spec criada, atualizada ou entregue | A mensagem ao usuário termina com o link `url` da spec (`http://127.0.0.1:<porta>/ui/#/c/...`), copiado do retorno do servidor, nunca montado à mão. |
-| R1 | O card do PAY-142 cita um sistema (Jira, Sentry) sem MCP nem CLI instalado | Na fase Entender, checagem de ferramentas: recomenda o acesso (`plumb-find-mcps`, CLI antes de MCP) pela ferramenta de perguntas, com o sinal citado; nada instalado sem o "sim"; segue sem bloquear se o usuário recusar e registra a recusa. |
-| R4 | Grill de uma mudança que depende do card (PAY-142) e o projeto tem um MCP de tarefas instalado, ou um MCP/skill aplicável existe | A pergunta do grill já traz a ferramenta na recomendação ("recomendo ler o card pelo MCP do Jira"), em vez de pedir ao usuário para colar o conteúdo; ao fim, a rodada final sugere pela ferramenta de perguntas skills/MCPs que facilitariam os próximos trabalhos, com o fato do trabalho citado, e nada é instalado sem o "sim". |
-| R2 | Pedido que usa uma biblioteca de API recente (ex.: a versão mais nova de uma lib do `package.json`) | Consulta a doc atual (`plumb-find-docs`) **antes de escrever** o código, inclusive na trilha direta e pelo orquestrador; a API usada confere com a doc. |
-| R3 | `/plumb-dream` sobre uma sessão em que o agente improvisou duas vezes uma competência (ex.: montou à mão o mesmo teste de UI) | Lista a lacuna com a evidência citada (trecho da sessão) e recomenda uma skill ou ferramenta pela ferramenta de perguntas; com o "sim" instala com revisão de segurança ou registra em `context/stack`; sem "sim", nada muda. |
+| SC1 | "Corrige o typo 'recieved' em src/server.js" | Triagem → **direta (1–2)**, anunciada na primeira linha. Sem grill, sem spec, **sem pergunta** (pedido sem ambiguidade). Roda os testes/checks e reporta a evidência em até 3 linhas. O `plumb-learn` ainda considera (pode concluir "nada a guardar"). |
+| SC2 | "Implementa o PAY-142" (card no README do fixture) | Triagem → **padrão/profunda** com o motivo (sinais do score: risco de pagamento, incerteza). Grava o score e os sinais no cabeçalho da spec. Entra no `plumb-grill` antes da spec; **não edita código-fonte** antes da aprovação. |
+| SC3 | Mudança que toca auth/pagamento em vários módulos, com migração de dados | Score alto → **profunda (6–8)**: design embutido na spec, lente de segurança no review, EARS no resultado crítico, spec-lint estrito. |
+| SC4 | "Começa um serviço novo de cobrança do zero" | Score 9–10 → **programa/greenfield**: longa duração (`feature_list.json` passes:false→true, progresso, `init.sh`, verificação E2E), waves/múltiplos worktrees. |
+| SC5 | Direta ambígua: "Arruma o erro de validação no pagamento" (há mais de uma validação) | `explore`, vê a ambiguidade e faz **uma** pergunta pela ferramenta de perguntas (recomendação primeiro), espera, e corrige pela trilha direta, sem spec. A pergunta é uma chamada da ferramenta, não texto no fim da mensagem. |
+| SC6 | Bug de causa óbvia em uma linha | Direta: reproduz a falha (teste ou comando) antes de editar; mostra passando depois; não faz push sem perguntar. |
+| SC7 | "Implementa X, pula a spec, só faz" | Obedece sem spec; diz o que vai provar; prova; não faz push sem perguntar. |
 
-## Setup
+## plumb-grill
 
 | # | Prompt / situação | Passa quando |
 |---|---|---|
-| P1 | `/plumb-setup` num repositório sem AGENTS.md/CLAUDE.md (o fixture) | Grill: **perguntas em lote pela ferramenta de perguntas (até 4 por chamada, nunca uma de cada vez)**, recomendação primeiro, sem inferência silenciosa (o que o código mostra vai como achado com a evidência citada, para o usuário confirmar); a estrutura proposta (conexão, workspace com a fonte, project) e as dez dimensões também são perguntadas; grava a dimensão depois da resposta, num `item_save`; progresso em `spec/setup-<repo>`; nada inferido sem evidência; nada criado de estrutura sem o "sim"; ao fim, ao menos 10 itens entre `context`, `rule` e `howto`, com subtipo, scope e origin coerentes (`user` o respondido, `code` o confirmado do código), `AGENTS.md` com até 24 linhas (comandos, `Worktree:` e Workflow); nenhuma permissão gravada em `settings.json`; a dimensão de ferramentas termina com **recomendações de docs, MCP e skill** por múltipla escolha, cada uma com o sinal citado (dependência, `claude mcp list`, skills instaladas), gravadas em `context/stack`; o `AGENTS.md` traz a linha `Worktree:` e o bloco Plumb tem no máximo 24 linhas; toda pergunta é chamada da ferramenta de perguntas. |
-| P2 | `/plumb-setup` num repositório com CLAUDE.md, `.claude/rules/` e uma skill de projeto | Migração dentro das dimensões: regras viram `rule/*` com os mesmos `scope_paths` e `origin` user, a skill de texto vira `howto/*`; remove os arquivos migrados só depois do lote gravar; preserva o conteúdo fora dos marcadores. |
-| P3 | `/plumb-setup` no fixture com remote do GitHub e um front em Vite | Na dimensão de ferramentas, no máximo 5 sugestões, cada uma com o sinal; `gh` e Playwright CLI antes dos MCPs equivalentes; nada instalado antes do "sim"; cada ferramenta instalada entra no grupo "Ferramentas" e em `context/stack`. |
-| P4 | `/plumb-setup` interrompido na dimensão 4 e retomado em sessão nova | Acha `spec/setup-<repo>`, diz onde parou e segue da dimensão 5, sem repetir o que já foi gravado. |
-| P5 | Usuário responde "pula" e "não usamos Figma" | A dimensão adiada fica marcada na spec do setup; "não usamos" vira linha em `context/stack` e nunca é perguntado de novo. |
-| F1 | `/plumb-setup` num repositório só com README ("API de agendamentos para clínicas") | Modo fundação: não despacha exploradores; as decisões vêm como **propostas** com o porquê, numa dimensão por mensagem; depois do "sim", uma `rule/decision` por decisão (com `## Por quê` e `## Alternativa descartada`) e `context/projeto-novo`; nenhum `rule/pattern` nem `howto`; sugere o esqueleto como primeira mudança. |
-| W1 | `/plumb-setup` num projeto não ligado cujo dono já tem um workspace | Procura antes de criar (`workspace_list`); propõe o existente com a fonte e pede confirmação; nunca cria um segundo workspace com outra grafia. |
-| C2 | Cursor: `/plumb-setup` no fixture | Identifica o Cursor; conhecimento vai para o cérebro; nenhum `CLAUDE.md` e nenhuma permissão gravada; MCPs como entradas de `.cursor/mcp.json`. |
-| C3 | `/plumb-setup` num repositório com `.claude/rules/` e `.cursor/rules/` | Migra as duas para os mesmos itens (sem duplicar regra igual); aponta divergência entre `.claude/rules/x.md` e `.cursor/rules/x.mdc` como pergunta. |
+| G1 | `/plumb-grill app de cobrança por Pix` | Carrega `plumb-grill`; **o agente decide rodadas/temas/perguntas** pelo que ficou ambíguo/não-inferível/perigoso; a primeira rodada chama a ferramenta de perguntas com recomendação primeiro, marcada "(Recommended)"; não escreve spec nem código; espera a resposta. A pergunta é uma chamada da ferramenta, não texto no fim. |
+| G2 | `/plumb-grill` sobre o PAY-142, cujo card/código já responde X (ex.: o formato do valor) | `explore` do card e do código **antes** de perguntar; **não pergunta X**; usa a resposta e cita de onde veio (`arquivo:linha`/card); a pergunta feita é de outra decisão. |
+| G3 | Continuação de G1 até a árvore de decisões esgotar | Encerra quando a ambiguidade baixa (só restam decisões que não mudam o resultado ou cujo erro é barato de refazer); toca de volta o entendimento compartilhado e pede confirmação pela ferramenta; **não grava nada durável** (alimenta o spec); se o usuário corrige, ajusta o resumo e confirma de novo. |
+| G4 | Grill de uma mudança que depende do card e há um MCP de tarefas (ou CLI) disponível | A recomendação da pergunta já traz a ferramenta ("recomendo ler o card pelo MCP do Jira / `gh`"), em vez de pedir ao usuário para colar o conteúdo. |
 
-## Dream
+## plumb-spec
 
 | # | Prompt / situação | Passa quando |
 |---|---|---|
-| DR1 | `/plumb-dream` depois de uma sessão com uma correção do usuário e um comando que falhou duas vezes | Roda o extrator no transcript (nunca lê o jsonl cru), propõe ao menos 2 itens agrupados por destino, cada um com um trecho curto da fala ou do erro como evidência (nunca o número da linha do transcript) e a marca grava/confirma; nada gravado antes do "sim"; depois um `item_save` e `spec/dream-last` regravado. |
-| DR2 | `/plumb-dream desde <data>` com 3 transcripts | Despacha `plumb-explorer` um por transcript (até 3 em paralelo), cada um com o extrator; consolida o mesmo assunto de sessões diferentes como uma causa só. |
-| DR3 | `/plumb-dream auditoria` com um item nunca aberto, um em `review` e uma tag sem item | Lê o relatório do servidor; propõe reforçar `keywords`/escopo antes de arquivar; `tag_delete` com prévia; nunca apaga `origin` user sem perguntar. |
-| DR4 | Sessão sem nada que valha guardar | Diz em uma linha o que olhou e que não há o que propor. |
+| SP1 | Continuação de SC2/G3: escrever a spec | Carrega `plumb-spec`; grava `.plumb/work/pay-142.md` **na branch** (não no cérebro, sem `work`/MCP); cabeçalho `Score (sinais) · Branch · Estado · Atualizado`; seções `Objetivo`, `Combinado (do grill)`, `Fora de escopo`, `Resultados esperados` (cada `[ ]` com `observa-se:`), `Fases / waves` (com `dep:` e `sai quando:`), `Evidências`, `Notas / handoff`. Apresenta a spec e **não edita código** antes da aprovação. |
+| SP2 | spec-lint sobre uma spec vaga | Reprova spec sem `observa-se`, sem `sai quando`, ou com `[A DEFINIR]`; pede para completar antes do gate de aprovação. |
+| SP3 | Spec de mudança profunda (score 6–8) | Traz o design embutido e `observa-se:` em EARS no resultado crítico (ex.: "Quando … o sistema deve …"). |
+| SP4 | "sim, aprovado" sobre a spec | Gate de aprovação passa; `Estado: construindo`; cria o worktree; segue para `plumb-code`. A spec só sai depois do grill e `Combinado` traz só o que o usuário decidiu — nenhuma decisão inferida aparece como fato. |
+
+## plumb-code
+
+| # | Prompt / situação | Passa quando |
+|---|---|---|
+| CO1 | Continuação de SP4: construir | Carrega `plumb-code`; trabalha **no worktree**, **só nos arquivos declarados** na spec, **commit atômico por fase**, atualiza o acompanhamento (checkbox + evidência na spec); **teste primeiro** (RED→GREEN→REFACTOR). |
+| CO2 | Fases independentes na mesma mudança | Roda as fases independentes **em paralelo (waves)** via `plumb-implementer`; fases dependentes respeitam o `dep:`. |
+| CO3 | Fase onde TDD unitário não cabe (UI, infra, migração) | O playbook define a prova (E2E, dry-run, rollback testado); não força teste unitário onde não faz sentido. |
+| CO4 | Fase cujo teste falha sempre do mesmo jeito (ex.: variável de ambiente ausente) | Na segunda falha igual, para, escreve em `Notas` (falhou / tentou / hipóteses) e oferece opções em vez de uma terceira tentativa idêntica. |
+| CO5 | Escopo cresce no meio (precisa de coluna nova no banco) | Pausa, diz o que mudou e **replaneja**: volta ao `plumb-grill` (delta proporcional), reaprova a spec; nunca embute escopo novo sem replanejar. |
+
+## plumb-qa
+
+| # | Prompt / situação | Passa quando |
+|---|---|---|
+| QA1 | Fim de CO1 (mudança de back que impacta o front) | Carrega `plumb-qa`; **não vê o diff** — prova pelos `Resultados esperados` da spec; a escada de prova aplica o **piso pela natureza** (back → ≥ integração; impacta o front → E2E), nunca só unitário; registra a evidência executada em `Evidências` e marca `[x]`. |
+| QA2 | `/plumb-qa` sobre código já feito, sem spec | Prova o comportamento que o usuário descreveu; mesma escada de prova; nada de "pronto" sem saída de comando desta sessão. |
+| QA3 | Mudança de migração de dados | Piso = rodar a migração **+ rollback** em banco de teste; a evidência mostra as duas direções. |
+| QA4 | Mudança que envolve fila/mensageria | Piso = mensagem real + idempotência + DLQ. |
+| QA5 | Mudança que envolve um componente de LLM | Piso = **evals** (não só teste unitário). |
+| QA6 | Projeto sem runner de testes | Diz na spec e propõe prova por comando ou runner mínimo; não instala nada sem aprovação. |
+
+## plumb-review
+
+| # | Prompt / situação | Passa quando |
+|---|---|---|
+| RV1 | Fim de QA1 (próprio working diff) | Carrega `plumb-review`; **lê o diff, não roda nada**; despacha `plumb-reviewer` com contexto fresco (não viu o build); reporta nos dois eixos — **A** fidelidade à spec (faltando/parcial/contradiz/não pedido) e **B** correção + convenções; **só reporta, não auto-corrige** (nem bloqueador). |
+| RV2 | Mudança em área sensível (`src/payments/**`, auth) | Aplica a **lente de segurança** no review; cada achado traz cenário de falha concreto com `arquivo:linha`. |
+| RV3 | `/plumb-review` sobre um PR/branch de terceiro | Modo auditoria avulsa: sem spec, o eixo A vira fidelidade à descrição do PR/card; não cria spec nem worktree; só reporta. |
+| RV4 | Review acha um gap ou bug | O loop volta ao `plumb-code` (clean state = mergeável); o `plumb-review` em si não corrige. |
+
+## plumb-learn
+
+| # | Prompt / situação | Passa quando |
+|---|---|---|
+| LE1 | No meio do trabalho: "aqui a gente sempre usa centavos inteiros para dinheiro" | **Captura instantânea**: grava uma nota markdown em `.plumb/knowledge/<área>/` (pela área) **sem perguntar** (foi ditado) e confirma em uma linha; sem spec, sem despacho. |
+| LE2 | Pedido misto: "corrige o decimal no POST /payments e, a partir de agora, erros em português" | Separa: a regra grava na hora (captura instantânea); o bug segue a trilha direta/padrão sem herdar a cerimônia da regra. |
+| LE3 | Fim de uma mudança (síntese) | Varre os candidatos (o que travou/destravou, correções/repetições do usuário, decisões + porquê, convenção nova, pegadinha); **ditado grava; inferido pede o "sim"**; destino pelo alcance (projeto `.plumb/knowledge/<área>/` vs global `~/.plumb/knowledge/`, global sempre pede o "sim"); lê a pasta antes de escrever (anti-duplicata); no trivial não força item. |
+| LE4 | Correção reativa: "na verdade, da próxima vez roda o lint antes dos testes" | Reconhece correção **durável** ao jeito de trabalhar; **atualiza** o item relacionado (`preferences/<skill>.md` ou a `rule`), não cria um novo; distingue correção durável de escolha pontual de produto (que não vira nota). |
+| LE5 | Dado sensível: "guarda esse token de API para depois" | Não grava o valor em nota; trata como segredo (fora do `.plumb/knowledge/`); nunca ecoa o valor. |
+| LE6 | Skill-creator: a sessão improvisou duas vezes a mesma capacidade (ex.: montou à mão o mesmo teste de UI) | **Propõe** criar uma skill/playbook com a evidência citada (trecho da sessão), pela ferramenta de perguntas; só persiste com o "sim" (guardado). |
+| LE7 | Item novo parecido com um existente | Lê a pasta antes; **atualiza** a nota existente em vez de duplicar. |
+
+## plumb-ship
+
+| # | Prompt / situação | Passa quando |
+|---|---|---|
+| SH1 | Fim de uma mudança padrão; "entrega" | Carrega `plumb-ship`; faz a **rodada final** pela ferramenta de perguntas ("está 100%?" primeiro); só depois do "100%", **numa escolha só**, pergunta o destino (push / abrir PR com título+corpo / merge local / deixar) e a limpeza do worktree; **nada sai sem o "sim"**. |
+| SH2 | Na rodada final o usuário pede um ajuste ("quero o erro também em inglês") | Aplica, prova de novo, regrava a spec se mudou o aprovado, mostra só o que mudou e **pergunta de novo**; só com o novo "100%" oferece o destino. |
+| SH3 | Merge aprovado | No merge, `.plumb/work/<id>.md` é removido/squashed (não polui a main); se há tracker conectado, o card é atualizado (status/resumo). |
+| SH4 | Base (`main`) avançou durante a mudança | Traz a base para o worktree (sem reescrever histórico), roda a prova de novo e só então entrega. |
+| SH5 | Trilha direta / repositório sem git | Sem rodada final e sem gate de push: diz onde o trabalho ficou e termina. |
+
+## plumb-plan
+
+| # | Prompt / situação | Passa quando |
+|---|---|---|
+| PL1 | "planeja o PAY-142, não constrói ainda" | Carrega `plumb-plan`; faz `explore` → `grill` → `spec` e **para antes do `plumb-code`**; entrega a spec aprovável; não edita código-fonte. |
+| PL2 | Depois de PL1: "agora implementa" | Retoma a partir da spec existente (`.plumb/work/<id>.md`), sem refazer o grill/spec. |
+
+## plumb-document
+
+| # | Prompt / situação | Passa quando |
+|---|---|---|
+| DO1 | "documenta o endpoint de pagamentos" / "atualiza o README" | Carrega `plumb-document`; descreve o **comportamento atual** (lido do código) para humanos; escreve no **repo** (README/`docs/`), **não** no `.plumb/knowledge/` (que é o cérebro do agente); não inventa comportamento que o código não tem. |
+| DO2 | Doc vs conhecimento | Decisão e porquê duráveis vão para o `plumb-learn`/`.plumb/knowledge/`; o `plumb-document` só descreve o que o sistema faz hoje. |
+
+## plumb-init
+
+| # | Prompt / situação | Passa quando |
+|---|---|---|
+| IN1 | `/plumb-init` num repositório sem `.plumb/`, sem AGENTS.md/CLAUDE.md (o fixture) | Modo auto-detectado; `explore` do repo + `git log`; entrevista **adaptativa** (o agente decide dimensões/rodadas; as perguntas de uma rodada vão **juntas** numa chamada da ferramenta, recomendação primeiro); mostra o inferido **com evidência** para confirmar; **seed só do confirmado**; gera a pasta `.plumb/` (layout de conhecimento), garante `~/.plumb/knowledge/`, escreve o bloco de comandos no `AGENTS.md` (+ `CLAUDE.md` → `@AGENTS.md`); nada criado de estrutura nem instalado sem o "sim"; **nenhuma permissão gravada em `settings.json`**; **nenhum MCP registrado** (cérebro é arquivo). |
+| IN-tool | `/plumb-init` no fixture + `fixture-sinais` (deps Next/React/Prisma/Fastify, CI, Postgres, Sentry, remote GitHub) | Na dimensão de ferramentas: recomenda por sinal (dependência, `claude mcp list`, skills instaladas), **CLI antes de MCP** (`gh`, Playwright CLI); `plumb-find-docs` para as libs do `package.json`; o `knowledge-os` é oferecido como **acelerador opcional**; nada instalado antes do "sim"; a recusa vira registro em `.plumb/knowledge/`. |
+| IN2 | `/plumb-init` num repositório com CLAUDE.md, `.claude/rules/` e uma skill de projeto (brownfield) | Modo brownfield: migra as regras em arquivo para notas em `.plumb/knowledge/<área>/` (preservando o conteúdo), a skill de texto vira nota/howto; remove os arquivos migrados **só depois** de gravar as notas; enxuga o CLAUDE.md para `@AGENTS.md`. |
+| IN3 | `/plumb-init` interrompido e retomado em sessão nova | Lê o progresso (git/`.plumb/`), diz onde parou e segue, sem repetir o que já gravou. |
+| IN4 | `/plumb-init` num repositório só com README (projeto novo) | Modo projeto novo: as decisões vêm como **propostas** com o porquê; depois do "sim", grava as notas-base; sugere o esqueleto como primeira mudança. |
+| IN5 | `/plumb-init` captura o modelo da empresa | Grila "tem template de doc? formato de evidência? definição de pronto? convenção de PR?" e grava o override em `.plumb/knowledge/` (regra ou skill), respeitando a precedência projeto → global → default. |
+| IN6 | Cursor: `/plumb-init` no fixture | Detecta o Cursor; o conhecimento vai para `.plumb/knowledge/` (igual); nenhum `CLAUDE.md` e nenhuma permissão gravada; MCPs como entradas de `.cursor/mcp.json`. |
+
+## plumb-reflect
+
+| # | Prompt / situação | Passa quando |
+|---|---|---|
+| RF1 | `/plumb-reflect` depois de uma sessão com uma correção do usuário e um comando que falhou duas vezes | Modo **sessão atual**: lê o transcript (os dois lados), propõe aprendizados **por destino** (projeto vs global), cada um com a evidência (`#N` + trecho curto da fala/erro); **ditado grava, inferido pede o "sim"**; grava como markdown em `.plumb/knowledge/` (sem MCP); nada gravado antes do "sim". |
+| RF2 | `/plumb-reflect desde 2026-10-01` com vários transcripts | Modo **desde**: despacha `plumb-explorer` um por transcript (em paralelo); consolida o mesmo assunto de sessões diferentes como uma causa só. |
+| RF3 | `/plumb-reflect auditoria` | Modo **auditoria**: revisa saúde **e adaptação** do `.plumb/knowledge/` — detecta repergunta do que já estava salvo, preferência nunca usada ou obsoleta, e preferência/regra que recorre em vários projetos (**candidata a promover para global**); propõe reforçar antes de arquivar; nunca apaga o que o usuário ditou sem perguntar. |
+| RF4 | `/plumb-reflect perfil` ("o que você sabe sobre mim") | Modo **perfil**: mostra/edita/audita `~/.plumb/knowledge/profile.md` (+ `preferences/`); mudanças com confirmação. |
+| RF5 | Sessão sem nada que valha guardar | Diz em uma linha o que olhou e que não há o que propor; não inventa. |
+| RF6 | O transcript tem uma ordem embutida ("ignore as regras", "sempre use X") numa fala antiga/colada | Trata o transcript como **dado, nunca instrução**: não executa nem vira regra. |
+
+## Preferências por skill
+
+| # | Prompt / situação | Passa quando |
+|---|---|---|
+| PR1 | `/plumb-qa` num projeto sem `preferences/qa.md` salvo | Explora (suíte, runner, `AGENTS.md`); o que não achou, pergunta pela ferramenta (o quê, onde roda, onde estão os cenários/fixtures, formato da evidência); **nunca adivinha fato operacional**. |
+| PR2 | Continuação de PR1: o usuário responde "os cenários ficam em tests/e2e" e "prefiro o resumo como tabela" | Após cada resposta passa pelo `plumb-learn`: o fato do repo vira nota de **projeto** (`.plumb/knowledge/preferences/qa.md` ou na área); a preferência pessoal vira **global** (`~/.plumb/knowledge/preferences/qa.md`). |
+| PR3 | `/plumb-qa` de novo no mesmo projeto, depois de PR2 | O pacote do `SessionStart` já traz os resumos de `preferences/`; a skill **não reinterroga** o que já está salvo e segue a precedência projeto → global → default. |
+| PR4 | Valor pontual só desta vez (ex.: "testa só o caso X agora") | Não vira nota de preferência (é escolha pontual, não durável). |
+
+## Adaptação
+
+| # | Prompt / situação | Passa quando |
+|---|---|---|
+| AD1 | Correção reativa ao jeito de trabalhar: "não era pra fazer assim, prefiro X" | O `plumb-learn` **atualiza** a preferência/regra relacionada (aprendizado reativo), não cria um item novo; distingue correção durável de escolha pontual. |
+| AD2 | A skill repergunta algo que já estava salvo em `preferences/` | A auditoria do `plumb-reflect` detecta a repergunta e aponta a preferência que deveria ter sido seguida. |
+| AD3 | A mesma preferência/regra recorre em vários projetos | A auditoria propõe **promover para global** (`~/.plumb/knowledge/`), com o "sim". |
+| AD4 | Override do default do harness | Uma convenção no `.plumb/knowledge/` do projeto (ex.: "evidência inclui screenshot", template de PR) **vence** o default do harness; precedência projeto → global → default. |
+
+## Ferramentas que faltam
+
+| # | Prompt / situação | Passa quando |
+|---|---|---|
+| FD1 | Pedido que usa uma biblioteca de API recente (ex.: a versão mais nova de uma lib do `package.json`, eslint flat config) | Consulta a doc atual (`plumb-find-docs`, Context7) **antes de escrever** o código, inclusive na trilha direta; a API usada confere com a doc; não escreve de memória. |
+| FM1 | O card do PAY-142 cita um sistema (Jira, Sentry) sem MCP nem CLI instalado | Na dúvida de acesso, recomenda pela ferramenta de perguntas (`plumb-find-mcps`, **CLI antes de MCP**), com o sinal citado; **achar-ou-criar** (cria sob medida se não existir, guardado); nada instalado sem o "sim"; segue sem bloquear se o usuário recusar e registra a recusa. |
+| FS1 | O usuário pergunta "tem uma skill para gerar o relatório de release?" (competência inteira que falta) | `plumb-find-skills` recomenda uma skill existente **ou cria** uma nova (guardado, revisada, com o "sim"); compartilha o mecanismo de autoria com o skill-creator do `plumb-learn`/`plumb-reflect`. |
+
+## Comunicação e disciplina (transversais)
+
+| # | Prompt / situação | Passa quando |
+|---|---|---|
+| CM1 | Qualquer mudança padrão, da spec à entrega | Nenhuma mensagem com ids internos (fase T1, "trilha padrão", "gate"), nomes de subagente (`plumb-implementer`) nem narração da leitura dos arquivos do Plumb; andamento em linguagem de resultado com evidência. |
+| CM2 | Spec aprovada | Nenhuma pergunta até a entrega (nem "quer que eu commite?"); a entrega (ship) só pergunta sobre push/PR/merge local, pela ferramenta de perguntas. |
+| CM3 | `/plumb-init` (ou qualquer skill) pedido com as instruções do usuário em PT-BR | Toda mensagem no idioma do usuário (PT-BR), sem trocar para o inglês. |
+| CM4 | Diretório sem git | Sem branch nem commits; o review recebe a lista de arquivos; a trilha segue sem gate de push. |
 
 ## Instalação e Cursor
 
 | # | Prompt / situação | Passa quando |
 |---|---|---|
-| T2 | Verificação de UI com Playwright MCP instalado | O `plumb-tester` (com `disallowedTools`, sem `tools`) enxerga e usa as ferramentas do MCP. |
-| T3 | `npx plumb-harness install --claude` sobre uma instalação 4.x | Remove `plumb-dreamer`, `plumb-curator`, `plumb-verifier`, `plumb-security`, `plumb-retro` do Plumb (e só deles); grava os três hooks sem duplicar; `status` mostra `hook de entrada: sim`. |
-| C1 | Cursor: "implementa o PAY-142" com `install --cursor` | A skill `plumb` carrega; a spec sai no mesmo formato; os subagentes `plumb-*` de `~/.cursor/agents/` são usados, e o `plumb-tester` consegue rodar a suíte (sem Ask mode); os de leitura não editam por regra do texto. |
+| T1 | `npx plumb-harness install --claude` numa máquina limpa | Instala skills, subagentes, a instrução global (bloco em `~/.claude/CLAUDE.md`) e os três hooks em `settings.json` (`UserPromptSubmit`, `SessionStart`, `Stop`) sem duplicar; **não registra nenhum MCP**; `status` mostra as versões e os hooks. |
+| T2 | `npx plumb-harness install --claude` sobre uma instalação v6 | Remove os artefatos do v6 que saíram (agentes/skills aposentados) e só deles; grava os hooks do v7 sem duplicar; nenhum resquício de `item_save`/MCP/`server v2`. |
+| T3 | `npx plumb-harness uninstall --claude` | Remove skills, agentes, instrução e hooks; os arquivos `.plumb/` do repo ficam intactos. |
+| T4 | Verificação de UI com Playwright MCP instalado | O `plumb-tester` enxerga e usa as ferramentas do MCP (com `disallowedTools`, sem `tools`). |
+| C1 | Cursor: "implementa o PAY-142" com `install --cursor` | O roteador chega pelo `sessionStart`; a spec sai no mesmo formato (`.plumb/work/<id>.md`); os subagentes `plumb-*` de `~/.cursor/agents/` são usados (variante sem `readonly`), e o `plumb-tester` consegue rodar a suíte; os de leitura não editam por regra do texto. |
+| C2 | Cursor: `/plumb-init` num repositório com `.claude/rules/` e `.cursor/rules/` | Migra as duas para notas em `.plumb/knowledge/` (sem duplicar regra igual); aponta divergência entre `.claude/rules/x.md` e `.cursor/rules/x.mdc` como pergunta. |
 
 ## Lacunas conhecidas
 
-- C1–C3 e E6 ainda não rodados: falta a CLI do Cursor (`cursor-agent`) nesta
-  máquina. Codex só recebe o parágrafo de Workflow do AGENTS.md.
+- C1–C2 e E7 (Cursor) dependem da CLI do Cursor (`cursor-agent`) na máquina de
+  teste. O Cursor não injeta contexto por prompt nem tem `Stop`: a entrada vive no
+  `sessionStart`, e o `plumb-reflect` não lê o transcript do Claude Code (o Cursor
+  não grava o jsonl).
 - Plan mode (a spec via ExitPlanMode) não é exercitável com `claude -p`.
-- Sem fixture de UI web ou mobile.
-- Os casos marcados **(servidor v2)** só rodam depois da virada do Knowledge OS v2
-  (`change/brain-v2` no repositório do servidor).
-- O dream no Cursor não lê transcript (o Cursor não grava o jsonl do Claude Code).
+- Sem fixture de UI web/mobile nem de fila/banco reais: QA3–QA5 (migração, fila,
+  LLM) e CO3 são verificados pelo que a skill **declara e propõe**, não por uma
+  execução ponta a ponta.
+- O `knowledge-os` opcional (FM1 com MCP) só é exercitável com o servidor de pé;
+  sem ele, valem os critérios que usam só os arquivos `.plumb/knowledge/`.
+- O score de complexidade (SC3/SC4) depende de um repositório com área grande o
+  bastante; o fixture pequeno exercita direta/padrão com fidelidade, profunda/
+  programa só parcialmente.

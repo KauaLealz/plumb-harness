@@ -1,58 +1,19 @@
 # Resultados dos evals
 
-Rodados com `claude -p --permission-mode bypassPermissions --output-format json`
-contra cópias de `evals/fixture/` com as skills e agentes em `.claude/` do
-projeto, sem `/plumb-setup` (sem AGENTS.md). Modelo padrão da CLI.
+> **Resultados do v6 — histórico no git.** Os runs das versões 3.x–6.x (casos
+> antigos: trilhas do `plumb-change`, cérebro via MCP `item_save`, `/plumb-setup`,
+> `/plumb-dream`, servidor Knowledge OS v2) foram arquivados. Para consultá-los,
+> veja o histórico deste arquivo (`git log -p evals/results.md`). Os casos do v7
+> estão em `evals/cases.md`; registre os runs novos abaixo.
+
+## Plumb v7
+
+Rode cada caso de `evals/cases.md` numa sessão real (ou via `evals/sim/run.mjs`
+com `PLUMB_SIM_ARGS`) e registre aqui. Preparação: `npx plumb-harness install
+--claude --project` sobre uma cópia de `evals/fixture/` — **sem MCP** (cérebro em
+arquivos `.plumb/knowledge/`). Em `claude -p` prova-se o fallback em texto da
+ferramenta de perguntas; a chamada clicável só aparece em sessão interativa.
 
 | Data | Modelo | Caso | Resultado | Custo | Evidência |
 |---|---|---|---|---|---|
-| 2026-10-01 | claude-opus-4-8 | X1 | passou | US$ 0,73 | Respondeu direto com `src/server.js:26-34`; a skill não foi carregada. |
-| 2026-10-01 | claude-opus-4-8 | S1 | passou com ressalvas | US$ 0,94 | Carregou `plumb`, trilha padrão, gravou `.plumb/changes/PAY-142.md` (4 critérios, 2 tasks), gate no formato com 1 pergunta e sugestão, nenhum código editado. Ressalvas: planejou sem despachar explorador e planejador ("repo pequeno, já li tudo") e gravou em Decisões uma sugestão ainda em aberto. Correções: planejamento inline passou a ser regra explícita para área pequena; Decisões só registra o que o usuário respondeu. |
-| 2026-10-01 | claude-opus-4-8 | D1 | falhou | US$ 0,52 | A skill não disparou; corrigiu o typo sem rodar testes nem anunciar a trilha. |
-| 2026-10-01 | claude-opus-4-8 | D1 (description reforçada) | falhou | US$ 0,30 | Mesmo resultado: em edição trivial o modelo não carrega a skill. Correção: o parágrafo de Workflow do AGENTS.md (gravado pelo `/plumb-setup`, sempre carregado) passou a exigir testes e evidência até para typo. Rodado de novo depois do setup (linha abaixo). |
-| 2026-10-01 | claude-opus-4-8 | P1/P3 (`/plumb-setup`, fixture com remote GitHub) | passou com ressalvas | US$ 1,19 + 0,78 (aprovação) | Diagnóstico "estruturação"; nada gravado antes do "sim"; uma proposta com 4 perguntas; ferramentas por sinal, CLI primeiro (`gh` detectado como já instalado, Hurl opcional); curador despachado; AGENTS.md com 49 linhas. Ressalvas: registrou o typo do fixture como "fato" (corrigido no curador: bugs e dívidas não são fatos); reescreveu o parágrafo de Workflow em tópicos; omitiu a seção "Ao compactar"; explorou sem despachar exploradores (aceito para repositório pequeno — virou regra explícita). |
-| 2026-10-01 | claude-opus-4-8 | D1 (depois do setup) | passou | US$ 0,44 | Corrigiu o typo, rodou `npm test` (2/2) e reportou antes de dizer pronto; perguntou antes de commitar. Não anunciou a trilha — a skill não carrega em edição trivial; quem garantiu a evidência foi o parágrafo de Workflow do AGENTS.md. |
-| 2026-10-01 | claude-opus-4-8 | F1 (`/plumb-setup` em repo só com README) — etapa de entrevista | passou com ressalva | US$ 0,41 | Diagnóstico "novo" → fundação; sem exploradores; 6 perguntas de fundação numa mensagem, com sugestões coerentes com o README (Node+TS+Fastify, por feature, Vitest, envelope de erro, Postgres+Prisma, GH Actions); as 2 perguntas do fluxo dentro da 6ª; nada gravado. Ressalva: acrescentou uma 7ª pergunta (onde ficam os cards). Observação: usou como sinal um MCP da configuração global do usuário (Railway). Etapa pós-aprovação não rodada. |
-| 2026-10-01 | claude-opus-4-8 | S1→S2→V1→K2 ponta a ponta (PAY-142, repo com setup feito) | passou | US$ 0,65 + 2,97 | Gate 1 no formato, 1 pergunta com sugestão. Depois do "sim": branch `feat/pay-142-pix`, lista de tarefas nativa, `plumb-implementer` (TDD), `plumb-verifier` (6/6 + curl real), `plumb-reviewer` e `plumb-security` em paralelo (pagamento), achado menor (teste de precedência com falso verde) corrigido e reverificado, sinal `retrabalho` na Retro, **um** despacho do `plumb-curator` no fechamento, Aprendizados com sim/não no gate 2, PR proposto e nada enviado. Ressalvas: listou "decisões que tomei" no gate 1 antes da aprovação; a correção do menor não virou T-fix nos Números. |
-
-| 2026-10-05 | claude-opus-4-8 | P2/P1 migração (`/plumb-setup`, repo com `CLAUDE.md` e `.claude/rules/` e cérebro vazio) + aprovação | passou | US$ 1,77 + 1,96 | Hook injetou "projeto não ligado"; `context_get` e `health_check` no diagnóstico; diagnóstico "migração"; curador despachado uma vez; proposta única com 5 itens do cérebro + arquivos; nada gravado antes do "sim". Depois: `project_link`, **um** `item_save` (6 itens `working`, regras com `scope_paths src/**`), `AGENTS.md` só com comandos e Workflow (22 linhas), `.claude/rules` removida só depois do lote gravar, permissões mescladas preservando o hook. |
-| 2026-10-05 | claude-opus-4-8 | K1/M1/M3 (pedido com correção + regra nova) → S1 → V1 → K2 | passou com ressalva | US$ 1,04 + ~3 + 1,49 | Pacote do hook no início; `context_get` com os arquivos da área trouxe `regra/money` e `regra/formato-erro`; regra "erros em português" enunciada → curador → `item_save` na hora, sem perguntar, com relação ao item existente; gate 1 no formato; construção em branch, verificador + revisor + segurança em paralelo; revisor achou AC4 sem teste (sinal `retrabalho` na Retro); gate 2 listou o que foi guardado. Ressalva: o curador propôs um tipo de relação inválido (corrigido pelo orquestrador; o agente agora lista os tipos aceitos); a mudança de um bug simples foi para a trilha padrão. |
-
-| 2026-10-05 | claude-opus-4-8 | I1 (pergunta sobre o código, v3.1) | passou | US$ 0,39 | Respondeu direto (3 turnos), apontou lacunas da validação, ofereceu conduzir pelo Plumb; nenhum arquivo, nenhum despacho. |
-| 2026-10-05 | claude-opus-4-8 | I3 (bug + regra no mesmo pedido, v3.1) | passou | US$ 0,51 (antes ~US$ 1,04 só até o gate 1) | Separou as duas coisas; a regra já existia no cérebro (não duplicou); bug pela trilha direta com vermelho → verde; 12 turnos, 99 s. |
-| 2026-10-05 | claude-opus-4-8 | S1→S2→V1 (PAY-142, v3.1) | passou, com uma regressão achada e corrigida | US$ 0,67 + 2,65 | Gate 1: 1 lote (2 tasks), área sensível, contradição decisão × regra levantada como pergunta. Construção: **1** despacho do implementador, 1 verificador, 1 revisor com lente de segurança, sem `plumb-security` nem curador, 1 `item_save`; suíte 7/7 + curl real. Regressão: na primeira rodada o modelo não achou o card — o Grep por `PAY-142` também casava os exemplos das skills do Plumb e ele descartou o README; corrigido (passo 0.3: procurar o id fora de `.claude/`, `.cursor/`, `.plumb/`). |
-
-| 2026-10-05 | Cursor Auto (`cursor-agent`) | C1 + B2 + M6 (endpoint novo, trilha profunda, v3.1) | passou | — (Cursor não informa custo) | Gate 1 em 74 s (antes 116 s): **uma** consulta ao cérebro (`context_get` com paths e query), 1 lote de 4 tasks (antes 4 despachos). Construção: 1 implementador, 1 verificador, 1 revisor, 1 `plumb-security` (profunda), 0 curador, 2 `item_save`; suíte 10/10. Compatibilidade achada nos testes: `readonly` vira Ask mode e bloqueia shell/MCP (removido das variantes do Cursor); `.cursor/cli.json` de projeto não aceita `version`; hooks do Cursor precisam rodar fora do Git Bash (a variável `SHELL` faz o wrapper PowerShell dos hooks falhar num bash) e o stdin do hook vem com BOM. |
-
-## Plumb 6.0.0 — 2026-10-10
-
-Rodado com `claude -p` (modelo padrão da conta), Plumb 6 instalado só no projeto do sandbox (`--setting-sources project,local`),
-servidor da branch `feature/brain-v2-url` (`--strict-mcp-config --mcp-config`) e cérebro isolado (`KNOWLEDGE_OS_HOME`), pelo
-`evals/sim/run.mjs` com `PLUMB_SIM_ARGS`. O `claude -p` não tem a ferramenta de perguntas clicável: o que se prova aqui é o
-fallback em texto numerado (uma pergunta, recomendação em primeiro); a chamada da ferramenta só aparece numa sessão interativa.
-
-| Data | Caso | Resultado | Custo | Evidência |
-|---|---|---|---|---|
-| 2026-10-10 | G1, G2, G3 (`/plumb-grill`, PAY-142) | passou | US$ 1,5 | Explorou código, README e cérebro antes de perguntar; 3 perguntas, uma por vez, recomendação em primeiro; só perguntou o que o card não definia; terminou com o resumo do entendimento e "Em aberto: nada"; só com a confirmação escreveu a spec. |
-| 2026-10-10 | S1 + U1 + W6 (mesmo sandbox, aprovação e construção) | passou | US$ 2,6 | Spec `draft` com resumo `<estado> · <fase n/total> · <branch> · <worktree> · <agente>`, cabeçalho e tags `aguardando-aprovacao` + área; a mensagem terminou com `Spec: http://127.0.0.1:8765/ui/#/c/...` vindo do `url` do servidor; após o "sim": worktree `.claude/worktrees/pay-142-pix` (diretório no `exclude`), spec `active`, testes 2/2 antes, 6/6 depois, tester e reviewer em paralelo; ao fim `done` com só a tag de área. |
-| 2026-10-10 | E1 (rodada final) | passou, com uma falha corrigida | US$ 0,8 | Perguntou "está 100%?"; diante do ajuste aplicou, provou de novo, mostrou só o que mudou e perguntou de novo; só depois perguntou o destino da branch. Falha: regravou a decisão numa key nova (duas regras iguais no cérebro) → regra "pelas mesmas keys" na fase Entregar. |
-| 2026-10-10 | W2 (spec A ativa de outro agente em src/) | passou | US$ 0,75 | Leu o resumo da spec ativa, avisou da sobreposição e que o worktree dela não existia (órfã) e perguntou sequenciar/paralelizar/parar, com recomendação. Ressalva: mandou "Pergunta 1 de 2" e adiantou o contexto da 2ª. |
-| 2026-10-10 | D1 (typo) | passou com falha corrigida | US$ 0,37 | Corrigiu sem perguntar; terminou com "quer que eu faça o commit?" → trilha direta sem convenção de commit não pergunta. |
-| 2026-10-10 | D4 (direta ambígua) | passou | US$ 0,55 | Leu o código e fez uma pergunta com recomendação e 3 opções, sem alterar nada. |
-| 2026-10-10 | S2/P1 (`/plumb-setup`, projeto sem sinais) | passou com ressalvas | US$ 6,3 | Uma pergunta por vez no início; achou a divergência manifesto × código (fastify/prisma/vitest declarados e não usados) e perguntou; gravou 8 itens; `AGENTS.md` com `Worktree:` e o Workflow novo; sem sinais, não recomendou ferramenta e disse por quê. Ressalva: duas perguntas por mensagem nas dimensões 1 e 2. |
-| 2026-10-10 | S2/P1 (`/plumb-setup`, `evals/fixture-sinais`: CI, Postgres, Prisma, Sentry, Next/React/Fastify, remote GitHub) | passou | US$ 4,6 (até a dimensão 8) | Varredura de dependências, MCPs/skills/conectores e instruções globais; `gh` já instalado = sem lacuna; recomendações uma por vez com sinal e custo (gestor de tarefas pelo padrão `PAY-<n>` com Jira/Linear/GitHub Issues/"não usam"; documentação de fastify/prisma/next por `plumb-find-docs`); recusa vira registro; perguntou o preparo do worktree com a evidência. |
-| 2026-10-10 | R2 (eslint flat config, "pode ir direto") | falhou → passou | US$ 0,75 + 0,87 | 1ª: escreveu a config da memória, sem consultar doc. Depois de reforçar o passo (ferramentas e configs, "mesmo em setup padrão") e o roteador: carregou `plumb-find-docs`, rodou `npx ctx7@latest library/docs` antes de escrever e travou `eslint@9` pelo aviso de versão do Node. |
-| 2026-10-10 | R3 (`/plumb-dream` numa sessão limpa) | passou (limitado) | US$ 1,05 | Disse "nada durável" e listou por que cada candidato não vira item; "ferramentas que faltaram: nenhuma"; não inventou. Não provou a recomendação a partir de competência improvisada (faltou uma sessão com esse sinal). |
-| 2026-10-10 | Não rodados | — | — | W3 (lista de em andamento), W4 (retomar com worktree e Agente de outro), W5 (base avançada), R1 (card sem acesso), T1 isolado. |
-
-Achados de ambiente (não do Plumb): o servidor MCP aparece como "caiu" nos turnos retomados com `--resume` (volta no turno seguinte); uma mensagem que começa com `/` passada pelo Git Bash vira caminho (`C:/Program Files/Git/…`): use `@arquivo`.
-
-## Custo fixo de uma execução `claude -p`
-
-Medido com o prompt "Responda apenas: ok", modelo `sonnet`:
-
-| Modo | Custo | Tokens gravados em cache |
-|---|---|---|
-| Padrão | US$ 0,27 | 45.106 |
-| `--strict-mcp-config --setting-sources project --system-prompt <curto>` | US$ 0,21 | 35.096 |
-| `--bare` | não roda com login por assinatura ("Not logged in") — exige chave de API | — |
+| | | | | | |
