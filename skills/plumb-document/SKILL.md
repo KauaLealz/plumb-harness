@@ -26,13 +26,21 @@ Leia `playbook.md` (como documentar bem) uma vez. O cérebro é opcional
 
 ## Procedimento
 
-1. **Consulte o cérebro** (`.plumb/knowledge/`, projeto + global) pela área: glossário, termos,
+1. **O que preciso saber (explorar → perguntar na dúvida).** Antes de escrever, explore: leia
+   `.plumb/knowledge/preferences/document.md` (projeto + global), o **template de doc da empresa** se
+   houver, e as **docs existentes** (para casar tom e estrutura). O que isso já responde **não vira
+   pergunta**. Na dúvida — formato/estilo, onde a doc mora, público-alvo —, **sempre pergunte** pela
+   ferramenta de perguntas (recomendação primeiro); não adivinhe. **Após cada resposta, passe pelo
+   `plumb-learn`** para gravar o durável e não reinterrogar na próxima vez. Siga a preferência salva —
+   precedência **projeto → global → playbook (default)**. No **trivial**, não interrogue à toa: use o
+   que explorou e o default. Ver `../plumb/references/preferences.md` (dimensões em `playbook.md`).
+2. **Consulte o cérebro** (`.plumb/knowledge/`, projeto + global) pela área: glossário, termos,
    mapa do código e — importante — um **template/estilo de doc da empresa**, se houver.
-2. **Explore o código** da área (subagentes de leitura em paralelo em área grande; devolve
+3. **Explore o código** da área (subagentes de leitura em paralelo em área grande; devolve
    `arquivo:linha`). Documente o comportamento **real** a partir do que leu/rodou.
-3. **Escreva/atualize** a doc no repo, no estilo e na estrutura certos (ver `playbook.md`:
+4. **Escreva/atualize** a doc no repo, no estilo e na estrutura certos (ver `playbook.md`:
    README, guia de uso, referência). Atualizar: case com o que já existe; corrija o defasado.
-4. **Prove.** Se há como (link checker, `markdownlint`, o build da doc, rodar um exemplo que você
+5. **Prove.** Se há como (link checker, `markdownlint`, o build da doc, rodar um exemplo que você
    escreveu), rode e reporte; senão, releia e confira que **cada afirmação bate com o código**.
 
 ## Override (dev/empresa)

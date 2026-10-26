@@ -19,6 +19,7 @@ empresa/cliente moram no próprio repo** (dentro de `.plumb/knowledge/`), não n
 ```
 .plumb/knowledge/
   rules.md                      regras e convenções globais do projeto (poucas, densas)
+  preferences/<skill>.md        como o dev/time gosta dos passos de uma skill (ver preferences.md)
   <área>/                       uma pasta por assunto/área quando o volume pede
     <item>.md                   um arquivo por item (uma decisão, uma pegadinha, um howto)
 ```

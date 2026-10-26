@@ -23,18 +23,28 @@ vez. Worktree em `../plumb/references/worktrees.md`; gestor de tarefas em
 
 ## Procedimento
 
-1. **Rodada final.** Pergunte (ferramenta de perguntas, **"Está 100%"** primeiro) se há dúvida ou
+1. **O que preciso saber (explorar → perguntar na dúvida).** Antes de fechar, **explore**:
+   `.plumb/knowledge/preferences/ship.md` (projeto **e** global) e as convenções de PR/commit do
+   repo (template de PR, histórico de mensagens de commit, estratégia de merge). O que isso já
+   responde **não vira pergunta**. **Na dúvida, sempre pergunte** (ferramenta de perguntas,
+   recomendação primeiro) — não adivinhe formato de PR, convenção de commit ou estratégia de merge.
+   **Após CADA resposta, passe pelo `plumb-learn`** para gravar o que durar (projeto → convenção do
+   repo/time; global → preferência pessoal de entrega). **Siga a preferência/fato salvo**
+   (precedência **projeto → global → playbook**). O mecanismo completo em
+   `../plumb/references/preferences.md`; o que costuma ser pergunta, em `playbook.md` §"O que preciso
+   saber". (A pergunta de push/PR/merge/deixar da entrega continua existindo normalmente, no passo 4.)
+2. **Rodada final.** Pergunte (ferramenta de perguntas, **"Está 100%"** primeiro) se há dúvida ou
    ajuste. Se houver: corrija, **prove de novo** (volta ao `plumb-code`/`qa`) e **pergunte outra
    vez**. Repita até o 100%.
-2. **Traga a base** se ela avançou (`git merge <base>` no worktree) e rode os testes de novo —
+3. **Traga a base** se ela avançou (`git merge <base>` no worktree) e rode os testes de novo —
    `worktrees.md` §4.
-3. **Escolha de saída, numa chamada só** (recomendação primeiro): **push da branch** · **abrir PR**
+4. **Escolha de saída, numa chamada só** (recomendação primeiro): **push da branch** · **abrir PR**
    (título + corpo) · **merge local na base** · **deixar como está**. Veja o playbook para quando
    recomendar cada um.
-4. **Execute o escolhido.** No **merge**, remova/squash a spec `.plumb/work/<id>.md` para **não
+5. **Execute o escolhido.** No **merge**, remova/squash a spec `.plumb/work/<id>.md` para **não
    poluir a main**. Com um **gestor de tarefas** conectado (`task-manager.md`), **atualize o card**
    (status/resumo/evidência, link do commit ou PR).
-5. **Limpe o worktree** só com o "sim" (na mesma chamada): `worktrees.md` §6. Branch não integrada
+6. **Limpe o worktree** só com o "sim" (na mesma chamada): `worktrees.md` §6. Branch não integrada
    ou mudança não commitada → diga e não force.
 
 ## Trilha direta / sem git

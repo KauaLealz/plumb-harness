@@ -31,6 +31,11 @@ camada de conhecimento em **arquivos**; o orquestrador some e o fluxo passa a se
 ### Destaques
 
 - **Score de complexidade** rege a cerimônia (direta/padrão/profunda/programa).
+- **Preferências por skill** (`references/preferences.md`): cada skill mantém o dev no loop —
+  explora primeiro, **na dúvida pergunta** o que precisa (nunca adivinha fato operacional: o quê,
+  onde roda, cenários, formato do entregável) e, **após cada resposta, passa pelo `plumb-learn`**
+  para gravar o que durar em `preferences/<skill>.md` (global para o dev, projeto para o time) e não
+  reinterrogar.
 - **qa** com escada de prova por natureza (nunca só unitário); **review** em dois eixos, só reporta.
 - **Adaptação ao dev/empresa:** tudo que o harness formata é default sobrescrevível
   (precedência projeto → global → default).

@@ -36,6 +36,25 @@ Duas coisas diferentes, dois destinos. Nunca misture.
 - Descobriu um porquê/decisão durável enquanto documentava? Mande pro cérebro via **`plumb-learn`**
   (ele decide alcance e pede o "sim" no inferido). Não grave nada no cérebro por conta própria aqui.
 
+## O que preciso saber (1ª vez)
+
+Na primeira vez que documento algo num projeto, exploro e — na dúvida — pergunto estas dimensões
+(cada resposta passa pelo `plumb-learn`; ver `../plumb/references/preferences.md`). Depois já sei e
+não pergunto de novo.
+
+- **Formato/estilo** da doc — tom (direto, didático), pessoa, uso de exemplos, convenção de títulos.
+  Tende a ser **global** (jeito pessoal de escrever do dev, viaja entre projetos).
+- **Onde a doc mora** — README, `docs/`, wiki (Confluence/Notion), comentários no código. Tende a ser
+  **projeto** (convenção do repo/time).
+- **Público-alvo** — dev que integra, operador, usuário final, time interno. Muda profundidade e
+  vocabulário. Em geral **projeto** (depende do que aquela doc serve).
+- **Estrutura preferida** — seções obrigatórias, ordem, nível de detalhe por tipo (README enxuto vs.
+  guia completo). **Projeto** quando é convenção do time; **global** quando é gosto do dev.
+- **Template de doc da empresa** — se o time tem um modelo (seções fixas, formato de exemplo,
+  front-matter), ele **vence** a estrutura-padrão abaixo. Quase sempre **projeto** (template do time).
+
+No **trivial**, não interrogue à toa: use o que explorou (docs existentes, template) e o default.
+
 ## Estrutura
 
 ### README (porta de entrada)

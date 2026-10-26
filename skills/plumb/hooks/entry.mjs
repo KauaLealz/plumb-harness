@@ -23,6 +23,7 @@ export const ROUTER = [
   '- Cérebro = arquivos markdown em `.plumb/knowledge/` (projeto) e `~/.plumb/knowledge/` (global); OPCIONAL (tudo funciona sem). Consulte antes de agir (proporcional ao score); grave o que durar via `plumb-learn`. Ditado pelo usuário grava na hora; o inferido pede o "sim". Override: projeto → global → default do harness.',
   '- A spec e o estado de execução são git/worktree-native (`.plumb/work/<id>.md` na branch), nunca no cérebro.',
   '- Pergunta ao usuário → ferramenta de perguntas (recomendação primeiro); sem ela, lista numerada. Não infira o que muda o resultado: pergunte.',
+  '- Cada skill explora antes, mas na dúvida PERGUNTA o que precisa (nunca adivinha fato operacional: o que/onde roda/cenários/formato); após cada resposta passa pelo `plumb-learn` para gravar o que durar (projeto ou global) e não reinterrogar.',
   '- Prova antes de "pronto", no nível certo pela natureza (nunca só teste unitário). Push/PR/merge só com o "sim".',
   '- Paralelize o trabalho independente. Arquivo/cérebro indisponível: avise em uma linha e siga.',
 ];

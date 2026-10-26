@@ -4,6 +4,30 @@ A expertise do `plumb-code`: como implementar uma fase com qualidade, e as **fat
 ciclo de vida** por área (como construir + a pegadinha). A **prova mínima** de cada
 área é o `plumb-qa` que roda (ver o playbook dele); aqui o foco é o **COMO construir**.
 
+## O que preciso saber (1ª vez)
+
+Antes da primeira fase, **explore** o código e as preferências salvas; o que restar de
+dúvida, **pergunte** (e cada resposta passa pelo `plumb-learn` — ver
+`../plumb/references/preferences.md`). As dimensões que o code elicita:
+
+- **Disciplina de TDD** — quão estrita: teste primeiro sempre, ou pragmático em
+  algumas áreas (UI/infra)? → **global** (estilo pessoal), salvo convenção do time.
+- **Granularidade do commit** — fase inteira num commit, ou passos menores? → **global**.
+- **Convenção de commit** — formato da mensagem (ex.: conventional commits:
+  `feat:`, `fix:`), idioma, corpo/footer. → **projeto** (convenção do repo).
+- **Nomenclatura de branch** — padrão (ex.: `feat/<id>`, `fix/<ticket>`). → **projeto**.
+- **Onde colocar arquivos/módulos novos** — a estrutura de pastas e o padrão de onde
+  mora cada coisa. → **projeto**.
+- **Comando de lint/format** — o que rodar antes de fechar a fase (ex.: `npm run lint`,
+  `ruff`, `prettier`). → **projeto**.
+- **Padrões de estilo que o dev gosta** — nomes, early-return, imports, o que ele
+  corrige sempre. → **global**.
+
+Marcação de alcance acima é o default: convenção de commit/branch, lint e layout do
+repo tendem a **projeto**; disciplina de TDD, granularidade e estilo pessoal tendem a
+**global**. Na dúvida entre pessoal e do time, pergunte o alcance uma vez. No trivial,
+use o que explorou e o default — não interrogue à toa.
+
 ## O ritmo de uma fase (TDD por padrão)
 
 1. **RED** — escreva o teste que expressa o `observa-se:` do resultado, nas bordas

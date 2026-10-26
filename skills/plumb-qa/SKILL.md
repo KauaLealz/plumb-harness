@@ -24,16 +24,24 @@ Leia `playbook.md` (a escada de prova) uma vez. O cérebro é opcional
 
 ## Procedimento
 
-1. **Descubra o piso.** Pela natureza da mudança (os playbooks das skills que ela tocou — migração,
+1. **O que preciso saber (explorar → perguntar na dúvida).** Antes de provar, **explore**: a suíte, o
+   runner, o `AGENTS.md`, e o `.plumb/knowledge/preferences/qa.md` (projeto + global). O que isso já
+   responde não vira pergunta. **Na dúvida, sempre pergunte** o que falta para provar certo (o quê,
+   onde roda, onde estão os cenários/fixtures, dados, formato da evidência) — **nunca adivinhe fato
+   operacional**. **Após cada resposta, passe pelo `plumb-learn`** para gravar o que durar (projeto ou
+   global) e não reinterrogar na próxima. Siga a preferência/fato salvo (precedência **projeto →
+   global → playbook**). No trivial, não interrogue à toa. Mecanismo:
+   `../plumb/references/preferences.md`.
+2. **Descubra o piso.** Pela natureza da mudança (os playbooks das skills que ela tocou — migração,
    fila, API, UI…), monte a **união** das provas mínimas aplicáveis (`playbook.md`). Escale acima do
    piso conforme o score.
-2. **Reaproveite → estenda → crie.** Rode o teste que já cobre; estenda se perto; crie só se nenhum
+3. **Reaproveite → estenda → crie.** Rode o teste que já cobre; estenda se perto; crie só se nenhum
    der a prova. Use as ferramentas que o projeto já tem.
-3. **Execute** cada resultado esperado e **observe**: comando + saída, chamada real, ou (mudança
+4. **Execute** cada resultado esperado e **observe**: comando + saída, chamada real, ou (mudança
    visível) o fluxo no navegador. Teste instável: rode de novo uma vez e reporte como instável.
-4. **Registre na spec:** marque `[x]` cada resultado provado e anexe a evidência na seção
+5. **Registre na spec:** marque `[x]` cada resultado provado e anexe a evidência na seção
    `## Evidências` (`qa — resultado N ✓ <evidência>`).
-5. **Falhou?** Não maquie: reporte o que falhou com a saída. Bug real → volta ao `plumb-code` (loop).
+6. **Falhou?** Não maquie: reporte o que falhou com a saída. Bug real → volta ao `plumb-code` (loop).
 
 ## Override (dev/empresa)
 

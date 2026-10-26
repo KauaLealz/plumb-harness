@@ -135,6 +135,13 @@ corpo entra sob demanda. Uma regra que o usuário **dita** grava na hora; o que 
 pede o "sim". **Override:** uma convenção do dev/empresa no `.plumb/knowledge/` **vence** o default
 do harness (precedência projeto → global → default).
 
+**Preferências por skill.** Cada skill mantém você no loop: explora primeiro, mas **na dúvida
+pergunta** o que precisa para fazer certo (ex.: a `qa` — o que testar, onde roda, onde estão os
+cenários, o formato do entregável) e **nunca adivinha fato operacional**. Após cada resposta, passa
+pelo `plumb-learn` para gravar o que durar em `.plumb/knowledge/preferences/<skill>.md` (global para
+você, projeto para o time) — e na próxima vez já sabe, sem reinterrogar. Detalhe em
+`references/preferences.md`.
+
 A **spec e o estado de execução não ficam no cérebro** — são `.plumb/work/<id>.md`, commitado na
 branch da mudança e removido no merge. Com um gestor de tarefas conectado (Jira/Linear/GitHub
 Issues), o card é o **quê + status**; o `.plumb/knowledge/` guarda o **porquê**.

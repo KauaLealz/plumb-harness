@@ -30,6 +30,15 @@ cérebro é opcional (`../plumb/references/knowledge-model.md`).
 
 ## Procedimento
 
+0. **O que preciso saber (explorar → perguntar na dúvida).** Antes de julgar, explore:
+   `.plumb/knowledge/preferences/review.md` (projeto + global) e as convenções do repo (as `rule` do
+   projeto, padrões da base). O que isso já responde não vira pergunta. **Na dúvida, sempre pergunte**
+   pela ferramenta de perguntas (recomendação primeiro) — em que focar, qual o limiar de severidade,
+   onde ficam as convenções, que formato de veredito o dev quer. **Após cada resposta, passe pelo
+   `plumb-learn`** (grava no projeto ou global, para não reinterrogar na próxima). Siga a preferência
+   salva — precedência **projeto → global → playbook**. No trivial, não interrogue à toa: use o que
+   explorou e o default. O mecanismo completo está em `../plumb/references/preferences.md`; as dimensões
+   da 1ª vez, no `playbook.md`.
 1. **Pegue o diff e a régua.** Working diff (`git diff`) ou PR/branch (`gh`, card). Leia a spec
    (resultados esperados + combinado) e as notas de `.plumb/knowledge/` da área que o diff toca.
 2. **Veja a área.** Toca auth, pagamento, dado pessoal, segredo no diff ou entrada externa? →

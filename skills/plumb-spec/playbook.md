@@ -3,6 +3,28 @@
 A expertise do `plumb-spec`: o que faz uma spec ser **aprovável e provável** (pelo `plumb-qa`, que não
 vê o diff). É o que o `spec` lê para escrever bem e para rodar o spec-lint.
 
+## O que preciso saber (1ª vez)
+
+Antes de especificar, explore o que o dev/time já definiu (`.plumb/knowledge/preferences/spec.md` e o
+template da empresa) e, **na dúvida, pergunte** — cada resposta passa pelo `plumb-learn`, para na
+próxima a skill já saber. Dimensões que costumam travar uma spec boa:
+
+- **Formato/seções** — como o dev/time quer a spec: as seções do template, a ordem, o que entra no
+  cabeçalho. Quando a empresa tem **template de spec próprio**, ele manda. → tende a **projeto** (o
+  template é do time); o gosto de layout pessoal é **global**.
+- **Nível de detalhe** — spec enxuta (só resultados + fases) ou densa (cada resultado destrinchado,
+  casos de borda listados). → tende a **global** (preferência pessoal de formato).
+- **Critérios de aceite: EARS vs linguagem simples** — o time exige EARS (`WHEN … SHALL …`) em tudo, só
+  no crítico (default), ou prefere linguagem simples falsificável em todo lugar. → **projeto** se é
+  convenção do time; **global** se é gosto do dev.
+- **De onde vêm os critérios** — o card/ticket já traz os critérios de aceite a copiar, ou se escreve do
+  zero a partir do Combinado? (Qual sistema: Jira, Linear, GitHub Issues.) → **projeto**.
+- **Template de spec da empresa** — existe um arquivo/modelo oficial a seguir em vez do default? → é a
+  fonte que **vence** o playbook; nota de **projeto**.
+
+No trivial, não interrogue à toa: use o que explorou e o default, e pergunte só o que de fato muda o
+entregável. Detalhe do mecanismo em `../plumb/references/preferences.md`.
+
 ## Resultado observável e falsificável
 
 O coração da spec são os **resultados esperados**. Um bom resultado:

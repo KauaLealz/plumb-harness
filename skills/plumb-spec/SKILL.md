@@ -33,16 +33,24 @@ Leia `playbook.md` (como especificar bem) uma vez. O template é
 
 ## Procedimento
 
-1. **Puxe o Combinado** do grill e o score/sinais da triagem. Leia o `.plumb/knowledge/` das áreas que
+1. **O que preciso saber (explorar → perguntar na dúvida).** Antes de escrever, descubra como o
+   dev/time quer a spec: **explore primeiro** o `.plumb/knowledge/preferences/spec.md` (projeto +
+   global) e o template de spec da empresa se houver. O que isso já responde **não vira pergunta**. Na
+   dúvida — formato/seções, nível de detalhe, EARS vs linguagem simples, de onde vêm os critérios —
+   **sempre pergunte** pela ferramenta de perguntas (recomendação primeiro); não adivinhe o que muda o
+   formato do entregável. **Após cada resposta, passe pelo `plumb-learn`** para a próxima vez já saber.
+   Siga a preferência/template salvo (precedência **projeto → global → playbook/template default**). No
+   trivial, não interrogue à toa: use o que explorou e o default. Ver `../plumb/references/preferences.md`.
+2. **Puxe o Combinado** do grill e o score/sinais da triagem. Leia o `.plumb/knowledge/` das áreas que
    a mudança toca (proporcional ao score) — override da empresa vence o default.
-2. **Escreva a spec** no template: cabeçalho (Score · Branch · Estado · Atualizado), Objetivo,
+3. **Escreva a spec** no template: cabeçalho (Score · Branch · Estado · Atualizado), Objetivo,
    Combinado, Fora de escopo, Resultados esperados (`[ ]` + `observa-se:` + EARS no crítico), Fases/waves
    (`[ ]` + arquivos + dep + sai quando), Evidências (vazia, cada agente anexa a sua), Notas/handoff.
-3. **Design quando o score pede:** avalie 2+ abordagens, decida e condense a escolhida em 1 linha no
+4. **Design quando o score pede:** avalie 2+ abordagens, decida e condense a escolhida em 1 linha no
    Objetivo (o porquê curto; o descartado vira nota se útil).
-4. **Rode o spec-lint** (`playbook.md`): reprova spec com resultado sem `observa-se:`, fase sem
+5. **Rode o spec-lint** (`playbook.md`): reprova spec com resultado sem `observa-se:`, fase sem
    `sai quando:`, `[A DEFINIR]` pendente, ou (no crítico) resultado sem EARS. Conserte antes de seguir.
-5. **Gate de aprovação:** apresente a spec pela ferramenta de perguntas (recomendação primeiro) e
+6. **Gate de aprovação:** apresente a spec pela ferramenta de perguntas (recomendação primeiro) e
    espere o **"sim"**. Replanejar sem aprovar: ajuste e reapresente.
 
 ## Override (dev/empresa)

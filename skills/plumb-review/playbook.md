@@ -4,6 +4,22 @@ A expertise do `plumb-review`: os **dois eixos**, a **lente de segurança** e co
 severidade**. É o que o revisor lê para julgar um diff sem rodar nada. A régua é a spec + as
 convenções do projeto (`.plumb/knowledge/`), nunca o gosto do revisor.
 
+## O que preciso saber (1ª vez)
+
+Antes do primeiro review num repo (ou com um dev novo), explore e, na dúvida, pergunte. O mecanismo
+(explorar → perguntar → `plumb-learn`) está em `../plumb/references/preferences.md`. Dimensões:
+
+| Dimensão | O que descobrir | Tende a ser |
+|---|---|---|
+| **Foco** | em que o dev quer que o review mire — bugs, segurança, performance, estilo (e o que **não** policiar) | **global** (jeito de revisar do dev) |
+| **Limiar de severidade** | reporta nit/menor ou só major+? onde fica o corte do "não bloqueia" | **global** |
+| **Fonte das convenções** | onde moram as regras do projeto (`.plumb/knowledge/`, `AGENTS.md`, lint/style, guia do time) | **projeto** (convenção do repo) |
+| **Formato do veredito/relatório** | como o dev quer o veredito e os achados — tabela, por severidade, com `arquivo:linha`, onde registrar | **global** |
+
+- **Projeto** (vence o global): a fonte das convenções e qualquer definição de pronto/critério da
+  empresa — fato do repo, viaja com ele.
+- **Global**: foco, limiar e formato — preferência pessoal do dev, viaja entre projetos.
+
 ## Eixo A — fidelidade à spec (ex-verify/converge)
 
 Confronte o **diff** com os **resultados esperados** e o **combinado** da spec (no modo auditoria,

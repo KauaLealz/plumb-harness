@@ -3,6 +3,23 @@
 A expertise do `plumb-qa`: a **escada de prova** e os padrões de cada natureza. É o que o `qa` lê
 para saber o piso e como executá-lo.
 
+## O que preciso saber (1ª vez)
+
+Antes de montar o piso, a `qa` precisa de alguns fatos. Explore primeiro (suíte, runner, `AGENTS.md`,
+`.plumb/knowledge/preferences/qa.md`); o que não achar, **pergunte** — e, após a resposta, passe pelo
+`plumb-learn` para não reinterrogar. As dimensões:
+
+| Dimensão | O que elicitar | Tende a virar nota de |
+|---|---|---|
+| **O quê** | o comportamento a provar (o resultado esperado da spec, ou o que o dev descreveu) | — (desta vez) |
+| **Onde roda** | ambiente da prova: local, container, staging | **projeto** |
+| **Onde estão os cenários/fixtures** | pasta dos testes, fixtures, seeds (`tests/e2e`, …) | **projeto** |
+| **Dados de teste** | contas, tokens, dados de exemplo para exercitar o fluxo | **projeto** (se do repo/time) |
+| **Formato do entregável/evidência** | relatório, print, só o verde — como o dev gosta de ver a prova | **global** |
+
+No **trivial**, use o que explorou e o default; só pergunte o que de fato trava a prova. Mecanismo
+completo: `../plumb/references/preferences.md`.
+
 ## A escada de prova (piso por natureza — nunca abaixo, nunca só unitário)
 
 | Natureza da mudança | Piso (prova mínima) | Como rodar · o que observar |

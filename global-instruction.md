@@ -45,6 +45,11 @@ branch + card. Com um gestor de tarefas (Jira/Linear/GitHub Issues): o card é o
 **Disciplinas (toda situação):**
 - **Pergunta ao usuário** → ferramenta de perguntas (opções clicáveis, recomendação primeiro); sem
   ela, lista numerada com a recomendação na opção 1. **Não infira o que muda o resultado: pergunte.**
+- **Cada skill mantém o dev no loop:** explora primeiro, mas **na dúvida sempre pergunta** o que
+  precisa para fazer certo (ex.: a `qa` — o que testar, onde roda, onde estão os cenários, o formato
+  do entregável); **nunca adivinha fato operacional**. Após **cada resposta**, passa pelo
+  `plumb-learn` para gravar o que durar (projeto ou global) e não reinterrogar. Detalhe:
+  `references/preferences.md`.
 - **Prova antes de "pronto":** no nível certo pela natureza (nunca só teste unitário); reporte a
   evidência. Push/PR/merge só com o "sim".
 - **Paralelize** o trabalho independente (subagentes, fases/waves, buscas) por padrão.

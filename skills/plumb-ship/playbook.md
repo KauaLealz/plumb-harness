@@ -3,6 +3,23 @@
 A expertise do `plumb-ship`: a rodada final, o canal de saída certo, o squash da spec, o card e a
 limpeza. É o que o `ship` lê para fechar sem susto.
 
+## O que preciso saber (1ª vez)
+
+Para entregar do jeito do dev/time, a `ship` **explora** antes (`.plumb/knowledge/preferences/ship.md`
+projeto + global, template de PR e histórico de commits do repo) e, **na dúvida, pergunta** — cada
+resposta passa pelo `plumb-learn` e vira preferência, para não reinterrogar na próxima. O mecanismo
+geral em `../plumb/references/preferences.md`. As dimensões:
+
+| Dimensão | O que descobrir | Tende a ser |
+|---|---|---|
+| **Saída padrão** | push da branch vs abrir PR vs merge local vs deixar — qual recomendar por default | **projeto** (fluxo do time: tem revisão de PR? solo?) |
+| **Título/corpo do PR** | formato do título (prefixo, idioma) e o que vai no corpo (objetivo, evidência, link do card, template do repo) | **projeto** (template/convenção do repo) |
+| **Mensagem de commit** | convenção (Conventional Commits, idioma, escopo, trailer) | **projeto** (convenção do repo), com toque **global** se o dev tem estilo próprio |
+| **Estratégia de merge** | squash vs `--no-ff` vs rebase ao integrar na base | **projeto** (política do repo) |
+| **Comentário no card** | o que entra (resumo em resultado + evidência do `qa` + link do commit/PR), tom e idioma | **projeto** (o que o time espera no card) |
+
+Precedência ao seguir o que está salvo: **projeto → global → o default deste playbook**.
+
 ## A rodada final (até o 100%)
 
 O fecho é uma **conversa curta**, não um despacho. Você já provou (`qa`) e revisou (`review`); agora

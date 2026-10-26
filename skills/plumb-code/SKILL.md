@@ -32,21 +32,34 @@ Leia `playbook.md` (como construir bem + as fatias de ciclo de vida) uma vez. A 
 
 ## Procedimento
 
-1. **Leia a spec e o cérebro.** Pegue as fases desmarcadas, as dependências (`dep:`)
+1. **O que preciso saber (explorar → perguntar na dúvida).** Antes de construir,
+   **explore**: as convenções do próprio código (como o repo commita, nomeia branch,
+   roda lint, onde ficam os módulos) e as preferências salvas em
+   `.plumb/knowledge/preferences/code.md` (projeto **e** global). O que isso já responde
+   **não vira pergunta**. **Na dúvida, sempre pergunte** pela ferramenta de perguntas
+   (recomendação primeiro) — **nunca adivinhe fato operacional** (convenção de commit,
+   nome de branch, onde colocar arquivo novo, comando de lint/format). **Após CADA
+   resposta, passe pelo `plumb-learn`** para gravar o que é durável e não reinterrogar
+   depois. Siga a preferência salva, precedência **projeto → global → playbook**
+   (default). As dimensões que o code elicita estão no `playbook.md` ("O que preciso
+   saber (1ª vez)"); o mecanismo inteiro está em
+   `../plumb/references/preferences.md`. No **trivial**, não interrogue à toa: use o que
+   explorou e o default, e pergunte só o que de fato trava o trabalho.
+2. **Leia a spec e o cérebro.** Pegue as fases desmarcadas, as dependências (`dep:`)
    e o `sai quando:` de cada uma; leia as notas de `.plumb/knowledge/` da área que a
    fase toca (resumo + caminho). Rode a suíte uma vez antes da primeira fase — falha
    que já existia não é sua: anote e avise.
-2. **Monte as waves.** Fases com `dep:` satisfeito e arquivos **disjuntos** rodam em
+3. **Monte as waves.** Fases com `dep:` satisfeito e arquivos **disjuntos** rodam em
    paralelo (ver `parallel.md`); as dependentes esperam. Em série quando há dependência
    real, não houver git, ou forem menos de 3 lotes.
-3. **Implemente cada fase** (você ou, nas waves, um subagente implementador pelo
+4. **Implemente cada fase** (você ou, nas waves, um subagente implementador pelo
    contrato de `prompt-contract.md` com o caminho absoluto do worktree): teste primeiro
    (ou a prova que o `playbook.md` define para a natureza), código mínimo, refatore.
-4. **Rode o `sai quando:`** da fase você mesmo. Passou → commit atômico, marque o
+5. **Rode o `sai quando:`** da fase você mesmo. Passou → commit atômico, marque o
    checkbox, registre a evidência, uma linha de andamento. Falhou → conserte antes de
    seguir; a mesma verificação falha duas vezes → procure no `.plumb/knowledge` pelo
    sintoma (grep); sem saída, leve opções ao usuário.
-5. **Integre as waves** uma por vez na branch da mudança, rodando a verificação do
+6. **Integre as waves** uma por vez na branch da mudança, rodando a verificação do
    lote após cada integração (`parallel.md`).
 
 ## Override (dev/empresa)
